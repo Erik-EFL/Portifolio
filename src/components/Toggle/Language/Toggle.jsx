@@ -31,7 +31,7 @@ export default function CustomizedSwitches() {
 
   return (
     <ToggleContainer className='toggleTheme'>
-      <Image src={br} w="30" h="30" alt="imagem de bandeira do brasil" />
+      <Image src={br} loading='lazy' w="30" h="30" alt="imagem de bandeira do brasil" />
       <StyledInput
         type={"checkbox"}
         className='check'
@@ -40,7 +40,7 @@ export default function CustomizedSwitches() {
         checked={isChecked}
         onChange={handleChange}
       />
-      <Image src={us} w="30" h="30" alt="imagem de bandeira dos estados unidos" />
+      <Image src={us} loading='lazy' w="30" h="30" alt="imagem de bandeira dos estados unidos" />
     </ToggleContainer>
   );
 }

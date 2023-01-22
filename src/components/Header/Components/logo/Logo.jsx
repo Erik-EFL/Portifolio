@@ -9,6 +9,7 @@ export default function Logo() {
         <Image
           src={logo}
           alt={"Logotipo"}
+          loading='lazy'
           w="100"
           h="200"
         />

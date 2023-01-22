@@ -27,8 +27,8 @@ function ToggleTheme({ toggleTheme, number }) {
           htmlFor={`change-Theme-color-${number}`}
           aria-label='Change Theme Color'
         >
-          <FontAwesomeIcon className='fa-moon' icon={faMoon} />
-          <FontAwesomeIcon className='fa-sun' icon={faSun} />
+          <FontAwesomeIcon loading='lazy' className='fa-moon' icon={faMoon} />
+          <FontAwesomeIcon loading='lazy' className='fa-sun' icon={faSun} />
           <div
             className='ball'
           />
