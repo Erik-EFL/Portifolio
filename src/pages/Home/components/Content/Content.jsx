@@ -17,7 +17,7 @@ const Content = () => {
         margin: 'auto',
       }} item xs={12} sm={6} md={6} lg={6}>
         <Box sx={{ position: 'relative', marginBottom: '-10px'}}>
-          <h3>
+          <span>
             <Typography component='span' sx={{
               position: 'relative',
               zIndex: '10',
@@ -33,7 +33,7 @@ const Content = () => {
             </Typography>
             {' '}
             {home.name}
-          </h3>
+          </span>
           <Box sx={{
             position: 'absolute',
             top: '-16px',
@@ -43,6 +43,7 @@ const Content = () => {
             borderRadius: '100%',
             backgroundColor: '#F1A208',
             marginLeft: '20px',
+            zIndex: '-1',
           }} />
         </Box>
         <TypeAnimation
