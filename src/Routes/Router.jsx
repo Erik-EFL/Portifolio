@@ -17,10 +17,8 @@ const Router = () => {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('/sw.js').then(function(registration) {
-        // Registro bem-sucedido
         console.log('ServiceWorker registrado com sucesso: ', registration.scope);
       }, function(err) {
-        // Falha no registro
         console.log('ServiceWorker falha no registro: ', err);
       });
     });

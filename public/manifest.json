@@ -1,0 +1,51 @@
+{
+  "name": "Meu Portfólio",
+  "short_name": "Portfólio",
+  "start_url": "/",
+  "display": "standalone",
+  "serviceworker": {
+    "src": "/sw.js",
+    "scope": "/"
+  },
+  "icons": [
+    {
+      "src": "image-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg",
+      "purpose": "maskable"
+    },
+    {
+      "src": "image-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg",
+      "purpose": "maskable"
+    },
+    {
+      "src": "image-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "image-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "image-192x192.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon"
+    }
+  ],
+  "permissions": [
+    "geolocation"
+  ],
+  "description": "Este é um aplicativo web Progressive (PWA) que serve como meu portfólio online. Nele você pode ver meus projetos, habilidades e contato",
+  "background_color": "#1E1E1F",
+  "theme_color": "#1E1E1F",
+  "orientation": "portrait",
+  "scope": "/dist/",
+  "dir": "ltr",
+  "lang": "pt-BR"
+}
