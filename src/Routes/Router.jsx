@@ -1,4 +1,4 @@
-import React, { useState, lazy } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from 'styled-components'
@@ -13,6 +13,18 @@ const Router = () => {
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === darkTheme ? lightTheme : darkTheme));
   };
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        // Registro bem-sucedido
+        console.log('ServiceWorker registrado com sucesso: ', registration.scope);
+      }, function(err) {
+        // Falha no registro
+        console.log('ServiceWorker falha no registro: ', err);
+      });
+    });
+  }
 
   return (
     <ThemeProvider theme={theme}>

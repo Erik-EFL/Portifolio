@@ -4,7 +4,6 @@ import useCheckRef from '../../Hooks/useCheckRef'
 
 function Image({...props}) {
   const checkRef = useCheckRef(`${props.w}`, `${props.h}`)
-  console.log(props.h) //
   return (
     <picture>
       <ImageStyle
@@ -12,7 +11,6 @@ function Image({...props}) {
         srcSet={props.src + ' 1x, ' + props.src + ' 2x'}
         {...props}
         ref={checkRef}
-        loading='lazy'
         decoding="async"
         alt={props.alt}
         sx={props.sx}

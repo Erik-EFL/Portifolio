@@ -21,9 +21,10 @@ const Content = () => {
             <Typography component='span' sx={{
               position: 'relative',
               zIndex: '10',
-              color: 'rgb(0, 0, 0)',
+              fontFamily: 'Montserrat',
+              color: '#000000',
               backgroundColor: 'transparent',
-              fontWeight: '900',
+              fontWeight: '800',
               fontSize: '1.2rem',
               lineHeight: '1.2rem',
               marginRight: '5px',
@@ -35,8 +36,8 @@ const Content = () => {
           </h3>
           <Box sx={{
             position: 'absolute',
-            top: '-18px',
-            left: '-28px',
+            top: '-16px',
+            left: '-26px',
             width: '50px',
             height: '50px',
             borderRadius: '100%',

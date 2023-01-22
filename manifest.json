@@ -3,11 +3,40 @@
   "short_name": "Meu Portfólio",
   "start_url": "/dist/index.html",
   "display": "standalone",
+  "serviceworker": {
+    "src": "/sw.js",
+    "scope": "/"
+  },
   "icons": [
     {
-      "src": "/public/image.svg",
+      "src": "public/image.svg",
       "sizes": "192x192",
-      "type": "image/svg"
+      "type": "image/svg",
+      "purpose": "maskable"
+    },
+    {
+      "src": "public/image.svg",
+      "sizes": "512x512",
+      "type": "image/svg",
+      "purpose": "maskable"
+    },
+    {
+      "src": "public/image-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "public/image-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "image-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "permissions": [
