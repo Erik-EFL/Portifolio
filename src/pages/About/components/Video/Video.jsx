@@ -12,6 +12,7 @@ const Video = () => {
       src={src}
       title={title}
       options={options}
+      loading='lazy'
     />
   )
 };
