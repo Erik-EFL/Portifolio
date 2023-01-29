@@ -1,19 +1,51 @@
 import React from 'react';
-import Container from '@mui/material/Container';
-import Card from './components/Content/Card'; 'react';
+import ProjectCard from '../../components/Cards/Projects/Card';
+import useFetchLanguages from './utils/FetchAPI';
+import Images from './utils/Images';
+import { ProjectsStyled } from './Projects.style';
+import requestGit from './utils/FetchUrl';
 
 const Projects = () => {
+  const { data, filtered, isLoading, error } = useFetchLanguages()
+
+  if (isLoading) return <p>Loading...</p>
+  if (error) return <p>Error</p>
+
+  if(!data) return null;
+
+  const filterData = filtered()
+  const filterImages = filterData.map((project) => {
+    const image = Images.filter((image) => {
+      return image.id === project.id
+    })
+
+    return image.map((img) => {
+      return {
+        image: img.img,
+      }
+    })
+  })
+
+  const catOnlyImage = filterImages.map((image) => {
+    if (image.length === 0 || image[0].image === undefined) {
+      return 'src/Data/Image/Logo.webp'
+    }
+    return image[0].image
+  })
+
   return (
-    <Container component='main'  maxWidth="lg" sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignContent: 'center',
-      alignItems: 'center',
-      marginTop: '90px',
-    }}>
-      <Card />
-    </Container>
+    <ProjectsStyled>
+      {filterData.map((project) => (
+        <ProjectCard
+          name={project.name}
+          description={project.description}
+          gitHub={project.html_url}
+          site={project.homepage}
+          id={project.id}
+          image={catOnlyImage[filterData.indexOf(project)]}
+        />
+      ))}
+    </ProjectsStyled>
   );
 }
 

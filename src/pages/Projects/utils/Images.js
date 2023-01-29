@@ -7,60 +7,97 @@ import wine from '../../../Data/Image/wine.webp';
 
 export default [
   {
-    id: 532724083,
-    url: 'https://github.com/Erik-EFL/Portifolio',
-    title: 'Portfolio',
-    img: portfolio,
-    description: 'Portfólio de meus trabalhos atuais e anteriores.',
-    technologies: ['React', 'Styled Components', 'MUI'],
-
+    id: 591819752,
+    img: portfolio
   },
   {
     id: 518212691,
-    url: 'https://github.com/Erik-EFL/Query-box-Game',
-    title: 'Query Box',
     img: queryBox,
-    description: 'Query Box um jogo baseado na API de Perguntas Trivia',
-    technologies: ['React', 'Redux', 'CSS Module'],
   },
   {
     id: 517488673,
-    url: 'https://github.com/Erik-EFL/recipe-app-Chefinho',
-    title: 'Chefinho Recipes',
     img: chefinho,
-    description: 'Web app mobile first de receitas',
-    technologies: ['React', 'Styled Components', 'RTL'],
   },
   {
     id: 517504676,
-    url: 'https://github.com/Erik-EFL/Solar-System',
-    title: 'Solar System',
     img: solarSystem,
-    description: 'Web app do nosso sistema solar junto com curiosidades',
-    technologies: ['React', 'Jest', 'JavaScript'],
   },
   {
     id: 517500584,
-    url: 'https://github.com/Erik-EFL/StarWars-Planets-Search',
-    title: 'StarWars Planets Search',
     img: starWarsSearch,
-    description: 'Web app de planetas do StarWars junto com curiosidades sobre cada planeta',
-    technologies: ['React', 'Context API', 'JavaScript'],
   },
-/*   {
-    id: 530811640,
-    url: 'https://github.com/Erik-EFL/Talker-Manager',
-    title: 'Talker Manager',
-    img: portfolio,
-    description: 'CRUD simples para criação de uma API REST de um sistema de palestras',
-    technologies: ['Node', 'JavaScript', 'JWT'],
-  }, */
   {
     id: 520568798,
-    url: 'https://github.com/Erik-EFL/wine-19-hackathon',
-    title: 'Clone Wine (Hackathon)',
     img: wine,
-    description: 'Clone da Web page da Wine (Hackathon)',
-    technologies: ['React', 'Styled Components', 'MUI'],
+  },
+  {
+    // bank app
+    id: 571716451,
+    img: undefined,
+  },
+  {
+    // BettleSystem-SOLID-POO
+    id: 553865348,
+    img: undefined,
+  },
+  {
+    // "BlogsAPI"
+    id: 553851374,
+    img: undefined,
+  },
+  {
+    // "CampFutebolManager"
+    id: 553860310,
+    img: undefined,
+  },
+  {
+    // "CarShopAPI"
+    id: 553852552,
+    img: undefined,
+  },
+  {
+    // "DesafioReact"
+    id: 556400535,
+    img: undefined,
+  },
+  {
+    // "GamingLife"
+    id: 573537110,
+    img: undefined,
+  },
+  {
+    // "GoleDelivery"
+    id: 553847256,
+    img: undefined,
+  },
+  {
+    // "JobsInsights"
+    id: 555475760,
+    img: undefined,
+  },
+  {
+    // "Microservice-notifications"
+    id: 581334100,
+    img: undefined,
+  },
+  {
+    // "Mongo-comerce"
+    id: 546978049,
+    img: undefined,
+  },
+  {
+    // "MusicPlayer"
+    id: 553862130,
+    img: undefined,
+  },
+  {
+    // "pokedex"
+    id: 538823926,
+    img: undefined,
+  },
+  {
+    // "StoreAPI"
+    id: 553863935,
+    img: undefined,
   },
 ]
