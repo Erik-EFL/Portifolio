@@ -1,13 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ThemeContext } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types';
 import { ToggleStyled } from './toggle.styles';
 import { StyledInput } from '../../Input/Input.style';
+// import { darkTheme, lightTheme } from '../../../Styles/Themes';
 
 function ToggleTheme({ toggleTheme, number }) {
   const { title } = useContext(ThemeContext);
+
+/*   useEffect(() => {
+    if (title === 'dark') {
+      localStorage.setItem('theme', JSON.stringify(darkTheme));
+    } else {
+      localStorage.setItem('theme', JSON.stringify(lightTheme));
+    }
+  }, [title]) */
 
   return (
       <ToggleStyled

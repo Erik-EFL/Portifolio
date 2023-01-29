@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from 'styled-components'
@@ -10,11 +10,32 @@ import components from '../components/export.components'
 
 const Router = () => {
   const [theme, setTheme] = useState(darkTheme);
+
   const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === darkTheme ? lightTheme : darkTheme));
+/*     const getTheme = localStorage.getItem('theme');
+    const parseTheme = JSON.parse(getTheme);
+    if (parseTheme === darkTheme) {
+      setTheme(lightTheme);
+      localStorage.setItem('theme', JSON.stringify(lightTheme));
+    }
+    if (parseTheme === lightTheme) {
+      setTheme(darkTheme);
+      localStorage.setItem('theme', JSON.stringify(darkTheme));
+    } */
+
+    setTheme(theme === darkTheme ? lightTheme : darkTheme);
   };
 
-  if ('serviceWorker' in navigator) {
+  useEffect(() => {
+    const getTheme = localStorage.getItem('theme');
+    if (!getTheme) {
+      localStorage.setItem('theme', true);
+    } else {
+      console.log("200 ok")
+    }
+  }, [theme])
+
+/*   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.getRegistration('/sw.js').then(function(registration) {
           if (!registration) {
@@ -28,7 +49,7 @@ const Router = () => {
           }
       });
     });
-  }
+  } */
 
   return (
     <ThemeProvider theme={theme}>
