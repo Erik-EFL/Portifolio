@@ -10,7 +10,7 @@ import pages from '../pages/export.pages';
 
 const Router = () => {
   const storage = typeof window !== 'undefined' ? window.localStorage : {};
-  
+
   const [theme, setTheme] = useState(() => {
     const storageValue = JSON.parse(storage.getItem('theme'));
 
@@ -41,7 +41,7 @@ const Router = () => {
     }
   };
 
-/*   if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.getRegistration('/sw.js').then(function(registration) {
           if (!registration) {
@@ -55,7 +55,7 @@ const Router = () => {
           }
       });
     });
-  } */
+  }
 
   return (
     <ThemeProvider theme={theme}>

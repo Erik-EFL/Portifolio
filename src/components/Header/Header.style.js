@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const HeaderStyled = styled.header`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,6 +9,8 @@ const HeaderStyled = styled.header`
   height: 100px;
   margin: 0 auto;
   max-width: 1200px;
+  z-index: 1000;
+  background: ${({ theme }) => theme.background.primary};
 
   @media (min-width: 769px) {
     width: 90%;
