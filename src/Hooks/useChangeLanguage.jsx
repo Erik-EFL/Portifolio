@@ -28,9 +28,7 @@ const useChangeLanguage = () => {
       /* Caso não haja sete a informação */
       sessionStorage.setItem('language', 'ptBR');
     }
-  }, []);
-
-  useEffect(() => {}, [language]);
+  }, [language]);
 
   const handleChangeLanguage = (language) => {
     setLanguage(language);
