@@ -37,6 +37,7 @@ const Projects = () => {
     <ProjectsStyled>
       {filterData.map((project) => (
         <ProjectCard
+          key={project.id}
           name={project.name}
           description={project.description}
           gitHub={project.html_url}

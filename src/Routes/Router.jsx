@@ -9,10 +9,16 @@ import components from '../components/export.components';
 import pages from '../pages/export.pages';
 
 const Router = () => {
+
+
   const storage = typeof window !== 'undefined' ? window.localStorage : {};
 
   const [theme, setTheme] = useState(() => {
     const storageValue = JSON.parse(storage.getItem('theme'));
+
+    if (!storageValue) {
+      return darkTheme;
+    }
 
     if (storageValue.title === 'dark') {
       return darkTheme;
@@ -23,8 +29,9 @@ const Router = () => {
   });
 
   useEffect(() => {
-    if (!storage.getItem('theme')) {
-       storage.setItem('theme', JSON.stringify(darkTheme));
+    const findStorage = typeof window !== 'undefined' ? window.localStorage : {};
+    if (!findStorage.getItem('theme')) {
+      findStorage.setItem('theme', JSON.stringify(darkTheme));
     }
    }, [theme]);
 
