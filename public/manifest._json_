@@ -41,11 +41,10 @@
   "permissions": [
     "geolocation"
   ],
-  "description": "Este é um aplicativo web Progressive (PWA) que serve como meu portfólio online. Nele você pode ver meus projetos, habilidades e contato",
+  "description": "Este é um aplicativo web Progressive (PWA) que serve como meu portfólio online. Nele você pode ver meus projetos, habilidades e informações de contato.",
   "background_color": "#1E1E1F",
   "theme_color": "#1E1E1F",
   "orientation": "portrait",
-  "scope": "/dist/",
   "dir": "ltr",
   "lang": "pt-BR"
 }

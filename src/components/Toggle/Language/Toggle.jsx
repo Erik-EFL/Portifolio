@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import useChangeLanguage from '../../../Hooks/useChangeLanguage';
 import usePersistedState from '../../../Hooks/usePersistedState';
 import br from '../../../Data/Image/icons8-brazil-48.webp';
@@ -8,19 +8,7 @@ import Image from '../../ImageContainer/Image';
 import { StyledInput } from '../../Input/Input.style';
 
 export default function CustomizedSwitches() {
-  const [verify, setVerify] = React.useState(false)
-
-  useEffect(() => {
-    const inputState = document.querySelector('.check');
-
-    if (inputState.checked) {
-      setVerify(true);
-    } else {
-      setVerify(false);
-    }
-  }, []);
-
-  const [isChecked, setIsChecked] = usePersistedState('input', verify);
+  const [isChecked, setIsChecked] = usePersistedState('input', false);
   const { handleChangeLanguage } = useChangeLanguage();
 
   const handleChange = (event) => {
