@@ -3,7 +3,7 @@ import ProjectCard from '../../components/Cards/Projects/Card';
 import useFetchLanguages from './utils/FetchAPI';
 import Images from './utils/Images';
 import { ProjectsStyled } from './Projects.style';
-import requestGit from './utils/FetchUrl';
+// import requestGit from './utils/FetchUrl';
 
 const Projects = () => {
   const { data, filtered, isLoading, error } = useFetchLanguages()
