@@ -1,20 +1,47 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from 'styled-components'
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from '../Global.style';
 import { darkTheme, lightTheme } from '../Styles/Themes';
 
-import pages from '../pages/export.pages'
-import components from '../components/export.components'
+import components from '../components/export.components';
+import pages from '../pages/export.pages';
 
 const Router = () => {
-  const [theme, setTheme] = useState(darkTheme);
+  const storage = typeof window !== 'undefined' ? window.localStorage : {};
+  
+  const [theme, setTheme] = useState(() => {
+    const storageValue = JSON.parse(storage.getItem('theme'));
+
+    if (storageValue.title === 'dark') {
+      return darkTheme;
+    }
+    if (storageValue.title === 'light') {
+      return lightTheme;
+    }
+  });
+
+  useEffect(() => {
+    if (!storage.getItem('theme')) {
+       storage.setItem('theme', JSON.stringify(darkTheme));
+    }
+   }, [theme]);
+
   const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === darkTheme ? lightTheme : darkTheme));
+    const storageValue = JSON.parse(storage.getItem('theme'));
+
+    if (storageValue.title === 'dark') {
+      storage ? storage.setItem('theme', JSON.stringify(lightTheme)) : null;
+      setTheme(lightTheme);
+    }
+    if (storageValue.title === 'light') {
+      storage ? storage.setItem('theme', JSON.stringify(darkTheme)) : null;
+      setTheme(darkTheme);
+    }
   };
 
-  if ('serviceWorker' in navigator) {
+/*   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.getRegistration('/sw.js').then(function(registration) {
           if (!registration) {
@@ -28,7 +55,7 @@ const Router = () => {
           }
       });
     });
-  }
+  } */
 
   return (
     <ThemeProvider theme={theme}>
