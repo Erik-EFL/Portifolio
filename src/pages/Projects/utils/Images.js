@@ -4,6 +4,9 @@ import chefinho from '../../../Data/Image/chefinho.webp';
 import starWarsSearch from '../../../Data/Image/logo-star-wars-750x375.webp';
 import solarSystem from '../../../Data/Image/solarsystem.webp';
 import wine from '../../../Data/Image/wine.webp';
+import AllForOne from '../../../Data/Image/All-For-One-SQL.webp';
+import Techila from '../../../Data/Image/Techila.webp';
+import DungeonsEndDragons from '../../../Data/Image/Ground-breaking.webp';
 
 export default [
   {
@@ -38,7 +41,7 @@ export default [
   {
     // BettleSystem-SOLID-POO
     id: 553865348,
-    img: undefined,
+    img: DungeonsEndDragons,
   },
   {
     // "BlogsAPI"
@@ -68,7 +71,7 @@ export default [
   {
     // "GoleDelivery"
     id: 553847256,
-    img: undefined,
+    img: Techila,
   },
   {
     // "JobsInsights"
@@ -99,5 +102,10 @@ export default [
     // "StoreAPI"
     id: 553863935,
     img: undefined,
+  },
+  {
+    // "StoreAPI"
+    id: 594267100,
+    img: AllForOne,
   },
 ]
