@@ -1,0 +1,4 @@
+# Verificação rápida antes do commit: só os arquivos staged passam por
+# eslint --fix + prettier; o typecheck é do projeto inteiro (tsc não aceita
+# arquivo isolado sem perder o tsconfig).
+npx lint-staged && npm run typecheck

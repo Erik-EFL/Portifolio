@@ -33,3 +33,8 @@ dist-ssr
 # Scaffold do `firebase init functions` criado na raiz por engano.
 # O backend de verdade vive em functions/.
 portifolio/
+
+# Artefatos de teste (cobertura e Playwright)
+coverage
+playwright-report
+test-results

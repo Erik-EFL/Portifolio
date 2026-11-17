@@ -30,6 +30,23 @@ const HomeContainer = styled.section`
   @media (min-width: 1024.1px) {
     margin-top: 30px;
   }
+
+  /* No mobile o hero não cabia lado a lado: a foto de 500px era empurrada para
+     fora da tela (x=251, right=644 em viewport de 393), o que esticava o
+     documento e quebrava até o position:fixed da barra inferior. */
+  @media (max-width: 900px) {
+    height: auto;
+    min-height: calc(100vh - 150px);
+    padding: 24px 16px 120px;
+
+    & section {
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      text-align: center;
+    }
+  }
 `
 
 export default HomeContainer

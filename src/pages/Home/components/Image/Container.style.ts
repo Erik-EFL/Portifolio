@@ -12,4 +12,10 @@ export const ProfileImage = styled(Image)`
   border-radius: 50%;
   box-shadow: 2px 2px 50px 0 rgba(0, 0, 0, 0.5);
   object-fit: cover;
+
+  /* 500px não cabe no hero empilhado do mobile */
+  @media (max-width: 900px) {
+    width: 240px;
+    height: 240px;
+  }
 `

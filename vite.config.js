@@ -18,6 +18,26 @@ export default defineConfig(({ mode }) => ({
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
     restoreMocks: true,
-    css: false
+    css: false,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.d.ts',
+        'src/@types/**',
+        'src/main.tsx',
+        'src/test/**'
+      ],
+      // Piso = cobertura real medida (18% de linhas): o objetivo aqui é travar
+      // regressão, não fingir qualidade. Suba o piso junto com os testes.
+      thresholds: {
+        statements: 17,
+        branches: 16,
+        functions: 13,
+        lines: 17
+      }
+    }
   }
 }))

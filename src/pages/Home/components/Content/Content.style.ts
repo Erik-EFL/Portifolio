@@ -10,7 +10,10 @@ import { Link } from 'react-router-dom'
 const BRAND = '#F1A208'
 
 export const BadgeWrapper = styled.div`
+  /* inline-block ancora a bolinha no texto: como bloco de largura total ela
+     escapava para a esquerda quando o hero passou a ser centralizado */
   position: relative;
+  display: inline-block;
   margin-bottom: -10px;
 `
 
