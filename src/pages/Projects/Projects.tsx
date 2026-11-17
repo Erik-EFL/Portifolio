@@ -1,7 +1,12 @@
 import { ProjectsSkeleton } from '@/components/Skeleton'
 import Logo from '@/assets/Image/Logo.webp'
 import ProjectCard from '../../components/Cards/Projects/Card'
-import { ProjectsError, ProjectsStyled } from './Projects.style'
+import {
+  ProjectsError,
+  ProjectsNote,
+  ProjectsSection,
+  ProjectsStyled
+} from './Projects.style'
 import Images from './utils/Images'
 import useFetchProjects from './utils/useFetchProjects'
 
@@ -9,7 +14,7 @@ import useFetchProjects from './utils/useFetchProjects'
 const imageById = new Map(Images.map(item => [String(item.id), item.img]))
 
 const Projects = () => {
-  const { projects, isLoading, error, retry } = useFetchProjects()
+  const { projects, isLoading, error, isStale, retry } = useFetchProjects()
 
   if (isLoading) return <ProjectsSkeleton />
 
@@ -25,19 +30,26 @@ const Projects = () => {
   }
 
   return (
-    <ProjectsStyled>
-      {projects.map(project => (
-        <ProjectCard
-          key={project.id}
-          id={String(project.id)}
-          name={project.name}
-          description={project.description ?? ''}
-          gitHub={project.html_url}
-          site={project.homepage ?? undefined}
-          image={imageById.get(String(project.id)) ?? Logo}
-        />
-      ))}
-    </ProjectsStyled>
+    <ProjectsSection>
+      {isStale && (
+        <ProjectsNote role='status'>
+          Mostrando a última lista salva — o GitHub não respondeu agora.
+        </ProjectsNote>
+      )}
+      <ProjectsStyled>
+        {projects.map(project => (
+          <ProjectCard
+            key={project.id}
+            id={String(project.id)}
+            name={project.name}
+            description={project.description ?? ''}
+            gitHub={project.html_url}
+            site={project.homepage ?? undefined}
+            image={imageById.get(String(project.id)) ?? Logo}
+          />
+        ))}
+      </ProjectsStyled>
+    </ProjectsSection>
   )
 }
 

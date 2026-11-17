@@ -29,6 +29,21 @@ export const ProjectsStyled = styled.main`
   }
 `
 
+export const ProjectsSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+/** Aviso discreto de que a lista veio do cache (GitHub fora/rate limit). */
+export const ProjectsNote = styled.p`
+  margin: 0;
+  padding: 0.75rem 1rem 0;
+  font-size: 0.8rem;
+  text-align: center;
+  color: ${({ theme }) => theme.semantic.textMuted};
+`
+
 export const ProjectsError = styled.div`
   display: flex;
   flex-direction: column;

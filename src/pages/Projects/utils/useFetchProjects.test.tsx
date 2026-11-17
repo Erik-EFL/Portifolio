@@ -92,6 +92,79 @@ describe('useFetchProjects', () => {
     expect(result.current.projects).toEqual([])
   })
 
+  it('usa a última lista salva quando a API falha (rate limit)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue({ ok: false, status: 403, json: async () => [] })
+    )
+    window.localStorage.setItem(
+      'portfolio-projects',
+      JSON.stringify({
+        savedAt: Date.now(),
+        projects: [repositorio({ id: 42, name: 'Do cache' })]
+      })
+    )
+
+    const { result } = renderHook(() => useFetchProjects(), {
+      wrapper: criarWrapper()
+    })
+
+    // a busca falha em segundo plano; o cache segura a tela
+    await waitFor(() => expect(result.current.isStale).toBe(true))
+    expect(result.current.error).toBeNull()
+    expect(result.current.projects).toHaveLength(1)
+    expect(result.current.projects[0].name).toBe('Do cache')
+    expect(result.current.isLoading).toBe(false)
+  })
+
+  it('ignora cache vencido e mostra o erro', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue({ ok: false, status: 403, json: async () => [] })
+    )
+    window.localStorage.setItem(
+      'portfolio-projects',
+      JSON.stringify({
+        savedAt: Date.now() - 8 * 24 * 60 * 60 * 1000,
+        projects: [repositorio({ id: 42, name: 'Vencido' })]
+      })
+    )
+
+    const { result } = renderHook(() => useFetchProjects(), {
+      wrapper: criarWrapper()
+    })
+
+    await waitFor(() => expect(result.current.error).not.toBeNull())
+    expect(result.current.projects).toEqual([])
+  })
+
+  it('grava o cache quando a busca dá certo', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [repositorio({ id: 11, name: 'Novo' })]
+      })
+    )
+
+    const { result } = renderHook(() => useFetchProjects(), {
+      wrapper: criarWrapper()
+    })
+
+    await waitFor(() => expect(result.current.projects).toHaveLength(1))
+
+    const salvo = JSON.parse(
+      window.localStorage.getItem('portfolio-projects') ?? '{}'
+    )
+
+    expect(salvo.projects[0].name).toBe('Novo')
+    expect(typeof salvo.savedAt).toBe('number')
+  })
+
   it('trata falha de rede como erro (sem ficar carregando para sempre)', async () => {
     vi.stubGlobal(
       'fetch',
