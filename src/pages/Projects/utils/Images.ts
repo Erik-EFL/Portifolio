@@ -1,12 +1,12 @@
-import AllForOne from '@/assets/Image/All-For-One-SQL.webp';
-import chefinho from '@/assets/Image/chefinho.webp';
-import DungeonsEndDragons from '@/assets/Image/Ground-breaking.webp';
-import starWarsSearch from '@/assets/Image/logo-star-wars-750x375.webp';
-import portfolio from '@/assets/Image/portfolio.webp';
-import queryBox from '@/assets/Image/queryBox.webp';
-import solarSystem from '@/assets/Image/solarsystem.webp';
-import Techila from '@/assets/Image/Techila.webp';
-import wine from '@/assets/Image/wine.webp';
+import AllForOne from '@/assets/Image/All-For-One-SQL.webp'
+import chefinho from '@/assets/Image/chefinho.webp'
+import DungeonsEndDragons from '@/assets/Image/Ground-breaking.webp'
+import starWarsSearch from '@/assets/Image/logo-star-wars-750x375.webp'
+import portfolio from '@/assets/Image/portfolio.webp'
+import queryBox from '@/assets/Image/queryBox.webp'
+import solarSystem from '@/assets/Image/solarsystem.webp'
+import Techila from '@/assets/Image/Techila.webp'
+import wine from '@/assets/Image/wine.webp'
 
 export default [
   {
@@ -15,97 +15,97 @@ export default [
   },
   {
     id: 518212691,
-    img: queryBox,
+    img: queryBox
   },
   {
     id: 517488673,
-    img: chefinho,
+    img: chefinho
   },
   {
     id: 517504676,
-    img: solarSystem,
+    img: solarSystem
   },
   {
     id: 517500584,
-    img: starWarsSearch,
+    img: starWarsSearch
   },
   {
     id: 520568798,
-    img: wine,
+    img: wine
   },
   {
     // bank app
     id: 571716451,
-    img: undefined,
+    img: undefined
   },
   {
     // BettleSystem-SOLID-POO
     id: 553865348,
-    img: DungeonsEndDragons,
+    img: DungeonsEndDragons
   },
   {
     // "BlogsAPI"
     id: 553851374,
-    img: undefined,
+    img: undefined
   },
   {
     // "CampFutebolManager"
     id: 553860310,
-    img: undefined,
+    img: undefined
   },
   {
     // "CarShopAPI"
     id: 553852552,
-    img: undefined,
+    img: undefined
   },
   {
     // "DesafioReact"
     id: 556400535,
-    img: undefined,
+    img: undefined
   },
   {
     // "GamingLife"
     id: 573537110,
-    img: undefined,
+    img: undefined
   },
   {
     // "GoleDelivery"
     id: 553847256,
-    img: Techila,
+    img: Techila
   },
   {
     // "JobsInsights"
     id: 555475760,
-    img: undefined,
+    img: undefined
   },
   {
     // "Microservice-notifications"
     id: 581334100,
-    img: undefined,
+    img: undefined
   },
   {
     // "Mongo-comerce"
     id: 546978049,
-    img: undefined,
+    img: undefined
   },
   {
     // "MusicPlayer"
     id: 553862130,
-    img: undefined,
+    img: undefined
   },
   {
     // "pokedex"
     id: 538823926,
-    img: undefined,
+    img: undefined
   },
   {
     // "StoreAPI"
     id: 553863935,
-    img: undefined,
+    img: undefined
   },
   {
     // "StoreAPI"
     id: 594267100,
-    img: AllForOne,
-  },
+    img: AllForOne
+  }
 ]

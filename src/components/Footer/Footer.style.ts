@@ -16,9 +16,13 @@ export const FooterContainer = Styled.footer`
   padding: 0.8rem;
 
   background-color: ${({ theme }) =>
-    theme.mode === 'dark' ? theme.colors.grayscale[20] : theme.colors.grayscale[100]};
+    theme.mode === 'dark'
+      ? theme.colors.grayscale[20]
+      : theme.colors.grayscale[100]};
   color: ${({ theme }) =>
-    theme.mode === 'dark' ? theme.colors.grayscale[100] : theme.colors.grayscale[10]};
+    theme.mode === 'dark'
+      ? theme.colors.grayscale[100]
+      : theme.colors.grayscale[10]};
   transition: background-color 0.25s linear, color 0.25s linear;
 
   p {

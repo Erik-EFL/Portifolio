@@ -1,9 +1,8 @@
 import { HomeContentSkeleton, HomeImageSkeleton } from '@/components/Skeleton'
 import { useLanguage } from '@/store/language.store'
-import Content from './components/Content/Content';
-import ContainerImage from './components/Image/Container';
-import HomeContainer from './Home.style';
-'react';
+import Content from './components/Content/Content'
+import ContainerImage from './components/Image/Container'
+import HomeContainer from './Home.style'
 
 const Home = () => {
   const { isLoading } = useLanguage()
@@ -24,7 +23,7 @@ const Home = () => {
         )}
       </section>
     </HomeContainer>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -50,7 +50,7 @@ export const useLanguage = () => {
   const rowsQuery = useQuery({
     queryKey: PORTFOLIO_ROWS_QUERY_KEY,
     queryFn: getRows,
-    retry: 1
+    retry: false
   })
   const data = getLocalizedPortfolioData(
     mergePortfolioRows(rowsQuery.data ?? []),
@@ -61,7 +61,10 @@ export const useLanguage = () => {
     language,
     changeLanguage,
     data,
-    isLoading: rowsQuery.isPending,
+    // `isPending` sozinho prende a página no skeleton quando a retentativa do
+    // react-query pausa (API fora do ar, aba sem foco): o fetch fica 'paused'
+    // em vez de falhar. Sem fetch em andamento, mostramos o conteúdo estático.
+    isLoading: rowsQuery.isPending && rowsQuery.fetchStatus === 'fetching',
     error: rowsQuery.error,
     retry: rowsQuery.refetch
   }

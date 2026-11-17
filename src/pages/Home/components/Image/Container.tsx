@@ -1,7 +1,5 @@
-import { Box, Grid } from '@mui/material'
 import Image from '../../../../components/ImageContainer/Image'
 import { perfil } from '@/assets/Image/export-images'
-import ImageContainer from './Container.style'
 
 function Container() {
   return (

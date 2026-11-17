@@ -1,54 +1,44 @@
 import { ProjectsSkeleton } from '@/components/Skeleton'
 import Logo from '@/assets/Image/Logo.webp'
-import ProjectCard from '../../components/Cards/Projects/Card';
-import { ProjectsStyled } from './Projects.style';
-import useFetchProjects from './utils/FetchAPI';
-import Images from './utils/Images';
+import ProjectCard from '../../components/Cards/Projects/Card'
+import { ProjectsError, ProjectsStyled } from './Projects.style'
+import Images from './utils/Images'
+import useFetchProjects from './utils/useFetchProjects'
+
+/** id do repositório -> screenshot local do projeto. */
+const imageById = new Map(Images.map(item => [String(item.id), item.img]))
 
 const Projects = () => {
-  const { filtered, isLoading, error } = useFetchProjects()
+  const { projects, isLoading, error, retry } = useFetchProjects()
 
   if (isLoading) return <ProjectsSkeleton />
-  if (error) return <p>Error</p>
 
-  const filterData = filtered()
-
-  if (!filterData) return <p>Error</p>
-
-  const filterImages = filterData.map((project) => {
-    const image = Images.filter((image) => {
-      return String(image.id) === String(project.id)
-    })
-
-    return image.map((img) => {
-      return {
-        image: img.img,
-      }
-    })
-  })
-
-  const catOnlyImage = filterImages.map((image) => {
-    if (image.length === 0 || image[0].image === undefined) {
-      return Logo
-    }
-    return image[0].image
-  })
+  if (error) {
+    return (
+      <ProjectsError>
+        <p role='alert'>Não foi possível carregar os projetos.</p>
+        <button type='button' onClick={() => void retry()}>
+          Tentar novamente
+        </button>
+      </ProjectsError>
+    )
+  }
 
   return (
     <ProjectsStyled>
-      {filterData?.map((project) => (
+      {projects.map(project => (
         <ProjectCard
           key={project.id}
+          id={String(project.id)}
           name={project.name}
-          description={project.description}
+          description={project.description ?? ''}
           gitHub={project.html_url}
-          site={project?.home_page}
-          id={project.id}
-          image={catOnlyImage[filterData.indexOf(project)]}
+          site={project.homepage ?? undefined}
+          image={imageById.get(String(project.id)) ?? Logo}
         />
       ))}
     </ProjectsStyled>
-  );
+  )
 }
 
-export default Projects;
+export default Projects

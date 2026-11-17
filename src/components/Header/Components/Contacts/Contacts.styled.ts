@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const Container = styled.nav`
   /* Layout */
@@ -41,6 +41,6 @@ const Container = styled.nav`
   .icon-social-mobile {
     display: none;
   }
-`;
+`
 
-export default Container;
+export default Container

@@ -1,9 +1,9 @@
 export enum BreakpointsSizes {
-  Mobile = "mobile",
-  Tablet = "tablet",
-  Laptop = "laptop",
+  Mobile = 'mobile',
+  Tablet = 'tablet',
+  Laptop = 'laptop'
 }
 
 export type BreakpointsType = {
-  [key in BreakpointsSizes]: string;
-};
+  [key in BreakpointsSizes]: string
+}

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const NavMenu = styled.nav`
   position: fixed;
@@ -10,7 +10,6 @@ const NavMenu = styled.nav`
   justify-content: space-around;
   align-items: center;
   padding: 0;
-
 
   .mobileLinks {
     display: flex;
@@ -25,12 +24,11 @@ const NavMenu = styled.nav`
     opacity: 0.4;
     transition: all 0.5s ease-in-out;
 
-
     h1 {
       margin-bottom: -10px;
       padding: 0;
       display: inline-block;
-     }
+    }
   }
 
   a:hover {
@@ -41,6 +39,6 @@ const NavMenu = styled.nav`
     opacity: 1;
     transition: all 0.5s ease-in-out;
   }
-`;
+`
 
-export default NavMenu;
+export default NavMenu

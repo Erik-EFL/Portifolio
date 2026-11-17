@@ -87,7 +87,10 @@ export const SkillsSkeleton = () => (
             <SkeletonLines style={{ gap: '14px' }}>
               {Array.from({ length: 4 }, (_, rowIndex) => (
                 <SkeletonRow key={rowIndex}>
-                  <SkeletonBox width={rowIndex % 2 === 0 ? 96 : 78} height={14} />
+                  <SkeletonBox
+                    width={rowIndex % 2 === 0 ? 96 : 78}
+                    height={14}
+                  />
                   <SkeletonBox width={72} height={12} />
                 </SkeletonRow>
               ))}
@@ -129,11 +132,29 @@ export const ProjectsSkeleton = () => (
           }}
         >
           <SkeletonBox width='100%' height={150} radius='0' />
-          <Box sx={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <Box
+            sx={{
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px'
+            }}
+          >
             <SkeletonBox width='70%' height={20} />
-            <SkeletonText lines={2} widths={['100%', '80%']} lineHeight={12} gap={8} />
+            <SkeletonText
+              lines={2}
+              widths={['100%', '80%']}
+              lineHeight={12}
+              gap={8}
+            />
           </Box>
-          <SkeletonRow style={{ padding: '0 16px 16px', justifyContent: 'flex-start', gap: '10px' }}>
+          <SkeletonRow
+            style={{
+              padding: '0 16px 16px',
+              justifyContent: 'flex-start',
+              gap: '10px'
+            }}
+          >
             <SkeletonBox width={74} height={22} />
             <SkeletonBox width={54} height={22} />
           </SkeletonRow>

@@ -1,17 +1,26 @@
 import { StyledInput } from './Input.style'
 
 interface InputProps {
-  type?: string;
-  name?: string;
-  id?: string;
-  ariaLabel?: string;
-  ariaRequired?: boolean;
-  classNew?: string;
-  checked?: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string
+  name?: string
+  id?: string
+  ariaLabel?: string
+  ariaRequired?: boolean
+  classNew?: string
+  checked?: boolean
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function Input({ type, name, id, ariaLabel, ariaRequired, classNew, checked, onChange }: InputProps) {
+export function Input({
+  type,
+  name,
+  id,
+  ariaLabel,
+  ariaRequired,
+  classNew,
+  checked,
+  onChange
+}: InputProps) {
   return (
     <StyledInput
       className={classNew}

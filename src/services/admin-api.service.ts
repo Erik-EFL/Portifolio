@@ -48,7 +48,9 @@ const getErrorMessage = async (response: Response): Promise<string> => {
       if (isRecord(body.error)) {
         const { code, message } = body.error
         if (typeof message === 'string') {
-          return typeof code === 'string' && code ? `${message} (${code})` : message
+          return typeof code === 'string' && code
+            ? `${message} (${code})`
+            : message
         }
         if (typeof code === 'string' && code) return code
       }

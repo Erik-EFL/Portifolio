@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const ToggleStyled = styled.div`
   position: relative;
@@ -14,12 +14,12 @@ export const ToggleStyled = styled.div`
   .label {
     width: 50px;
     height: 26px;
-    background-color:#111;
+    background-color: #111;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 5px;
-    border-radius:50px;
+    border-radius: 50px;
     transform: scale(1.5);
     cursor: pointer;
     position: relative;
@@ -37,15 +37,15 @@ export const ToggleStyled = styled.div`
   }
 
   /* target the element after the label*/
-  .check-box-change-Theme-color:checked + .label .ball{
+  .check-box-change-Theme-color:checked + .label .ball {
     transform: translateX(24px);
   }
 
   .fa-moon {
-    color: #F6F4F3;
+    color: #f6f4f3;
   }
 
   .fa-sun {
     color: yellow;
   }
-`;
+`

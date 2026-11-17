@@ -1,12 +1,19 @@
 import { useLanguage } from '@/store/language.store'
+import { useTheme } from '@/context/theme.context'
 import { Box, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { TypeAnimation } from 'react-type-animation'
 
 const Content = () => {
   const { data, language, isLoading } = useLanguage()
+  const { themeMode, theme } = useTheme()
 
   const { home } = data
+
+  const circleColor =
+    themeMode === 'dark'
+      ? theme.colors.grayscale[110]
+      : theme.colors.grayscale[10]
 
   return (
     <Grid
@@ -27,7 +34,7 @@ const Content = () => {
               position: 'relative',
               zIndex: '10',
               fontFamily: 'Montserrat',
-              color: '#000000',
+              color: circleColor,
               backgroundColor: 'transparent',
               fontWeight: '800',
               fontSize: '1.2rem',

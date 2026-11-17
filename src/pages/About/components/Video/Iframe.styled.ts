@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const IFrameContainer = styled.iframe`
   border: none;
@@ -21,6 +21,6 @@ const IFrameContainer = styled.iframe`
     height: 412px;
     margin-bottom: 70px;
   }
-`;
+`
 
-export default IFrameContainer;
+export default IFrameContainer

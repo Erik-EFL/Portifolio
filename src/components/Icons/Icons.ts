@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const IconsMenu = styled.div`
   position: relative;
@@ -26,14 +26,18 @@ const IconsMenu = styled.div`
     outline-offset: 4px;
   }
 
-  .icon:hover i{
-    animation: shake .25s;
+  .icon:hover i {
+    animation: shake 0.25s;
   }
 
   .ri-instagram-line:hover {
     background-image: radial-gradient(
       circle at 30% 107%,
-      #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%
+      #fdf497 0%,
+      #fdf497 5%,
+      #fd5949 45%,
+      #d6249f 60%,
+      #285aeb 90%
     );
     outline-color: #a02d76;
   }
@@ -51,13 +55,14 @@ const IconsMenu = styled.div`
   .icons {
     text-decoration: none;
     color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[100] : theme.colors.grayscale[20]};
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[100]
+        : theme.colors.grayscale[20]};
   }
 
   .icon:hover {
     color: #fff;
   }
-`;
+`
 
-export default IconsMenu;
-
+export default IconsMenu

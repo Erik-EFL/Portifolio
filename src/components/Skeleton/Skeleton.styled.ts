@@ -67,7 +67,10 @@ export const SkeletonRow = styled.div`
   width: 100%;
 `
 
-export const SkeletonCardShell = styled.div<{ $width?: string; $height?: string }>`
+export const SkeletonCardShell = styled.div<{
+  $width?: string
+  $height?: string
+}>`
   width: ${({ $width }) => $width ?? '100%'};
   height: ${({ $height }) => $height ?? 'auto'};
   padding: 20px;

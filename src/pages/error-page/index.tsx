@@ -1,13 +1,9 @@
-
 interface ErrorScreenProps {
   message?: string
   statusCode?: number
 }
 
-function ErrorScreen({
-  message,
-  statusCode,
-}: ErrorScreenProps) {
+function ErrorScreen({ message, statusCode }: ErrorScreenProps) {
   const errorMessage = message || 'Erro ao carregar a página'
 
   const errorStatusCode = statusCode || 500
@@ -19,7 +15,7 @@ function ErrorScreen({
       <p>Status code: {errorStatusCode}</p>
       <p>Erro: {errorMessage}</p>
     </div>
-  );
-};
+  )
+}
 
-export default ErrorScreen;
+export default ErrorScreen

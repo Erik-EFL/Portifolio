@@ -1,6 +1,6 @@
-import { Card } from '@mui/material';
-import styled from 'styled-components';
-import type { DefaultTheme } from 'styled-components';
+import { Card } from '@mui/material'
+import styled from 'styled-components'
+import type { DefaultTheme } from 'styled-components'
 
 /**
  * Cores do card vindas dos tokens do site.
@@ -10,21 +10,29 @@ import type { DefaultTheme } from 'styled-components';
  * dos módulos (goldenPalette), que já são diferentes por tema.
  */
 const surface = (theme: DefaultTheme) =>
-  theme.mode === 'dark' ? theme.colors.grayscale[20] : theme.colors.grayscale[100];
+  theme.mode === 'dark'
+    ? theme.colors.grayscale[20]
+    : theme.colors.grayscale[100]
 
 const surfaceBorder = (theme: DefaultTheme) =>
-  theme.mode === 'dark' ? theme.colors.grayscale[40] : theme.colors.grayscale[90];
+  theme.mode === 'dark'
+    ? theme.colors.grayscale[40]
+    : theme.colors.grayscale[90]
 
 const titleColor = (theme: DefaultTheme) =>
-  theme.mode === 'dark' ? theme.colors.grayscale[110] : theme.colors.grayscale[10];
+  theme.mode === 'dark'
+    ? theme.colors.grayscale[110]
+    : theme.colors.grayscale[10]
 
 const descriptionColor = (theme: DefaultTheme) =>
-  theme.mode === 'dark' ? theme.colors.grayscale[70] : theme.colors.grayscale[40];
+  theme.mode === 'dark'
+    ? theme.colors.grayscale[70]
+    : theme.colors.grayscale[40]
 
 const accentColor = (theme: DefaultTheme) =>
   theme.mode === 'dark'
     ? theme.colors.modules[1].color[2][60]
-    : theme.colors.modules[1].color[2][30];
+    : theme.colors.modules[1].color[2][30]
 
 export const ProjectCardStyled = styled(Card)`
   && {
@@ -54,4 +62,4 @@ export const ProjectCardStyled = styled(Card)`
   && .MuiButton-root:hover {
     background-color: ${({ theme }) => `${accentColor(theme)}1f`};
   }
-`;
+`

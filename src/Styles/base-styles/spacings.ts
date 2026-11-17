@@ -1,4 +1,4 @@
-import { css } from "styled-components";
+import { css } from 'styled-components'
 
 export const spacings = {
   titles: css`
@@ -17,5 +17,5 @@ export const spacings = {
     @media (max-width: 600px) {
       padding: 0 20px;
     }
-  `,
-};
+  `
+}

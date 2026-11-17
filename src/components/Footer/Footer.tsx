@@ -1,10 +1,13 @@
 import { useLanguage } from '@/store/language.store'
-import PropTypes from 'prop-types'
 import CustomizedSwitches from '../Toggle/Language/Toggle'
 import ToggleTheme from '../Toggle/Theme/Toggle.theme'
 import { FooterContainer } from './Footer.style'
 
-export default function Footer({ toggleTheme }) {
+interface IFooterProps {
+  toggleTheme: () => void
+}
+
+export default function Footer({ toggleTheme }: IFooterProps) {
   const { data } = useLanguage()
 
   const copyright = data.footerCopyright[0]?.copyright
@@ -18,8 +21,4 @@ export default function Footer({ toggleTheme }) {
       </div>
     </FooterContainer>
   )
-}
-
-Footer.propTypes = {
-  toggleTheme: PropTypes.func
 }

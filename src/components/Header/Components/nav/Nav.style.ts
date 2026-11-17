@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const NavMenu = styled.nav`
   display: flex;
@@ -14,10 +14,10 @@ const NavMenu = styled.nav`
       margin-right: 50px;
     }
   }
-`;
+`
 
 const Container = styled.div`
- //configuração do menu base
+  //configuração do menu base
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -30,7 +30,9 @@ const Container = styled.div`
 
   .active {
     color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[110] : theme.colors.grayscale[10]};
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[110]
+        : theme.colors.grayscale[10]};
     text-decoration: none;
     transition: all 0.5s ease-in-out;
     font-size: 20px;
@@ -38,7 +40,9 @@ const Container = styled.div`
 
   .inactive {
     color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[80] : theme.colors.grayscale[30]};
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[80]
+        : theme.colors.grayscale[30]};
     text-decoration: none;
     transition: all 0.5s ease-in-out;
     font-size: 20px;
@@ -58,7 +62,7 @@ const Container = styled.div`
   }
 
   @media (min-width: 640.2px) and (max-width: 840px) {
-     .menuContacts {
+    .menuContacts {
       display: flex;
     }
   }
@@ -82,9 +86,6 @@ const Container = styled.div`
       }
     }
   }
-`;
+`
 
-export {
-  NavMenu,
-  Container,
-};
+export { NavMenu, Container }

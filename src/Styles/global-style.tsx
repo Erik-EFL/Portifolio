@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components'
 
 /**
  * Estilos globais que aplicam os tokens de tema ao documento.
@@ -14,8 +14,12 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     background-color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[10] : theme.colors.grayscale[110]} !important;
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[10]
+        : theme.colors.grayscale[110]} !important;
     color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[110] : theme.colors.grayscale[10]} !important;
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[110]
+        : theme.colors.grayscale[10]} !important;
   }
-`;
+`

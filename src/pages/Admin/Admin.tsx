@@ -1306,13 +1306,10 @@ const AdminConsole = () => {
     onSuccess: (saved, section) => {
       // Seed the cache with the row the service just confirmed; a plain refetch
       // can still miss it, and saving again would then create a duplicate.
-      queryClient.setQueryData<DataRow[]>(
-        PORTFOLIO_ROWS_QUERY_KEY,
-        current => [
-          ...(current ?? []).filter(row => row.key !== section.key),
-          saved
-        ]
-      )
+      queryClient.setQueryData<DataRow[]>(PORTFOLIO_ROWS_QUERY_KEY, current => [
+        ...(current ?? []).filter(row => row.key !== section.key),
+        saved
+      ])
       void queryClient.invalidateQueries({
         queryKey: PORTFOLIO_ROWS_QUERY_KEY,
         refetchType: 'none'

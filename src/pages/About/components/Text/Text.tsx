@@ -9,11 +9,7 @@ const Text = () => {
   return (
     <TextArea className='textAbout'>
       {about.map((item: string, index: number) => {
-        return (
-          <p key={index}>
-            {item}
-          </p>
-        )
+        return <p key={index}>{item}</p>
       })}
     </TextArea>
   )

@@ -1,45 +1,41 @@
-import { Input } from '@/components/Input/Input';
-import { useTheme } from '@/context/theme.context';
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ToggleStyled } from './toggle.styles';
+import { Input } from '@/components/Input/Input'
+import { useTheme } from '@/context/theme.context'
+import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ToggleStyled } from './toggle.styles'
 
 interface IToggleThemeProps {
-  number: number;
-  toggleTheme?: () => void;
+  number: number
+  toggleTheme?: () => void
 }
 
 function ToggleTheme({ number, toggleTheme }: IToggleThemeProps) {
-  const { themeMode, switchTheme } = useTheme();
+  const { themeMode, switchTheme } = useTheme()
 
-  const handleChange = toggleTheme ?? switchTheme;
+  const handleChange = toggleTheme ?? switchTheme
 
   return (
-      <ToggleStyled
-        className='checkTheme'
+    <ToggleStyled className='checkTheme'>
+      <Input
+        type={'checkbox'}
+        id={`change-Theme-color-${number}`}
+        classNew='check-box-change-Theme-color'
+        name={'check-box-change-Theme-color'}
+        onChange={handleChange}
+        checked={themeMode === 'dark'}
+        ariaLabel={'check-box-change-Theme-color'}
+      />
+      <label
+        className='label'
+        htmlFor={`change-Theme-color-${number}`}
+        aria-label='Change Theme Color'
       >
-        <Input
-          type={"checkbox"}
-          id={`change-Theme-color-${number}`}
-          classNew='check-box-change-Theme-color'
-          name={'check-box-change-Theme-color'}
-          onChange={handleChange}
-          checked={themeMode === 'dark'}
-          ariaLabel={'check-box-change-Theme-color'}
-        />
-        <label
-          className="label"
-          htmlFor={`change-Theme-color-${number}`}
-          aria-label='Change Theme Color'
-        >
-          <FontAwesomeIcon className='fa-moon' icon={faMoon} />
-          <FontAwesomeIcon className='fa-sun' icon={faSun} />
-          <div
-            className='ball'
-          />
-        </label>
-      </ToggleStyled>
-    )
-  }
+        <FontAwesomeIcon className='fa-moon' icon={faMoon} />
+        <FontAwesomeIcon className='fa-sun' icon={faSun} />
+        <div className='ball' />
+      </label>
+    </ToggleStyled>
+  )
+}
 
 export default ToggleTheme

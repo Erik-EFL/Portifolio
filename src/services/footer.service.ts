@@ -1,5 +1,9 @@
 import dataArray from '@/constant/Data/data.json'
-import { FooterItem, NavigationLink, TLanguage } from '@/@types/data-tipe.entity'
+import {
+  FooterItem,
+  NavigationLink,
+  TLanguage
+} from '@/@types/data-tipe.entity'
 
 export const getFooter = (language: TLanguage): NavigationLink[] => {
   const section = dataArray.footer.find(

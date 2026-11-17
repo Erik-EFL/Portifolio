@@ -1,5 +1,4 @@
-import { Container } from '@mui/system';
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const HomeContainer = styled.section`
   display: flex;
@@ -31,6 +30,6 @@ const HomeContainer = styled.section`
   @media (min-width: 1024.1px) {
     margin-top: 30px;
   }
-`;
+`
 
-export default HomeContainer;
+export default HomeContainer

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const HeaderStyled = styled.header`
   position: sticky;
@@ -12,7 +12,9 @@ const HeaderStyled = styled.header`
   width: 100%;
   z-index: 1000;
   background: ${({ theme }) =>
-    theme.mode === 'dark' ? theme.colors.grayscale[20] : theme.colors.grayscale[100]};
+    theme.mode === 'dark'
+      ? theme.colors.grayscale[20]
+      : theme.colors.grayscale[100]};
   transition: background-color 0.25s linear;
   padding: 0 50px;
 
@@ -28,7 +30,7 @@ const HeaderStyled = styled.header`
     }
   }
 
-  @media (min-width: 640.3px) and (max-width: 840px)  {
+  @media (min-width: 640.3px) and (max-width: 840px) {
     .icon-social-media {
       display: none;
     }
@@ -40,7 +42,7 @@ const HeaderStyled = styled.header`
     }
   }
 
-  @media (min-width: 320px) and (max-width: 640.2px)  {
+  @media (min-width: 320px) and (max-width: 640.2px) {
     width: 100%;
 
     .icon-social-media {
@@ -51,6 +53,6 @@ const HeaderStyled = styled.header`
       display: none;
     }
   }
-`;
+`
 
-export default HeaderStyled;
+export default HeaderStyled

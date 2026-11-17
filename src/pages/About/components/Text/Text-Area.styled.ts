@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const TextArea = styled.article`
   width: 100%;
@@ -21,15 +21,22 @@ const TextArea = styled.article`
   &::-webkit-scrollbar-track {
     border-radius: 20px;
     background-color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[20] : theme.colors.grayscale[110]};
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[20]
+        : theme.colors.grayscale[110]};
   }
 
   &::-webkit-scrollbar-thumb {
     background-color: ${({ theme }) =>
-      theme.mode === 'dark' ? theme.colors.grayscale[80] : theme.colors.grayscale[20]};
+      theme.mode === 'dark'
+        ? theme.colors.grayscale[80]
+        : theme.colors.grayscale[20]};
     border-radius: 20px;
     border: 1px solid
-      ${({ theme }) => (theme.mode === 'dark' ? theme.colors.grayscale[20] : theme.colors.grayscale[110])};
+      ${({ theme }) =>
+        theme.mode === 'dark'
+          ? theme.colors.grayscale[20]
+          : theme.colors.grayscale[110]};
   }
 
   @media (min-width: 1025px) {
@@ -37,7 +44,7 @@ const TextArea = styled.article`
     margin-bottom: 100px;
   }
 
-  @media (min-width: 769px) and (max-width: 1024px)  {
+  @media (min-width: 769px) and (max-width: 1024px) {
     height: 50vh;
     margin-bottom: 100px;
   }
@@ -49,6 +56,6 @@ const TextArea = styled.article`
   @media (min-width: 320px) and (max-width: 399.2px) {
     height: 23vh;
   }
-`;
+`
 
-export default TextArea;
+export default TextArea

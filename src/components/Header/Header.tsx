@@ -9,10 +9,9 @@ interface IHeaderProps {
 }
 
 function Header({ toggleTheme }: IHeaderProps) {
-
   return (
     <HeaderStyled>
-      <div className="header-internal">
+      <div className='header-internal'>
         <Logo />
         <Nav />
         <SocialIcons />

@@ -1,13 +1,13 @@
 import { ImageStyle } from './Image.styled'
 
-function Image({...props}) {
+function Image({ ...props }) {
   return (
     <>
       <ImageStyle
         src={props.src}
         srcSet={props.src + ' 1x, ' + props.src + ' 2x'}
         {...props}
-        decoding="async"
+        decoding='async'
         alt={props.alt}
         width={props.w}
         height={props.h}

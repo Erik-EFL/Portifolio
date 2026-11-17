@@ -1,30 +1,34 @@
-
 import { NavLink } from 'react-router-dom'
 import Contacts from '../Contacts/Contacts'
 import { Container, NavMenu } from './Nav.style'
-import { useLanguage } from '@/store/language.store';
+import { useLanguage } from '@/store/language.store'
+
+/**
+ * O item de contato do menu não é uma rota: é o botão que abre os ícones
+ * sociais no mobile. Ele é identificado pelo link, nunca pelo texto traduzido.
+ */
+const CONTACT_LINK = '/contact'
 
 export default function Nav() {
   const { data } = useLanguage()
-
   const { navigation } = data
-  const filteredNavigation = navigation?.find(({ link }) => link === '/contact')?.link ?? '/contacts'
 
-  if (!navigation) return <div>Loading...</div>
+  const contactItem = navigation.find(({ link }) => link === CONTACT_LINK)
+  const menuLinks = navigation.filter(({ link }) => link !== CONTACT_LINK)
 
   return (
     <NavMenu className='navMenu'>
       <Container className='completeMenu'>
-        {navigation?.map(({ link, name }) => (
+        {menuLinks.map(({ link, name }) => (
           <NavLink
             key={link}
             to={link}
             className={({ isActive }) => (isActive ? 'active' : 'inactive')}
           >
-            {name !== 'Contato' && name}
+            {name}
           </NavLink>
         ))}
-        <Contacts link={filteredNavigation} />
+        <Contacts label={contactItem?.name ?? 'Contato'} />
       </Container>
     </NavMenu>
   )

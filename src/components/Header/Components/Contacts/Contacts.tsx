@@ -3,10 +3,10 @@ import SocialIcons from '../../../Icons/Icons_social'
 import Container from './Contacts.styled'
 
 interface IContacts {
-  link: string
+  label: string
 }
 
-function Contacts({ link }: IContacts) {
+function Contacts({ label }: IContacts) {
   const [isActive, setIsActive] = useState(false)
 
   return (
@@ -15,8 +15,9 @@ function Contacts({ link }: IContacts) {
         className={`${isActive ? 'is-open' : 'is-closed'} menu`}
         type='button'
         onClick={() => setIsActive(prevState => !prevState)}
+        aria-expanded={isActive}
       >
-        {link}
+        {label}
       </button>
       <div className={`${isActive ? 'is-open' : 'is-closed'} contacts`}>
         <SocialIcons />

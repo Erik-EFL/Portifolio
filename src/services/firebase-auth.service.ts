@@ -99,7 +99,9 @@ const getFirebaseAuth = (): Auth => {
   const emulatorUrl = authEmulatorUrl()
   if (emulatorUrl && !auth.emulatorConfig) {
     connectAuthEmulator(auth, emulatorUrl, { disableWarnings: true })
-    console.info(`Firebase Authentication is using the emulator at ${emulatorUrl}`)
+    console.info(
+      `Firebase Authentication is using the emulator at ${emulatorUrl}`
+    )
   }
 
   cachedAuth = auth
@@ -114,7 +116,8 @@ const toAdminUser = (user: User): AdminAuthUser => {
 }
 
 const describeAuthError = (error: unknown): Error => {
-  const code = isRecord(error) && typeof error.code === 'string' ? error.code : ''
+  const code =
+    isRecord(error) && typeof error.code === 'string' ? error.code : ''
   const message = AUTH_ERROR_MESSAGES[code]
   if (message) return new Error(message)
   if (error instanceof Error) return error
