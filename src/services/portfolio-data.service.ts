@@ -11,6 +11,7 @@ import type {
 } from '@/@types/data-tipe.entity'
 import aboutData from '@/constant/Data/About.data'
 import staticData from '@/constant/Data/data.json'
+import { isRecord } from '@/utils/is-record'
 
 export const DATA_SECTION_KEYS = [
   'navigation',
@@ -39,9 +40,6 @@ export type CreateDataRow = {
   key: DataSectionKey
   value: IData[DataSectionKey]
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
 
 const isString = (value: unknown): value is string => typeof value === 'string'
 

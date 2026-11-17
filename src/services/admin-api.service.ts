@@ -1,4 +1,5 @@
 import { getFirebaseIdToken } from '@/services/firebase-auth.service'
+import { isRecord } from '@/utils/is-record'
 import {
   type CreateDataRow,
   type DataRow,
@@ -94,17 +95,27 @@ const ensureSuccess = async (response: Response): Promise<void> => {
   }
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+/**
+ * Toda chamada tem teto de tempo: sem isso, uma API que aceita a conexão e não
+ * responde deixa a página em skeleton indefinidamente (o fallback estático que
+ * existe justamente para esse caso nunca aparece).
+ */
+const REQUEST_TIMEOUT_MS = 8000
+
+const request = (url: string, init: RequestInit = {}): Promise<Response> =>
+  fetch(url, {
+    ...init,
+    signal: init.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  })
 
 export const getRows = async (): Promise<DataRow[]> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/rows`)
+  const response = await request(`${getApiBaseUrl()}/api/rows`)
   await ensureSuccess(response)
   return parseDataRows(await response.json())
 }
 
 export const getAdminSession = async (): Promise<AdminSessionResponse> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/session`, {
+  const response = await request(`${getApiBaseUrl()}/api/session`, {
     headers: await authorizedHeaders()
   })
   await ensureSuccess(response)
@@ -122,7 +133,7 @@ export const getAdminSession = async (): Promise<AdminSessionResponse> => {
 }
 
 export const getRow = async (id: string): Promise<DataRow> => {
-  const response = await fetch(
+  const response = await request(
     `${getApiBaseUrl()}/api/rows/${encodeURIComponent(id)}`
   )
   await ensureSuccess(response)
@@ -142,7 +153,7 @@ export const getRow = async (id: string): Promise<DataRow> => {
 }
 
 export const createRows = async (rows: CreateDataRow[]): Promise<DataRow[]> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/rows`, {
+  const response = await request(`${getApiBaseUrl()}/api/rows`, {
     method: 'POST',
     headers: await authorizedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(rows)
@@ -167,7 +178,7 @@ export const updateRow = async (row: {
   key: DataSectionKey
   value: DataRow['value']
 }): Promise<void> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/rows`, {
+  const response = await request(`${getApiBaseUrl()}/api/rows`, {
     method: 'PUT',
     headers: await authorizedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(row)
@@ -176,7 +187,7 @@ export const updateRow = async (row: {
 }
 
 export const deleteRows = async (ids: string[]): Promise<void> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/rows`, {
+  const response = await request(`${getApiBaseUrl()}/api/rows`, {
     method: 'DELETE',
     headers: await authorizedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(ids)
@@ -188,7 +199,7 @@ export const uploadResume = async (
   language: TLanguage,
   file: File
 ): Promise<void> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/resumes/${language}`, {
+  const response = await request(`${getApiBaseUrl()}/api/resumes/${language}`, {
     method: 'POST',
     headers: await authorizedHeaders({ 'Content-Type': 'application/pdf' }),
     body: file
@@ -204,7 +215,7 @@ export const getResumeUrl = (language: TLanguage): string | undefined => {
 }
 
 export const getResumeAvailability = async (): Promise<ResumeAvailability> => {
-  const response = await fetch(`${getApiBaseUrl()}/api/resumes`)
+  const response = await request(`${getApiBaseUrl()}/api/resumes`)
   await ensureSuccess(response)
   const result: unknown = await response.json()
 
@@ -227,7 +238,7 @@ export const downloadResume = async (language: TLanguage): Promise<void> => {
     )
   }
 
-  const response = await fetch(resumeUrl)
+  const response = await request(resumeUrl)
   await ensureSuccess(response)
   const pdf = await response.blob()
 

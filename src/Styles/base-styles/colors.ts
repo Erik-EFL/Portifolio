@@ -204,3 +204,45 @@ export const module = {
     }
   }
 }
+
+/**
+ * Tokens semânticos: o papel de cada cor nos dois temas, num só lugar.
+ *
+ * Antes disso cada arquivo de estilo decidia `theme.mode === 'dark' ? A : B`
+ * por conta própria; qualquer superfície nova era mais um ternário e mais uma
+ * chance de escolher a ponta errada da escala.
+ */
+export const semanticTokens = {
+  light: {
+    surface: grayscale[110],
+    surfaceElevated: grayscale[100],
+    border: grayscale[90],
+    text: grayscale[10],
+    textMuted: grayscale[40],
+    accent: goldenPalette.color['light'][30],
+    /** Texto sobre o accent (badge laranja): escuro para manter contraste. */
+    onAccent: grayscale[10],
+    scrollbar: {
+      track: grayscale[100],
+      thumb: grayscale[60],
+      thumbHover: grayscale[40]
+    }
+  },
+  dark: {
+    surface: grayscale[10],
+    surfaceElevated: grayscale[20],
+    border: grayscale[40],
+    text: grayscale[110],
+    textMuted: grayscale[70],
+    accent: goldenPalette.color['dark'][60],
+    /** Texto sobre o accent (badge laranja): escuro para manter contraste. */
+    onAccent: grayscale[10],
+    scrollbar: {
+      track: grayscale[20],
+      thumb: grayscale[80],
+      thumbHover: grayscale[90]
+    }
+  }
+}
+
+export type SemanticTokens = typeof semanticTokens.light

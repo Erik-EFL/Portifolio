@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import { create } from 'zustand'
 import { useQuery } from '@tanstack/react-query'
 import { TLanguage } from '@/@types/data-tipe.entity'
@@ -14,6 +15,9 @@ interface ILanguageState {
 
 const STORAGE_KEY = 'language'
 const DEFAULT_LANGUAGE: TLanguage = 'ptBR'
+
+/** Teto para o skeleton: API que aceita conexão e não responde não segura a UI. */
+const SKELETON_TIMEOUT_MS = 2500
 
 const getStoredLanguage = (): TLanguage => {
   try {
@@ -50,21 +54,47 @@ export const useLanguage = () => {
   const rowsQuery = useQuery({
     queryKey: PORTFOLIO_ROWS_QUERY_KEY,
     queryFn: getRows,
-    retry: false
+    retry: false,
+    // Com o modo default ('online') uma falha de rede PAUSA a query e o status
+    // fica 'pending' para sempre; 'always' faz a falha virar erro de verdade.
+    networkMode: 'always',
+    // Conteúdo tem fallback estático: uma busca por carga, refeita só no
+    // botão "Retry".
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: 5 * 60 * 1000
   })
-  const data = getLocalizedPortfolioData(
-    mergePortfolioRows(rowsQuery.data ?? []),
-    language
+
+  // Skeleton só no primeiro carregamento e só uma vez: derivar "carregando" do
+  // estado da query fazia a página oscilar para sempre (montar o conteúdo
+  // assina o observer, o observer busca, a busca remonta o conteúdo...).
+  const [bootstrapped, setBootstrapped] = useState(false)
+
+  useEffect(() => {
+    if (!rowsQuery.isPending) {
+      setBootstrapped(true)
+      return
+    }
+
+    const timeout = setTimeout(() => setBootstrapped(true), SKELETON_TIMEOUT_MS)
+    return () => clearTimeout(timeout)
+  }, [rowsQuery.isPending])
+
+  const data = useMemo(
+    () =>
+      getLocalizedPortfolioData(
+        mergePortfolioRows(rowsQuery.data ?? []),
+        language
+      ),
+    [rowsQuery.data, language]
   )
 
   return {
     language,
     changeLanguage,
     data,
-    // `isPending` sozinho prende a página no skeleton quando a retentativa do
-    // react-query pausa (API fora do ar, aba sem foco): o fetch fica 'paused'
-    // em vez de falhar. Sem fetch em andamento, mostramos o conteúdo estático.
-    isLoading: rowsQuery.isPending && rowsQuery.fetchStatus === 'fetching',
+    isLoading: !bootstrapped,
     error: rowsQuery.error,
     retry: rowsQuery.refetch
   }

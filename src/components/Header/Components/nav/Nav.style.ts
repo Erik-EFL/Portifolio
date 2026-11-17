@@ -29,20 +29,14 @@ const Container = styled.div`
   font-weight: 700;
 
   .active {
-    color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[110]
-        : theme.colors.grayscale[10]};
+    color: ${({ theme }) => theme.semantic.text};
     text-decoration: none;
     transition: all 0.5s ease-in-out;
     font-size: 20px;
   }
 
   .inactive {
-    color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[80]
-        : theme.colors.grayscale[30]};
+    color: ${({ theme }) => theme.semantic.textMuted};
     text-decoration: none;
     transition: all 0.5s ease-in-out;
     font-size: 20px;

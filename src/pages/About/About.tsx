@@ -129,7 +129,7 @@ const About = () => {
             </Button>
           )}
         </Stack>
-        {availabilityQuery.isPending && (
+        {availabilityQuery.isFetching && (
           <Typography role='status' aria-live='polite' align='center'>
             {language === 'ptBR'
               ? 'Verificando currículos disponíveis…'

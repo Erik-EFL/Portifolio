@@ -9,9 +9,10 @@ const TextArea = styled.article`
   text-justify: distribute-all-lines;
   overflow-y: scroll;
 
-  /* Works on Firefox */
+  /* Firefox e Chrome recentes: mesma dupla track/thumb do ::-webkit-* */
+  scrollbar-color: ${({ theme }) => theme.semantic.scrollbar.thumb}
+    ${({ theme }) => theme.semantic.scrollbar.track};
   scrollbar-width: thin;
-  scrollbar-color: blue orange;
 
   /* Works on Chrome, Edge, and Safari */
   &::-webkit-scrollbar {
@@ -20,23 +21,13 @@ const TextArea = styled.article`
 
   &::-webkit-scrollbar-track {
     border-radius: 20px;
-    background-color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[20]
-        : theme.colors.grayscale[110]};
+    background-color: ${({ theme }) => theme.semantic.scrollbar.track};
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[80]
-        : theme.colors.grayscale[20]};
+    background-color: ${({ theme }) => theme.semantic.scrollbar.thumb};
     border-radius: 20px;
-    border: 1px solid
-      ${({ theme }) =>
-        theme.mode === 'dark'
-          ? theme.colors.grayscale[20]
-          : theme.colors.grayscale[110]};
+    border: 1px solid ${({ theme }) => theme.semantic.scrollbar.track};
   }
 
   @media (min-width: 1025px) {

@@ -13,13 +13,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[10]
-        : theme.colors.grayscale[110]} !important;
-    color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[110]
-        : theme.colors.grayscale[10]} !important;
+    background-color: ${({ theme }) => theme.semantic.surface} !important;
+    color: ${({ theme }) => theme.semantic.text} !important;
   }
 `

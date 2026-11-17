@@ -17,24 +17,15 @@ export const ProjectsStyled = styled.main`
   }
 
   &::-webkit-scrollbar-track {
-    background: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[20]
-        : theme.colors.grayscale[100]};
+    background: ${({ theme }) => theme.semantic.scrollbar.track};
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[80]
-        : theme.colors.grayscale[60]};
+    background: ${({ theme }) => theme.semantic.scrollbar.thumb};
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[90]
-        : theme.colors.grayscale[40]};
+    background: ${({ theme }) => theme.semantic.scrollbar.thumbHover};
   }
 `
 
@@ -51,11 +42,7 @@ export const ProjectsError = styled.div`
   button {
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    border: 1px solid
-      ${({ theme }) =>
-        theme.mode === 'dark'
-          ? theme.colors.grayscale[40]
-          : theme.colors.grayscale[90]};
+    border: 1px solid ${({ theme }) => theme.semantic.border};
     background: transparent;
     color: inherit;
     cursor: pointer;

@@ -54,10 +54,7 @@ const IconsMenu = styled.div`
 
   .icons {
     text-decoration: none;
-    color: ${({ theme }) =>
-      theme.mode === 'dark'
-        ? theme.colors.grayscale[100]
-        : theme.colors.grayscale[20]};
+    color: ${({ theme }) => theme.semantic.text};
   }
 
   .icon:hover {

@@ -11,10 +11,7 @@ const HeaderStyled = styled.header`
   height: 100px;
   width: 100%;
   z-index: 1000;
-  background: ${({ theme }) =>
-    theme.mode === 'dark'
-      ? theme.colors.grayscale[20]
-      : theme.colors.grayscale[100]};
+  background: ${({ theme }) => theme.semantic.surfaceElevated};
   transition: background-color 0.25s linear;
   padding: 0 50px;
 

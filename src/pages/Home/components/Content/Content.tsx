@@ -6,14 +6,12 @@ import { TypeAnimation } from 'react-type-animation'
 
 const Content = () => {
   const { data, language, isLoading } = useLanguage()
-  const { themeMode, theme } = useTheme()
+  const { theme } = useTheme()
 
   const { home } = data
 
-  const circleColor =
-    themeMode === 'dark'
-      ? theme.colors.grayscale[110]
-      : theme.colors.grayscale[10]
+  // Texto do badge laranja: escuro nos dois temas (o fundo é o accent).
+  const circleColor = theme.semantic.onAccent
 
   return (
     <Grid

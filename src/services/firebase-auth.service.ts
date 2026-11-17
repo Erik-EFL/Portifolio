@@ -12,6 +12,7 @@ import {
   type Auth,
   type User
 } from 'firebase/auth'
+import { isRecord } from '@/utils/is-record'
 
 /**
  * Only the signed-in identity is mirrored here so the UI can hydrate
@@ -51,9 +52,6 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/network-request-failed':
     'Could not reach Firebase Authentication. Check the emulator or your connection.'
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
 
 const readFirebaseConfig = (): FirebaseConfig => {
   const apiKey = import.meta.env.VITE_FIREBASE_API_KEY

@@ -31,12 +31,18 @@ const fetchProjects = async (): Promise<IProject[]> => {
 }
 
 export default function useFetchProjects() {
-  const { data, isLoading, error, refetch } = useQuery<IProject[]>({
+  const { data, error, refetch } = useQuery<IProject[]>({
     queryKey: ['github-repos'],
     queryFn: fetchProjects,
     retry: false,
-    // Evita refetch a cada foco de janela: a API do GitHub é limitada a
-    // 60 req/h por IP sem autenticação.
+    // Ver comentário na store de idioma: sem 'always' uma falha de rede fica
+    // pausada como 'pending' e a página oscila entre skeleton e conteúdo.
+    networkMode: 'always',
+    // Uma busca por carga: a API do GitHub é limitada a 60 req/h por IP sem
+    // autenticação e refetch em remontagem/foco estoura o limite à toa.
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     staleTime: 10 * 60 * 1000
   })
 
@@ -50,7 +56,8 @@ export default function useFetchProjects() {
 
   return {
     projects,
-    isLoading,
+    // Mesmo critério da store de idioma: sem dados e sem erro = carregando.
+    isLoading: data === undefined && error === null,
     error,
     retry: refetch
   }
