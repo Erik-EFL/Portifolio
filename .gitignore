@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Local environment: .env holds the emulator API URL and the local content
+# collection id. Only the placeholder file is versioned.
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
