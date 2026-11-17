@@ -57,13 +57,13 @@ export default defineConfig(({ mode }) => ({
         'src/**/*.styled.ts',
         'src/Styles/**'
       ],
-      // Piso = cobertura real medida (32% de linhas): o objetivo é travar
+      // Piso = cobertura real medida (46% de linhas): o objetivo é travar
       // regressão, não fingir qualidade. Suba o piso junto com os testes.
       thresholds: {
-        statements: 30,
-        branches: 22,
-        functions: 28,
-        lines: 30
+        statements: 45,
+        branches: 37,
+        functions: 41,
+        lines: 46
       }
     }
   }

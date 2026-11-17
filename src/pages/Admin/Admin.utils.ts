@@ -4,6 +4,10 @@ import {
   DataSectionKey,
   validateSectionDocument
 } from '@/services/portfolio-data.service'
+import {
+  getSkillsParityIssues,
+  isSkillsParitySection
+} from '@/services/skills-parity.service'
 import { isRecord } from '@/utils/is-record'
 
 export const SECTION_FORM_ID = 'section-editor-form'
@@ -52,6 +56,27 @@ export const getEditorValidation = (
     return {
       valid: false,
       message: `A raiz do JSON deve conter apenas "${key}" e o valor precisa seguir o schema da seção.`
+    }
+  }
+
+  // skills/skillsDetails: ptBR e enUS têm que ter a mesma estrutura (mesmas
+  // categorias, mesma quantidade de skills). Sem isso, adicionar uma skill em um
+  // idioma só deixa o outro com uma categoria a menos.
+  if (isSkillsParitySection(key)) {
+    const issues = getSkillsParityIssues(document[key])
+
+    if (issues.length > 0) {
+      const resumo = issues
+        .slice(0, 3)
+        .map(issue => `${issue.category}: ${issue.detail}`)
+        .join(' ')
+
+      return {
+        valid: false,
+        message: `Idiomas desalinhados (${issues.length} ${
+          issues.length === 1 ? 'diferença' : 'diferenças'
+        }). ${resumo}${issues.length > 3 ? ' …' : ''}`
+      }
     }
   }
 

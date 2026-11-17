@@ -8,6 +8,10 @@ import {
 import { isRecord } from '@/utils/is-record'
 import type { IData } from '@/@types/portfolio.entity'
 import styles from './Admin.module.css'
+import {
+  alignSkillsSections,
+  isSkillsParitySection
+} from '@/services/skills-parity.service'
 import { SECTION_FORM_ID, getEditorValidation } from './Admin.utils'
 import { ICONS, Icon } from './Admin.icons'
 import { VisualEditor } from './Admin.editors'
@@ -79,6 +83,16 @@ export const SectionEditor = ({
       return
     }
     onSave(validation.row)
+  }
+
+  const handleAlignLanguages = () => {
+    const base = isRecord(parsedDocument) ? parsedDocument : {}
+    const alinhado = alignSkillsSections(base[keyName])
+
+    setText(JSON.stringify({ ...base, [keyName]: alinhado }, null, 2))
+    setNotice(
+      'Blocos alinhados. Preencha os nomes que ficaram vazios antes de salvar.'
+    )
   }
 
   const handleReset = () => {
@@ -251,6 +265,18 @@ export const SectionEditor = ({
               ? 'Atualizar Seção'
               : 'Adicionar Seção'}
           </button>
+          {isSkillsParitySection(keyName) && (
+            <button
+              className={`${styles.btn} ${styles.btnSubtle}`}
+              type='button'
+              title='Cria no outro idioma as categorias e skills que faltam (com nome vazio para preencher)'
+              onClick={handleAlignLanguages}
+              disabled={isSaving || isDeleting}
+            >
+              <Icon path={ICONS.grid} size={14} />
+              Igualar idiomas
+            </button>
+          )}
           <button
             className={`${styles.btn} ${styles.btnSubtle}`}
             type='button'

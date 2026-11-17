@@ -1,4 +1,5 @@
 import { DataSectionKey } from '@/services/portfolio-data.service'
+import { isSkillsParitySection } from '@/services/skills-parity.service'
 import { isRecord } from '@/utils/is-record'
 import styles from './Admin.module.css'
 import { ICONS, Icon } from './Admin.icons'
@@ -353,6 +354,24 @@ export const VisualEditor = ({
   const firstLocale = isRecord(section[0]) ? section[0] : {}
   const firstLanguage =
     typeof firstLocale.language === 'string' ? firstLocale.language : 'bloco 1'
+  // Em skills/skillsDetails a categoria nova tem que entrar nos dois idiomas:
+  // criar só no primeiro é como as listas desalinhavam.
+  const addToEveryLanguage = isSkillsParitySection(keyName)
+
+  const addToAllLanguages = () =>
+    onChange(
+      section.map(locale => {
+        const current = isRecord(locale) ? locale : {}
+
+        return {
+          ...current,
+          items: [
+            ...(Array.isArray(current.items) ? current.items : []),
+            createItemTemplate(keyName)
+          ]
+        }
+      })
+    )
 
   return (
     <div className={styles.visualEditor}>
@@ -362,20 +381,30 @@ export const VisualEditor = ({
           className={styles.addHeadButton}
           type='button'
           disabled={disabled}
-          title={`Adicionar ${addLabel} no bloco ${firstLanguage}`}
+          title={
+            addToEveryLanguage
+              ? `Adicionar ${addLabel} em todos os idiomas`
+              : `Adicionar ${addLabel} no bloco ${firstLanguage}`
+          }
           onClick={() =>
-            updateLocale(0, current => ({
-              ...current,
-              items: [
-                ...(Array.isArray(current.items) ? current.items : []),
-                createItemTemplate(keyName)
-              ]
-            }))
+            addToEveryLanguage
+              ? addToAllLanguages()
+              : updateLocale(0, current => ({
+                  ...current,
+                  items: [
+                    ...(Array.isArray(current.items) ? current.items : []),
+                    createItemTemplate(keyName)
+                  ]
+                }))
           }
         >
           <Icon path={ICONS.plus} size={14} />
           Adicionar {addLabel}
-          {section.length > 1 ? ` · ${firstLanguage}` : ''}
+          {addToEveryLanguage
+            ? ' · todos os idiomas'
+            : section.length > 1
+            ? ` · ${firstLanguage}`
+            : ''}
         </button>
       </div>
 
