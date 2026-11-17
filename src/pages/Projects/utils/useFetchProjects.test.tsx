@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import useFetchProjects from './useFetchProjects'
+import useFetchProjects, { parseProjects } from './useFetchProjects'
 
 const criarWrapper = () => {
   const client = new QueryClient({
@@ -24,6 +24,31 @@ const repositorio = (overrides: Record<string, unknown>) => ({
   visibility: 'public',
   language: 'TypeScript',
   ...overrides
+})
+
+describe('parseProjects', () => {
+  it('descarta repositórios com formato inesperado e mantém os válidos', () => {
+    const projeto = repositorio({ id: 7, name: 'Valido' })
+
+    const resultado = parseProjects([
+      projeto,
+      null,
+      'texto',
+      { id: 8, name: 'SemHtmlUrl', fork: false },
+      { ...projeto, id: '9' },
+      { ...projeto, id: 10, fork: 'sim' }
+    ])
+
+    expect(resultado).toHaveLength(1)
+    expect(resultado[0]).toMatchObject({ id: 7, name: 'Valido' })
+  })
+
+  it('falha alto quando o payload não é uma lista', () => {
+    expect(() => parseProjects({ message: 'API rate limit exceeded' })).toThrow(
+      /não devolveu uma lista/
+    )
+    expect(() => parseProjects(null)).toThrow(/não devolveu uma lista/)
+  })
 })
 
 describe('useFetchProjects', () => {

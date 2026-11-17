@@ -1,4 +1,5 @@
 import { IProject } from '@/@types/projects.entity'
+import { isRecord } from '@/utils/is-record'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
@@ -20,6 +21,36 @@ const IGNORED_REPOS = [
   'GamingLife'
 ]
 
+/**
+ * Valida o payload antes de virar tipo. Antes era um `as IProject[]` — cast que
+ * não checa nada e deixava `undefined` atravessar até a tela.
+ */
+const isProject = (value: unknown): value is IProject => {
+  if (!isRecord(value)) return false
+
+  const { id, name, html_url: htmlUrl, fork } = value
+
+  return (
+    typeof id === 'number' &&
+    typeof name === 'string' &&
+    typeof htmlUrl === 'string' &&
+    typeof fork === 'boolean'
+  )
+}
+
+/**
+ * Um repositório com formato inesperado é descartado em vez de derrubar a
+ * página: o portfólio continua mostrando os outros. Payload que nem é lista é
+ * erro de contrato e falha alto.
+ */
+export const parseProjects = (payload: unknown): IProject[] => {
+  if (!Array.isArray(payload)) {
+    throw new Error('GitHub API não devolveu uma lista de repositórios.')
+  }
+
+  return payload.filter(isProject)
+}
+
 const fetchProjects = async (): Promise<IProject[]> => {
   const response = await fetch(REPOS_URL)
 
@@ -27,7 +58,7 @@ const fetchProjects = async (): Promise<IProject[]> => {
     throw new Error(`GitHub API respondeu ${response.status}.`)
   }
 
-  return (await response.json()) as IProject[]
+  return parseProjects(await response.json())
 }
 
 export default function useFetchProjects() {
