@@ -207,6 +207,18 @@ deploy oficial (o do GitHub Pages é).
 
 ## Firebase Functions: configuração local e deploy
 
+### Currículos (PDF) exigem o Storage habilitado
+
+Os uploads de currículo gravam em `resumes/ptBR.pdf` e `resumes/enUS.pdf` no
+bucket do Firebase Storage. **Sem o Storage habilitado no projeto não existe
+bucket** e o painel mostra `Resume service is unavailable` — foi exatamente esse
+o sintoma que apareceu depois do deploy. Habilite em Console → Storage →
+Começar; o bucket passa a ser `<projeto>.firebasestorage.app`.
+
+A function resolve o bucket, nesta ordem: `RESUME_STORAGE_BUCKET` (opcional) →
+`storageBucket` do `FIREBASE_CONFIG` injetado pelo Firebase → padrão do Admin
+SDK. Se falhar, o erro no log/console inclui o nome do bucket tentado.
+
 ### Preparar o projeto Firebase
 
 1. Crie ou selecione um projeto no [Firebase Console](https://console.firebase.google.com/).

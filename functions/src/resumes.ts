@@ -10,8 +10,63 @@ export interface ResumeAvailability {
   enUS: boolean;
 }
 
+/**
+ * Nome do bucket dos currículos.
+ *
+ * `getStorage().bucket()` sem argumento cai no bucket padrão do Admin SDK, que
+ * em projeto novo do Firebase é `<projeto>.appspot.com` — mas o bucket que existe
+ * de verdade é `<projeto>.firebasestorage.app`. Com o nome errado toda chamada de
+ * Storage falha e o admin só mostrava "Resume service is unavailable".
+ *
+ * Ordem: RESUME_STORAGE_BUCKET (override explícito) → storageBucket do
+ * FIREBASE_CONFIG (que o Firebase injeta na function) → padrão do SDK.
+ */
+export function resolveResumeBucket(
+  env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  const explicit = env.RESUME_STORAGE_BUCKET?.trim();
+  if (explicit) return explicit;
+
+  const rawConfig = env.FIREBASE_CONFIG;
+  if (!rawConfig) return undefined;
+
+  try {
+    const config: unknown = JSON.parse(rawConfig);
+    if (config && typeof config === "object") {
+      const bucket = (config as { storageBucket?: unknown }).storageBucket;
+      if (typeof bucket === "string" && bucket.trim()) return bucket.trim();
+    }
+  } catch {
+    // FIREBASE_CONFIG malformado: cai no padrão do SDK
+  }
+
+  return undefined;
+}
+
+function describeFailure(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error ?? "erro desconhecido");
+}
+
+function storageUnavailable(error: unknown): ApiError {
+  const bucket = resolveResumeBucket() ?? "bucket padrão do projeto";
+
+  // Detalhe vai para o Cloud Logging (a resposta é pública: a página About
+  // consulta a disponibilidade), então a mensagem devolvida traz só o bucket.
+  console.error(`[resumes] falha no Storage (bucket=${bucket}):`, describeFailure(error));
+
+  return new ApiError(
+    502,
+    "RESUME_STORAGE_UNAVAILABLE",
+    `Resume service is unavailable. (bucket: ${bucket})`,
+  );
+}
+
 function getResumeFile(language: ResumeLanguage) {
-  return getStorage().bucket().file(`resumes/${language}.pdf`);
+  const bucket = resolveResumeBucket();
+  const storage = getStorage();
+
+  return (bucket ? storage.bucket(bucket) : storage.bucket()).file(`resumes/${language}.pdf`);
 }
 
 async function storageObjectExists(language: ResumeLanguage): Promise<boolean> {
@@ -25,8 +80,8 @@ export async function listResumeAvailability(
   try {
     const [ptBR, enUS] = await Promise.all([checkExists("ptBR"), checkExists("enUS")]);
     return { ptBR, enUS };
-  } catch {
-    throw new ApiError(502, "RESUME_STORAGE_UNAVAILABLE", "Resume service is unavailable.");
+  } catch (error) {
+    throw storageUnavailable(error);
   }
 }
 
@@ -41,8 +96,8 @@ export async function saveResume(language: ResumeLanguage, pdf: Buffer): Promise
         contentDisposition: `attachment; filename="resume-${language}.pdf"`,
       },
     });
-  } catch {
-    throw new ApiError(502, "RESUME_STORAGE_UNAVAILABLE", "Resume service is unavailable.");
+  } catch (error) {
+    throw storageUnavailable(error);
   }
 }
 
@@ -52,8 +107,8 @@ export async function sendResume(language: ResumeLanguage, response: Response): 
   try {
     file = getResumeFile(language);
     [exists] = await file.exists();
-  } catch {
-    throw new ApiError(502, "RESUME_STORAGE_UNAVAILABLE", "Resume service is unavailable.");
+  } catch (error) {
+    throw storageUnavailable(error);
   }
   if (!exists) throw new ApiError(404, "RESUME_NOT_FOUND", "Requested resume was not found.");
 
@@ -71,10 +126,11 @@ export async function sendResume(language: ResumeLanguage, response: Response): 
       response.once("close", resolve);
       stream.pipe(response);
     });
-  } catch {
+  } catch (error) {
     if (!response.headersSent) {
-      throw new ApiError(502, "RESUME_STORAGE_UNAVAILABLE", "Resume service is unavailable.");
+      throw storageUnavailable(error);
     }
+    console.error("[resumes] falha ao enviar o PDF:", describeFailure(error));
     response.destroy();
   }
 }

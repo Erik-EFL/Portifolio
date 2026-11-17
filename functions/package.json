@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && node --test lib/validation.test.js"
+    "test": "npm run build && node --test lib/validation.test.js lib/resumes.test.js"
   },
   "dependencies": {
     "@google-cloud/firestore": "^9.4.1",
