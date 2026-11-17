@@ -67,13 +67,14 @@ Além do outras bibliotecas, como o React Router Dom, para a navegação entre a
   - ~~Criar area de admin~~ (feito: `/admin`, com login Firebase)
   - ~~Aplicar testes unitários~~ (feito: Vitest, ver "Testes")
 - Back-end
+
   - ~~Criar uma api para armazenar os dados dos projetos~~ (feito: Functions + tabela de conteúdo)
   - Criar testes de integração
   - ~~Criar testes E2E~~ (feito: Playwright, ver "Testes")
   - ~~Aplicar testes unitários~~ (feito: `node --test` em `functions/`)
 
-  <br />
-</details>
+    <br />
+  </details>
 
 ## 🗂️ Estrutura
 
@@ -93,6 +94,12 @@ src/
 e2e/                      testes de ponta a ponta (Playwright)
 functions/                backend Firebase (Functions + tabela do appbackend)
 ```
+
+As seções de texto (`home`, `about`, `navigation`, ...) guardam um bloco por
+idioma. **Skills não**: `skills` e `skillsDetails` têm uma lista única — o texto
+base em português vale também para o inglês e a tradução é opcional, embutida na
+própria entrada (`{ name: 'Boa comunicação', translations: { enUS: 'Good
+communication' } }`). Assim não existe "skill que só aparece em um idioma".
 
 O conteúdo vem da API administrativa (`/rows`) e é mesclado **por cima** de
 `src/constant/Data/data.json`. Se a API estiver fora, o site continua de pé com

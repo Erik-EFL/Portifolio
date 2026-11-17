@@ -163,560 +163,317 @@
   ],
   "skills": [
     {
-      "language": "ptBR",
-      "items": [
+      "title": "Soft Skills",
+      "skills": [
         {
-          "title": "Soft Skills",
-          "skills": [
-            {
-              "name": "Boa comunicação"
-            },
-            {
-              "name": "Resolução de problemas"
-            },
-            {
-              "name": "Gestão de tempo"
-            },
-            {
-              "name": "Criatividade"
-            },
-            {
-              "name": "Empatia"
-            },
-            {
-              "name": "Resiliencia"
-            },
-            {
-              "name": "Gestão de conflitos"
-            },
-            {
-              "name": "Liderança"
-            }
-          ]
+          "name": "Boa comunicação",
+          "translations": {
+            "enUS": "Good communication"
+          }
         },
         {
-          "title": "Linguagens",
-          "skills": [
-            {
-              "name": "Javascript",
-              "level": 4
-            },
-            {
-              "name": "Typescript",
-              "level": 4
-            },
-            {
-              "name": "Python",
-              "level": 3
-            },
-            {
-              "name": "C#",
-              "level": 3
-            }
-          ]
+          "name": "Resolução de problemas",
+          "translations": {
+            "enUS": "Problem solving"
+          }
+        },
+        {
+          "name": "Gestão de tempo",
+          "translations": {
+            "enUS": "Time management"
+          }
+        },
+        {
+          "name": "Criatividade",
+          "translations": {
+            "enUS": "Creativity"
+          }
+        },
+        {
+          "name": "Empatia",
+          "translations": {
+            "enUS": "Patience"
+          }
+        },
+        {
+          "name": "Resiliencia",
+          "translations": {
+            "enUS": "Resiliency"
+          }
+        },
+        {
+          "name": "Gestão de conflitos",
+          "translations": {
+            "enUS": "Conflict management"
+          }
+        },
+        {
+          "name": "Liderança",
+          "translations": {
+            "enUS": "Leadership"
+          }
         }
       ]
     },
     {
-      "language": "enUS",
-      "items": [
+      "title": "Linguagens",
+      "translations": {
+        "enUS": "Languages"
+      },
+      "skills": [
         {
-          "title": "Soft Skills",
-          "skills": [
-            {
-              "name": "Good communication"
-            },
-            {
-              "name": "Problem solving"
-            },
-            {
-              "name": "Time management"
-            },
-            {
-              "name": "Creativity"
-            },
-            {
-              "name": "Patience"
-            },
-            {
-              "name": "Resiliency"
-            },
-            {
-              "name": "Conflict management"
-            },
-            {
-              "name": "Leadership"
-            }
-          ]
+          "name": "Javascript",
+          "level": 4
         },
         {
-          "title": "Languages",
-          "skills": [
-            {
-              "name": "Javascript",
-              "level": 4
-            },
-            {
-              "name": "Typescript",
-              "level": 4
-            },
-            {
-              "name": "Python",
-              "level": 3
-            },
-            {
-              "name": "C#",
-              "level": 3
-            }
-          ]
+          "name": "Typescript",
+          "level": 4
+        },
+        {
+          "name": "Python",
+          "level": 3
+        },
+        {
+          "name": "C#",
+          "level": 3
         }
       ]
     }
   ],
   "skillsDetails": [
     {
-      "language": "ptBR",
-      "items": [
+      "title": "Front-end",
+      "skills": [
         {
-          "title": "Front-end",
-          "skills": [
-            {
-              "name": "React",
-              "level": 4
-            },
-            {
-              "name": "Next.js",
-              "level": 4
-            },
-            {
-              "name": "HTML",
-              "level": 5
-            },
-            {
-              "name": "CSS",
-              "level": 5
-            },
-            {
-              "name": "Sass",
-              "level": 4
-            },
-            {
-              "name": "Styled Components",
-              "level": 4
-            },
-            {
-              "name": "Bootstrap",
-              "level": 3
-            },
-            {
-              "name": "Tailwind",
-              "level": 4
-            },
-            {
-              "name": "Material UI",
-              "level": 4
-            },
-            {
-              "name": "Chakra UI",
-              "level": 4
-            },
-            {
-              "name": "Context API",
-              "level": 4
-            },
-            {
-              "name": "Redux",
-              "level": 4
-            },
-            {
-              "name": "React Hooks",
-              "level": 4
-            },
-            {
-              "name": "Figma",
-              "level": 4
-            }
-          ]
+          "name": "React",
+          "level": 4
         },
         {
-          "title": "Back-end",
-          "skills": [
-            {
-              "name": "Node.js",
-              "level": 4
-            },
-            {
-              "name": "Express",
-              "level": 4
-            },
-            {
-              "name": "Nest.js",
-              "level": 4
-            },
-            {
-              "name": "MongoDB",
-              "level": 4
-            },
-            {
-              "name": "PostgreSQL",
-              "level": 3
-            },
-            {
-              "name": "MySQL",
-              "level": 3
-            },
-            {
-              "name": "Prisma",
-              "level": 4
-            },
-            {
-              "name": "Sequelize",
-              "level": 4
-            },
-            {
-              "name": "TypeORM",
-              "level": 4
-            },
-            {
-              "name": "Insomnia",
-              "level": 4
-            },
-            {
-              "name": "Postman",
-              "level": 4
-            }
-          ]
+          "name": "Next.js",
+          "level": 4
         },
         {
-          "title": "Testes",
-          "skills": [
-            {
-              "name": "Jest",
-              "level": 4
-            },
-            {
-              "name": "Cypress",
-              "level": 4
-            },
-            {
-              "name": "React Testing Library",
-              "level": 4
-            }
-          ]
+          "name": "HTML",
+          "level": 5
         },
         {
-          "title": "DevOps",
-          "skills": [
-            {
-              "name": "Docker",
-              "level": 4
-            },
-            {
-              "name": "Git",
-              "level": 4
-            },
-            {
-              "name": "GitHub",
-              "level": 4
-            },
-            {
-              "name": "Azure",
-              "level": 4
-            },
-            {
-              "name": "Docker Compose",
-              "level": 4
-            },
-            {
-              "name": "Heroku",
-              "level": 3
-            },
-            {
-              "name": "Vercel",
-              "level": 3
-            }
-          ]
+          "name": "CSS",
+          "level": 5
         },
         {
-          "title": "Ferramentas",
-          "skills": [
-            {
-              "name": "VS Code",
-              "level": 5
-            },
-            {
-              "name": "Visual Studio",
-              "level": 4
-            },
-            {
-              "name": "Jira",
-              "level": 3
-            },
-            {
-              "name": "Trello",
-              "level": 3
-            },
-            {
-              "name": "Slack",
-              "level": 3
-            }
-          ]
+          "name": "Sass",
+          "level": 4
         },
         {
-          "title": "Idiomas",
-          "skills": [
-            {
-              "name": "Português",
-              "level": 5
-            },
-            {
-              "name": "Inglês",
-              "level": 4
-            }
-          ]
+          "name": "Styled Components",
+          "level": 4
         },
         {
-          "title": "Outras habilidades",
-          "skills": [
-            {
-              "name": "Scrum"
-            },
-            {
-              "name": "Kanban"
-            },
-            {
-              "name": "OOP"
-            },
-            {
-              "name": "SOLID"
-            },
-            {
-              "name": "Clean Code"
-            }
-          ]
+          "name": "Bootstrap",
+          "level": 3
+        },
+        {
+          "name": "Tailwind",
+          "level": 4
+        },
+        {
+          "name": "Material UI",
+          "level": 4
+        },
+        {
+          "name": "Chakra UI",
+          "level": 4
+        },
+        {
+          "name": "Context API",
+          "level": 4
+        },
+        {
+          "name": "Redux",
+          "level": 4
+        },
+        {
+          "name": "React Hooks",
+          "level": 4
+        },
+        {
+          "name": "Figma",
+          "level": 4
         }
       ]
     },
     {
-      "language": "enUS",
-      "items": [
+      "title": "Back-end",
+      "skills": [
         {
-          "title": "Front-end",
-          "skills": [
-            {
-              "name": "React",
-              "level": 4
-            },
-            {
-              "name": "Next.js",
-              "level": 4
-            },
-            {
-              "name": "HTML",
-              "level": 5
-            },
-            {
-              "name": "CSS",
-              "level": 5
-            },
-            {
-              "name": "Sass",
-              "level": 4
-            },
-            {
-              "name": "Styled Components",
-              "level": 4
-            },
-            {
-              "name": "Bootstrap",
-              "level": 3
-            },
-            {
-              "name": "Tailwind",
-              "level": 4
-            },
-            {
-              "name": "Material UI",
-              "level": 4
-            },
-            {
-              "name": "Chakra UI",
-              "level": 4
-            },
-            {
-              "name": "Context API",
-              "level": 4
-            },
-            {
-              "name": "Redux",
-              "level": 4
-            },
-            {
-              "name": "React Hooks",
-              "level": 4
-            },
-            {
-              "name": "Figma",
-              "level": 4
-            }
-          ]
+          "name": "Node.js",
+          "level": 4
         },
         {
-          "title": "Back-end",
-          "skills": [
-            {
-              "name": "Node.js",
-              "level": 4
-            },
-            {
-              "name": "Express",
-              "level": 4
-            },
-            {
-              "name": "Nest.js",
-              "level": 4
-            },
-            {
-              "name": "MongoDB",
-              "level": 4
-            },
-            {
-              "name": "PostgreSQL",
-              "level": 3
-            },
-            {
-              "name": "MySQL",
-              "level": 3
-            },
-            {
-              "name": "Prisma",
-              "level": 4
-            },
-            {
-              "name": "Sequelize",
-              "level": 4
-            },
-            {
-              "name": "TypeORM",
-              "level": 4
-            },
-            {
-              "name": "Insomnia",
-              "level": 4
-            },
-            {
-              "name": "Postman",
-              "level": 4
-            }
-          ]
+          "name": "Express",
+          "level": 4
         },
         {
-          "title": "Tests",
-          "skills": [
-            {
-              "name": "Jest",
-              "level": 4
-            },
-            {
-              "name": "Cypress",
-              "level": 4
-            },
-            {
-              "name": "React Testing Library",
-              "level": 4
-            }
-          ]
+          "name": "Nest.js",
+          "level": 4
         },
         {
-          "title": "DevOps",
-          "skills": [
-            {
-              "name": "Docker",
-              "level": 4
-            },
-            {
-              "name": "Git",
-              "level": 4
-            },
-            {
-              "name": "GitHub",
-              "level": 4
-            },
-            {
-              "name": "Azure",
-              "level": 4
-            },
-            {
-              "name": "Docker Compose",
-              "level": 4
-            },
-            {
-              "name": "Heroku",
-              "level": 3
-            },
-            {
-              "name": "Vercel",
-              "level": 3
-            }
-          ]
+          "name": "MongoDB",
+          "level": 4
         },
         {
-          "title": "Tools",
-          "skills": [
-            {
-              "name": "VS Code",
-              "level": 5
-            },
-            {
-              "name": "Visual Studio",
-              "level": 4
-            },
-            {
-              "name": "Jira",
-              "level": 3
-            },
-            {
-              "name": "Trello",
-              "level": 3
-            },
-            {
-              "name": "Slack",
-              "level": 3
-            }
-          ]
+          "name": "PostgreSQL",
+          "level": 3
         },
         {
-          "title": "Spoken languages",
-          "skills": [
-            {
-              "name": "Portuguese",
-              "level": 5
-            },
-            {
-              "name": "English",
-              "level": 4
-            }
-          ]
+          "name": "MySQL",
+          "level": 3
         },
         {
-          "title": "Other skills",
-          "skills": [
-            {
-              "name": "Scrum"
-            },
-            {
-              "name": "Kanban"
-            },
-            {
-              "name": "OOP"
-            },
-            {
-              "name": "SOLID"
-            },
-            {
-              "name": "Clean Code"
-            }
-          ]
+          "name": "Prisma",
+          "level": 4
+        },
+        {
+          "name": "Sequelize",
+          "level": 4
+        },
+        {
+          "name": "TypeORM",
+          "level": 4
+        },
+        {
+          "name": "Insomnia",
+          "level": 4
+        },
+        {
+          "name": "Postman",
+          "level": 4
+        }
+      ]
+    },
+    {
+      "title": "Testes",
+      "translations": {
+        "enUS": "Tests"
+      },
+      "skills": [
+        {
+          "name": "Jest",
+          "level": 4
+        },
+        {
+          "name": "Cypress",
+          "level": 4
+        },
+        {
+          "name": "React Testing Library",
+          "level": 4
+        }
+      ]
+    },
+    {
+      "title": "DevOps",
+      "skills": [
+        {
+          "name": "Docker",
+          "level": 4
+        },
+        {
+          "name": "Git",
+          "level": 4
+        },
+        {
+          "name": "GitHub",
+          "level": 4
+        },
+        {
+          "name": "Azure",
+          "level": 4
+        },
+        {
+          "name": "Docker Compose",
+          "level": 4
+        },
+        {
+          "name": "Heroku",
+          "level": 3
+        },
+        {
+          "name": "Vercel",
+          "level": 3
+        }
+      ]
+    },
+    {
+      "title": "Ferramentas",
+      "translations": {
+        "enUS": "Tools"
+      },
+      "skills": [
+        {
+          "name": "VS Code",
+          "level": 5
+        },
+        {
+          "name": "Visual Studio",
+          "level": 4
+        },
+        {
+          "name": "Jira",
+          "level": 3
+        },
+        {
+          "name": "Trello",
+          "level": 3
+        },
+        {
+          "name": "Slack",
+          "level": 3
+        }
+      ]
+    },
+    {
+      "title": "Idiomas",
+      "translations": {
+        "enUS": "Spoken languages"
+      },
+      "skills": [
+        {
+          "name": "Português",
+          "level": 5,
+          "translations": {
+            "enUS": "Portuguese"
+          }
+        },
+        {
+          "name": "Inglês",
+          "level": 4,
+          "translations": {
+            "enUS": "English"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Outras habilidades",
+      "translations": {
+        "enUS": "Other skills"
+      },
+      "skills": [
+        {
+          "name": "Scrum"
+        },
+        {
+          "name": "Kanban"
+        },
+        {
+          "name": "OOP"
+        },
+        {
+          "name": "SOLID"
+        },
+        {
+          "name": "Clean Code"
         }
       ]
     }

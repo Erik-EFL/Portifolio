@@ -1,5 +1,6 @@
+import type { Skill, SkillCategory } from '@/@types/portfolio.entity'
 import { DataSectionKey } from '@/services/portfolio-data.service'
-import { isSkillsParitySection } from '@/services/skills-parity.service'
+import { isSkillsSection } from '@/services/skills-model.service'
 import { isRecord } from '@/utils/is-record'
 import styles from './Admin.module.css'
 import { ICONS, Icon } from './Admin.icons'
@@ -320,6 +321,210 @@ export const ItemEditor = ({
   )
 }
 
+/**
+ * Editor de skills na fonte única: o texto base (português) vale para os dois
+ * idiomas e a tradução em inglês é opcional, linha a linha. Não existem mais
+ * dois blocos para manter em sincronia.
+ */
+const SkillRowEditor = ({
+  skill,
+  index,
+  comNivel,
+  disabled,
+  onChange,
+  onRemove
+}: {
+  skill: Skill
+  index: number
+  comNivel: boolean
+  disabled: boolean
+  onChange: (next: Skill) => void
+  onRemove: () => void
+}) => {
+  const nome = skill.name || `skill ${index + 1}`
+  const traducao = skill.translations?.enUS ?? ''
+
+  const setTraducao = (value: string) => {
+    const translations = { ...(skill.translations ?? {}) }
+
+    if (value.trim()) translations.enUS = value
+    else delete translations.enUS
+
+    onChange({
+      ...skill,
+      ...(Object.keys(translations).length > 0
+        ? { translations }
+        : { translations: undefined })
+    })
+  }
+
+  return (
+    <div className={styles.skillRow}>
+      <InlineInput
+        value={skill.name}
+        label={`Nome da skill ${index + 1} (português)`}
+        disabled={disabled}
+        placeholder='Nome (vale para os dois idiomas)'
+        onChange={name => onChange({ ...skill, name })}
+      />
+      <InlineInput
+        value={traducao}
+        label={`Tradução em inglês da skill ${index + 1}`}
+        disabled={disabled}
+        placeholder='Inglês (opcional)'
+        onChange={setTraducao}
+      />
+      <span className={styles.skillMeta}>
+        {comNivel && (
+          <LevelPicker
+            value={typeof skill.level === 'number' ? skill.level : 1}
+            label={nome}
+            disabled={disabled}
+            onChange={level => onChange({ ...skill, level })}
+          />
+        )}
+        <button
+          className={styles.iconButton}
+          type='button'
+          disabled={disabled}
+          title={`Remover ${nome}`}
+          aria-label={`Remover ${nome}`}
+          onClick={onRemove}
+        >
+          <Icon path={ICONS.trash} size={14} />
+        </button>
+      </span>
+    </div>
+  )
+}
+
+export const SkillsListEditor = ({
+  categories,
+  disabled,
+  onChange
+}: {
+  categories: SkillCategory[]
+  disabled: boolean
+  onChange: (categories: SkillCategory[]) => void
+}) => {
+  const patchCategory = (index: number, patch: Partial<SkillCategory>) =>
+    onChange(
+      categories.map((category, categoryIndex) =>
+        categoryIndex === index ? { ...category, ...patch } : category
+      )
+    )
+
+  const setTraducaoCategoria = (index: number, value: string) => {
+    const translations = { ...(categories[index].translations ?? {}) }
+
+    if (value.trim()) translations.enUS = value
+    else delete translations.enUS
+
+    patchCategory(index, {
+      translations:
+        Object.keys(translations).length > 0 ? translations : undefined
+    })
+  }
+
+  return (
+    <div className={styles.fieldGroup}>
+      <span className={styles.fieldLabel}>
+        Uma lista só — o nome em português vale para o inglês também
+      </span>
+      {categories.map((category, index) => {
+        const comNivel = category.skills.some(
+          skill => typeof skill.level === 'number'
+        )
+        const nomeCategoria = category.title || `categoria ${index + 1}`
+
+        return (
+          <div className={styles.previewLang} key={index}>
+            <div className={styles.inlineRow}>
+              <InlineInput
+                value={category.title}
+                label={`Título da categoria ${index + 1} (português)`}
+                disabled={disabled}
+                placeholder='Categoria'
+                onChange={title => patchCategory(index, { title })}
+              />
+              <InlineInput
+                value={category.translations?.enUS ?? ''}
+                label={`Tradução em inglês do título da categoria ${index + 1}`}
+                disabled={disabled}
+                placeholder='Inglês (opcional)'
+                onChange={value => setTraducaoCategoria(index, value)}
+              />
+              <span className={styles.skillMeta}>
+                <span className={styles.categoryCount}>
+                  {category.skills.length}{' '}
+                  {category.skills.length === 1 ? 'skill' : 'skills'}
+                </span>
+                <button
+                  className={styles.iconButton}
+                  type='button'
+                  disabled={disabled}
+                  title={`Remover ${nomeCategoria}`}
+                  aria-label={`Remover ${nomeCategoria}`}
+                  onClick={() =>
+                    onChange(
+                      categories.filter(
+                        (_, categoryIndex) => categoryIndex !== index
+                      )
+                    )
+                  }
+                >
+                  <Icon path={ICONS.trash} size={14} />
+                </button>
+              </span>
+            </div>
+
+            {category.skills.map((skill, skillIndex) => (
+              <SkillRowEditor
+                key={skillIndex}
+                skill={skill}
+                index={skillIndex}
+                comNivel={comNivel}
+                disabled={disabled}
+                onChange={next =>
+                  patchCategory(index, {
+                    skills: category.skills.map((current, currentIndex) =>
+                      currentIndex === skillIndex ? next : current
+                    )
+                  })
+                }
+                onRemove={() =>
+                  patchCategory(index, {
+                    skills: category.skills.filter(
+                      (_, currentIndex) => currentIndex !== skillIndex
+                    )
+                  })
+                }
+              />
+            ))}
+
+            <button
+              className={styles.addRowButton}
+              type='button'
+              disabled={disabled}
+              onClick={() =>
+                patchCategory(index, {
+                  skills: [
+                    ...category.skills,
+                    comNivel ? { name: '', level: 1 } : { name: '' }
+                  ]
+                })
+              }
+            >
+              <Icon path={ICONS.plus} size={14} />
+              Adicionar skill
+            </button>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export const VisualEditor = ({
   keyName,
   section,
@@ -339,6 +544,40 @@ export const VisualEditor = ({
     )
   }
 
+  // skills e skillsDetails guardam uma lista única (uma fonte de verdade), sem
+  // blocos por idioma.
+  if (isSkillsSection(keyName)) {
+    const categories = section.filter(isRecord) as unknown as SkillCategory[]
+
+    return (
+      <div className={styles.visualEditor}>
+        <div className={styles.columnHead}>
+          <span className={styles.columnTitle}>Editor visual</span>
+          <button
+            className={styles.addHeadButton}
+            type='button'
+            disabled={disabled}
+            title='Adicionar categoria (vale para os dois idiomas)'
+            onClick={() =>
+              onChange([
+                ...categories,
+                createItemTemplate(keyName) as unknown as SkillCategory
+              ])
+            }
+          >
+            <Icon path={ICONS.plus} size={14} />
+            Adicionar categoria
+          </button>
+        </div>
+        <SkillsListEditor
+          categories={categories}
+          disabled={disabled}
+          onChange={onChange}
+        />
+      </div>
+    )
+  }
+
   const updateLocale = (
     localeIndex: number,
     updater: (locale: Record<string, unknown>) => Record<string, unknown>
@@ -349,29 +588,10 @@ export const VisualEditor = ({
       )
     )
 
-  const addLabel =
-    keyName === 'skills' || keyName === 'skillsDetails' ? 'categoria' : 'item'
+  const addLabel = 'item'
   const firstLocale = isRecord(section[0]) ? section[0] : {}
   const firstLanguage =
     typeof firstLocale.language === 'string' ? firstLocale.language : 'bloco 1'
-  // Em skills/skillsDetails a categoria nova tem que entrar nos dois idiomas:
-  // criar só no primeiro é como as listas desalinhavam.
-  const addToEveryLanguage = isSkillsParitySection(keyName)
-
-  const addToAllLanguages = () =>
-    onChange(
-      section.map(locale => {
-        const current = isRecord(locale) ? locale : {}
-
-        return {
-          ...current,
-          items: [
-            ...(Array.isArray(current.items) ? current.items : []),
-            createItemTemplate(keyName)
-          ]
-        }
-      })
-    )
 
   return (
     <div className={styles.visualEditor}>
@@ -381,30 +601,20 @@ export const VisualEditor = ({
           className={styles.addHeadButton}
           type='button'
           disabled={disabled}
-          title={
-            addToEveryLanguage
-              ? `Adicionar ${addLabel} em todos os idiomas`
-              : `Adicionar ${addLabel} no bloco ${firstLanguage}`
-          }
+          title={`Adicionar ${addLabel} no bloco ${firstLanguage}`}
           onClick={() =>
-            addToEveryLanguage
-              ? addToAllLanguages()
-              : updateLocale(0, current => ({
-                  ...current,
-                  items: [
-                    ...(Array.isArray(current.items) ? current.items : []),
-                    createItemTemplate(keyName)
-                  ]
-                }))
+            updateLocale(0, current => ({
+              ...current,
+              items: [
+                ...(Array.isArray(current.items) ? current.items : []),
+                createItemTemplate(keyName)
+              ]
+            }))
           }
         >
           <Icon path={ICONS.plus} size={14} />
           Adicionar {addLabel}
-          {addToEveryLanguage
-            ? ' · todos os idiomas'
-            : section.length > 1
-            ? ` · ${firstLanguage}`
-            : ''}
+          {section.length > 1 ? ` · ${firstLanguage}` : ''}
         </button>
       </div>
 

@@ -4,13 +4,9 @@ import { getEditorValidation } from './Admin.utils'
 const documento = (key: string, value: unknown) =>
   JSON.stringify({ [key]: value })
 
-const bloco = (
-  language: 'ptBR' | 'enUS',
-  titulo: string,
-  skills: string[]
-) => ({
-  language,
-  items: [{ title: titulo, skills: skills.map(name => ({ name })) }]
+const categoria = (title: string, nomes: string[]) => ({
+  title,
+  skills: nomes.map(name => ({ name }))
 })
 
 describe('getEditorValidation', () => {
@@ -20,46 +16,10 @@ describe('getEditorValidation', () => {
     expect(resultado.valid).toBe(false)
   })
 
-  it('recusa skillsDetails com idiomas desalinhados', () => {
-    const texto = documento('skillsDetails', [
-      bloco('ptBR', 'Front-end', ['React', 'Vite']),
-      bloco('enUS', 'Front-end', ['React'])
-    ])
-
-    const resultado = getEditorValidation(texto, 'skillsDetails')
-
-    expect(resultado.valid).toBe(false)
-    expect(resultado.valid ? '' : resultado.message).toMatch(
-      /Idiomas desalinhados/
-    )
-    expect(resultado.valid ? '' : resultado.message).toMatch(/Front-end/)
-  })
-
-  it('recusa categoria que existe em um idioma só', () => {
-    const texto = documento('skillsDetails', [
-      {
-        language: 'ptBR',
-        items: [{ title: 'Front-end', skills: [{ name: 'React' }] }]
-      },
-      {
-        language: 'enUS',
-        items: [
-          { title: 'Front-end', skills: [{ name: 'React' }] },
-          { title: 'Soft Skills', skills: [{ name: 'Empathy' }] }
-        ]
-      }
-    ])
-
-    const resultado = getEditorValidation(texto, 'skillsDetails')
-
-    expect(resultado.valid).toBe(false)
-    expect(resultado.valid ? '' : resultado.message).toMatch(/categoria/)
-  })
-
-  it('aceita quando ptBR e enUS têm a mesma estrutura', () => {
+  it('aceita skills como lista única (uma fonte de verdade)', () => {
     const texto = documento('skills', [
-      bloco('ptBR', 'Soft Skills', ['Comunicação']),
-      bloco('enUS', 'Soft Skills', ['Communication'])
+      categoria('Soft Skills', ['Comunicação']),
+      categoria('Linguagens', ['Português'])
     ])
 
     const resultado = getEditorValidation(texto, 'skills')
@@ -68,7 +28,58 @@ describe('getEditorValidation', () => {
     expect(resultado.valid ? resultado.row.key : '').toBe('skills')
   })
 
-  it('não aplica a regra de idiomas às outras seções', () => {
+  it('mantém a tradução embutida na mesma entrada', () => {
+    const texto = documento('skillsDetails', [
+      {
+        title: 'Ferramentas',
+        translations: { enUS: 'Tools' },
+        skills: [{ name: 'VS Code', level: 5 }]
+      }
+    ])
+
+    const resultado = getEditorValidation(texto, 'skillsDetails')
+
+    expect(resultado.valid).toBe(true)
+
+    if (resultado.valid) {
+      const valor = resultado.row.value as unknown as Array<
+        Record<string, unknown>
+      >
+
+      expect(valor[0].translations).toEqual({ enUS: 'Tools' })
+    }
+  })
+
+  it('aceita o formato antigo e normaliza para a lista única', () => {
+    const texto = documento('skillsDetails', [
+      { language: 'ptBR', items: [categoria('Ferramentas', ['VS Code'])] },
+      { language: 'enUS', items: [categoria('Tools', ['VS Code'])] }
+    ])
+
+    const resultado = getEditorValidation(texto, 'skillsDetails')
+
+    expect(resultado.valid).toBe(true)
+
+    if (resultado.valid) {
+      const valor = resultado.row.value as unknown as Array<
+        Record<string, unknown> & { skills: unknown[] }
+      >
+
+      // virou lista única: sem blocos `language`, com o título base em ptBR
+      expect(valor).toHaveLength(1)
+      expect('language' in valor[0]).toBe(false)
+      expect(valor[0].title).toBe('Ferramentas')
+      expect(valor[0].translations).toEqual({ enUS: 'Tools' })
+    }
+  })
+
+  it('recusa skills com item malformado', () => {
+    const texto = documento('skillsDetails', [{ title: 'ok', skills: [null] }])
+
+    expect(getEditorValidation(texto, 'skillsDetails').valid).toBe(false)
+  })
+
+  it('não aplica nada disso às outras seções', () => {
     const texto = documento('footerCopyright', [
       { language: 'ptBR', items: [{ copyright: '© 2026' }] }
     ])

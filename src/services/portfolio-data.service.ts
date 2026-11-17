@@ -5,10 +5,12 @@ import type {
   IData,
   LocalizedSection,
   NavigationLink,
-  Skill,
-  SkillCategory,
   TLanguage
 } from '@/@types/portfolio.entity'
+import {
+  normalizeSkillCategories,
+  resolveSkillCategories
+} from '@/services/skills-model.service'
 import aboutData from '@/constant/Data/About.data'
 import staticData from '@/constant/Data/data.json'
 import { isRecord } from '@/utils/is-record'
@@ -66,17 +68,6 @@ const isAboutContent = (value: unknown): value is AboutContent =>
   Array.isArray(value.description) &&
   value.description.every(isString)
 
-const isSkill = (value: unknown): value is Skill =>
-  isRecord(value) &&
-  isString(value.name) &&
-  (value.level === undefined || typeof value.level === 'number')
-
-const isSkillCategory = (value: unknown): value is SkillCategory =>
-  isRecord(value) &&
-  isString(value.title) &&
-  Array.isArray(value.skills) &&
-  value.skills.every(isSkill)
-
 const isLocalizedSections = <Item>(
   value: unknown,
   isItem: (item: unknown) => item is Item
@@ -119,13 +110,13 @@ export const parseDataRow = (
         ? { ...rowId, key, value }
         : undefined
     case 'skills':
-      return isLocalizedSections(value, isSkillCategory)
-        ? { ...rowId, key, value }
-        : undefined
-    case 'skillsDetails':
-      return isLocalizedSections(value, isSkillCategory)
-        ? { ...rowId, key, value }
-        : undefined
+    case 'skillsDetails': {
+      // Lista única, sem blocos por idioma. O formato antigo (dois blocos) é
+      // migrado aqui para uma linha que ainda está no banco continuar valendo.
+      const categorias = normalizeSkillCategories(value)
+
+      return categorias ? { ...rowId, key, value: categorias } : undefined
+    }
     default:
       return undefined
   }
@@ -249,8 +240,10 @@ export const getLocalizedPortfolioData = (data: IData, language: TLanguage) => {
     home,
     about:
       sectionItems(data.about, language)[0]?.description ?? aboutData[language],
-    skills: sectionItems(data.skills, language),
-    skillsDetails: sectionItems(data.skillsDetails, language)
+    // Skills não são duplicadas por idioma: a mesma lista é resolvida no idioma
+    // pedido (texto base + tradução quando existir).
+    skills: resolveSkillCategories(data.skills, language),
+    skillsDetails: resolveSkillCategories(data.skillsDetails, language)
   }
 }
 

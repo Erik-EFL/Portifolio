@@ -15,8 +15,8 @@ declare const about: LocalizedSection<AboutContent>[]
 declare const footer: LocalizedSection<NavigationLink>[]
 declare const footerCopyright: LocalizedSection<FooterItem>[]
 declare const navigation: LocalizedSection<NavigationLink>[]
-declare const skills: LocalizedSection<SkillCategory>[]
-declare const skillsDetails: LocalizedSection<SkillCategory>[]
+declare const skills: SkillCategory[]
+declare const skillsDetails: SkillCategory[]
 export default {
   navigation,
   footer,

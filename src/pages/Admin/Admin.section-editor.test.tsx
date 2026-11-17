@@ -1,24 +1,21 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { IData } from '@/@types/portfolio.entity'
+import type { SkillCategory } from '@/@types/portfolio.entity'
 import { SectionEditor } from './Admin.section-editor'
 
-const desalinhado: IData['skillsDetails'] = [
+const listaUnica: SkillCategory[] = [
   {
-    language: 'ptBR',
-    items: [{ title: 'Front-end', skills: [{ name: 'React', level: 4 }] }]
-  },
-  {
-    language: 'enUS',
-    items: [
-      { title: 'Front-end', skills: [{ name: 'React', level: 4 }] },
-      { title: 'Soft Skills', skills: [{ name: 'Empathy' }] }
+    title: 'Ferramentas',
+    translations: { enUS: 'Tools' },
+    skills: [
+      { name: 'VS Code', level: 5 },
+      { name: 'Figma', level: 4 }
     ]
   }
 ]
 
-const montar = (value: IData['skillsDetails']) => {
+const montar = (value: SkillCategory[]) => {
   const setNotice = vi.fn()
 
   render(
@@ -43,33 +40,75 @@ const montar = (value: IData['skillsDetails']) => {
   return { textarea, setNotice }
 }
 
-describe('Admin / SectionEditor (skillsDetails)', () => {
-  it('bloqueia o salvar e explica o desalinhamento', () => {
-    montar(desalinhado)
+const lerJson = (textarea: HTMLTextAreaElement) =>
+  JSON.parse(textarea.value) as { skillsDetails: SkillCategory[] }
 
-    expect(screen.getByText(/Idiomas desalinhados/)).toBeInTheDocument()
+describe('Admin / SectionEditor (skillsDetails)', () => {
+  it('mostra a lista única com o nome base e a tradução na mesma linha', () => {
+    montar(listaUnica)
+
     expect(
-      screen.getByRole('button', { name: /Atualizar Seção|Adicionar Seção/ })
-    ).toBeDisabled()
+      screen.getByLabelText('Título da categoria 1 (português)')
+    ).toHaveValue('Ferramentas')
+    expect(
+      screen.getByLabelText('Tradução em inglês do título da categoria 1')
+    ).toHaveValue('Tools')
+    expect(screen.getByLabelText('Nome da skill 1 (português)')).toHaveValue(
+      'VS Code'
+    )
+    // skill sem tradução fica com o campo de inglês vazio
+    expect(screen.getByLabelText('Tradução em inglês da skill 2')).toHaveValue(
+      ''
+    )
   })
 
-  it('o botão "Igualar idiomas" completa o bloco que ficou atrás', async () => {
-    const { textarea, setNotice } = montar(desalinhado)
+  it('editar o nome base não cria bloco por idioma (uma fonte só)', async () => {
+    const { textarea } = montar(listaUnica)
 
-    await userEvent.click(
-      screen.getByRole('button', { name: /Igualar idiomas/ })
+    const campo = screen.getByLabelText('Nome da skill 1 (português)')
+    await userEvent.clear(campo)
+    await userEvent.type(campo, 'VS Code Insiders')
+
+    const json = lerJson(textarea)
+
+    expect(json.skillsDetails).toHaveLength(1)
+    expect(json.skillsDetails[0].skills[0].name).toBe('VS Code Insiders')
+    // continua uma lista de categorias, sem blocos com `language`
+    expect('language' in json.skillsDetails[0]).toBe(false)
+  })
+
+  it('preencher o campo de inglês grava a tradução na mesma skill', async () => {
+    const { textarea } = montar(listaUnica)
+
+    await userEvent.type(
+      screen.getByLabelText('Tradução em inglês da skill 2'),
+      'Figma'
     )
 
-    const depois = JSON.parse(textarea.value) as {
-      skillsDetails: IData['skillsDetails']
+    expect(lerJson(textarea).skillsDetails[0].skills[1]).toEqual({
+      name: 'Figma',
+      level: 4,
+      translations: { enUS: 'Figma' }
+    })
+  })
+
+  it('aceita o valor antigo (dois blocos) e o documento já sai em lista única', () => {
+    // valor antigo vindo do banco: { language, items }[] — a seção é criada com
+    // esse array, e a validação normaliza na leitura
+    const { textarea } = montar([
+      {
+        title: 'Ferramentas',
+        skills: [{ name: 'VS Code' }]
+      }
+    ] as unknown as SkillCategory[])
+
+    expect(screen.getByText('Valid section JSON.')).toBeInTheDocument()
+
+    const json = JSON.parse(textarea.value) as {
+      skillsDetails: SkillCategory[]
     }
 
-    expect(depois.skillsDetails[0].items).toHaveLength(2)
-    expect(depois.skillsDetails[1].items).toHaveLength(2)
-    expect(setNotice).toHaveBeenCalledWith(
-      expect.stringMatching(/Blocos alinhados/)
-    )
-    // com os blocos do mesmo tamanho o salvar volta a ficar disponível
-    expect(screen.getByText('Valid section JSON.')).toBeInTheDocument()
+    expect(json.skillsDetails).toHaveLength(1)
+    expect(json.skillsDetails[0].title).toBe('Ferramentas')
   })
 })
