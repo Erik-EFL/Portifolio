@@ -1,5 +1,6 @@
-import { Grid, Rating } from '@mui/material'
+import { Rating } from '@mui/material'
 import styled from 'styled-components'
+import type { DefaultTheme } from 'styled-components'
 
 /**
  * Círculo decorativo da marca. É cor de identidade (não superfície de tema),
@@ -7,45 +8,156 @@ import styled from 'styled-components'
  */
 const DECORATION = '#ffd001bd'
 
-export const CardStyled = styled(Grid)`
+/**
+ * Material "liquid glass": filme translúcido com gradiente, blur + saturação do
+ * que está atrás (as bolinhas aparecem desfocadas por baixo), borda de luz e
+ * brilho especular na aresta de cima.
+ */
+const glass = (theme: DefaultTheme) =>
+  theme.mode === 'dark'
+    ? {
+        film: 'linear-gradient(140deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0.02) 100%)',
+        border: 'rgba(255, 255, 255, 0.22)',
+        specular: 'rgba(255, 255, 255, 0.45)',
+        glow: 'rgba(255, 255, 255, 0.12)',
+        shadow: '0 18px 50px rgba(0, 0, 0, 0.45)'
+      }
+    : {
+        film: 'linear-gradient(140deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.6) 48%, rgba(255, 255, 255, 0.42) 100%)',
+        border: 'rgba(255, 255, 255, 0.9)',
+        specular: 'rgba(255, 255, 255, 0.95)',
+        glow: 'rgba(255, 255, 255, 0.55)',
+        shadow: '0 18px 50px rgba(16, 16, 18, 0.18)'
+      }
+
+/** Lista vertical: um card embaixo do outro. */
+export const SkillsList = styled.div`
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+`
+
+export const CardStyled = styled.section`
   position: relative;
   z-index: 1;
-  width: 280px;
-  padding: 20px;
-  line-height: 15px;
-  border-radius: 20px;
-  border: 1px solid ${({ theme }) => theme.semantic.border};
-  display: inline-block;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  backdrop-filter: blur(10px);
-  background-color: ${({ theme }) => theme.semantic.surfaceElevated};
+  width: 100%;
+  padding: 1.5rem 1.75rem;
+  border-radius: 28px;
+  overflow: hidden;
+  background: ${({ theme }) => glass(theme).film};
+  border: 1px solid ${({ theme }) => glass(theme).border};
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: ${({ theme }) => glass(theme).shadow},
+    inset 0 1px 0 ${({ theme }) => glass(theme).specular},
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+
+  /* brilho especular na aresta superior */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 14% auto;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      ${({ theme }) => glass(theme).specular},
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  /* realce suave no canto superior esquerdo */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -40% auto auto -10%;
+    width: 60%;
+    height: 90%;
+    background: radial-gradient(
+      closest-side,
+      ${({ theme }) => glass(theme).glow},
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   h4 {
-    margin-bottom: 0;
+    margin: 0;
     padding: 0;
+    font-weight: 600;
   }
 
   p {
+    margin: 0;
     padding: 0;
-    margin-left: -10px;
   }
 `
 
-export const CardHeader = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.semantic.border};
+export const CardHeader = styled.header`
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-top: -12px;
-  padding: 0;
-  width: 100%;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid ${({ theme }) => glass(theme).border};
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  p {
+    color: ${({ theme }) => theme.semantic.textMuted};
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+`
+
+/**
+ * Skills em colunas de no máximo 5 itens: `grid-auto-flow: column` com 5 linhas
+ * fixas cria quantas colunas forem necessárias (14 skills = 5 + 5 + 4).
+ */
+export const SkillsGrid = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(5, auto);
+  grid-auto-columns: minmax(0, 1fr);
+  column-gap: 2rem;
+  row-gap: 0.45rem;
+
+  @media (max-width: 640.2px) {
+    /* no mobile colunas de 5 não cabem: vira lista única */
+    grid-auto-flow: row;
+    grid-template-rows: none;
+    grid-template-columns: 1fr;
+  }
 `
 
 export const SkillRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+
+  h4 {
+    line-height: 1.2;
+    /* nomes longos ("Styled Components") quebram em duas linhas em vez de
+       serem cortados com reticências */
+    overflow-wrap: anywhere;
+  }
 `
 
 /** Camada decorativa atrás dos cards (posições sorteadas no componente). */
@@ -54,7 +166,7 @@ export const DecorationsLayer = styled.div`
   inset: -28px 0;
   z-index: 0;
   /* corta o que passa nas laterais (sem criar scroll horizontal) e deixa as
-     bolinhas de topo/base aparecerem porque a camada é mais alta que o grid */
+     bolinhas de topo/base aparecerem porque a camada é mais alta que a lista */
   overflow: hidden;
   pointer-events: none;
 `
@@ -77,7 +189,7 @@ export const Dot = styled.span<IDotProps>`
 
 export const SkillRating = styled(Rating)`
   && {
+    flex-shrink: 0;
     color: ${DECORATION};
-    margin-top: 16px;
   }
 `

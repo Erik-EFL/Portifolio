@@ -1,13 +1,15 @@
 import { useMemo } from 'react'
 import { SkillsSkeleton } from '@/components/Skeleton'
-import { Container, Grid } from '@mui/material'
+import { Container } from '@mui/material'
 import {
   CardHeader,
   CardStyled,
   DecorationsLayer,
   Dot,
   SkillRating,
-  SkillRow
+  SkillRow,
+  SkillsGrid,
+  SkillsList
 } from './Card.styled'
 import { Skill, SkillCategory } from '@/@types/portfolio.entity'
 import { useLanguage } from '@/store/language.store'
@@ -26,7 +28,7 @@ const CATEGORIES_WITHOUT_RATING = new Set([
 const hasRating = (categoryTitle: string): boolean =>
   !CATEGORIES_WITHOUT_RATING.has(categoryTitle)
 
-/** Quantidade de bolinhas decorativas espalhadas atrás dos cards. */
+/** Quantidade de bolinhas decorativas por lado. */
 const DOTS_PER_SIDE = 3
 
 interface IDecoration {
@@ -40,10 +42,10 @@ const randomInt = (min: number, max: number): number =>
   Math.round(min + Math.random() * (max - min))
 
 /**
- * Sorteia as bolinhas uma vez por montagem (useMemo de deps vazia), mas dentro
- * das MARGENS do grid: posição aleatória no miolo esconderia quase todas atrás
- * dos cards (eles ocupam o centro), então cada bolinha cai em uma faixa onde
- * fica visível espiando ao lado dos cards.
+ * Sorteia as bolinhas uma vez por montagem (useMemo de deps vazia). Os cards
+ * ficam um embaixo do outro ocupando toda a largura, então as posições se
+ * concentram nas margens/beiradas: no meio elas ficariam inteiramente atrás do
+ * vidro (aparecem só como um brilho desfocado, que é o efeito desejado).
  */
 const useRandomDecorations = (): IDecoration[] =>
   useMemo(() => {
@@ -57,28 +59,28 @@ const useRandomDecorations = (): IDecoration[] =>
       dots.push({
         id: dots.length,
         top: `${randomInt(faixa, faixa + 24)}%`,
-        left: `${randomInt(0, 8)}%`,
-        size: randomInt(30, 70)
+        left: `${randomInt(0, 6)}%`,
+        size: randomInt(34, 78)
       })
       dots.push({
         id: dots.length,
         top: `${randomInt(faixa, faixa + 24)}%`,
-        left: `${randomInt(92, 99)}%`,
-        size: randomInt(30, 70)
+        left: `${randomInt(94, 99)}%`,
+        size: randomInt(34, 78)
       })
     }
 
     dots.push({
       id: dots.length,
-      top: '-18px',
+      top: '2px',
       left: `${randomInt(10, 40)}%`,
-      size: randomInt(36, 64)
+      size: randomInt(40, 70)
     })
     dots.push({
       id: dots.length,
-      top: '97%',
+      top: 'calc(100% - 76px)',
       left: `${randomInt(55, 88)}%`,
-      size: randomInt(36, 64)
+      size: randomInt(40, 70)
     })
 
     return dots
@@ -96,18 +98,9 @@ const Card = () => {
     <Container
       component='main'
       maxWidth={false}
-      sx={{ maxWidth: '900px', marginTop: '-30px' }}
+      sx={{ maxWidth: '900px', marginTop: '-30px', paddingBottom: '6rem' }}
     >
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          gap: '30px',
-          justifyContent: 'center',
-          position: 'relative',
-          zIndex: '10'
-        }}
-      >
+      <SkillsList>
         <DecorationsLayer aria-hidden='true'>
           {decorations.map(dot => (
             <Dot
@@ -124,19 +117,25 @@ const Card = () => {
               <h3>{category.title}</h3>
               <p>{hasRating(category.title) ? 'Skill Level' : ''}</p>
             </CardHeader>
-            {category.skills.map((skill: Skill) => (
-              <SkillRow key={skill.name}>
-                <h4>{skill.name}</h4>
-                {hasRating(category.title) ? (
-                  <SkillRating name='read-only' value={skill.level} readOnly />
-                ) : (
-                  <p>{skill.level}</p>
-                )}
-              </SkillRow>
-            ))}
+            <SkillsGrid>
+              {category.skills.map((skill: Skill) => (
+                <SkillRow key={skill.name}>
+                  <h4>{skill.name}</h4>
+                  {hasRating(category.title) ? (
+                    <SkillRating
+                      name='read-only'
+                      value={skill.level}
+                      readOnly
+                    />
+                  ) : (
+                    <p>{skill.level}</p>
+                  )}
+                </SkillRow>
+              ))}
+            </SkillsGrid>
           </CardStyled>
         ))}
-      </Grid>
+      </SkillsList>
     </Container>
   )
 }
