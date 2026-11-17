@@ -144,6 +144,26 @@ npm run firebase:deploy:functions
 O hook de pré-commit (`.husky/pre-commit`) roda `lint-staged` (eslint --fix +
 prettier nos arquivos staged) e `npm run typecheck` antes de cada commit.
 
+## 🔍 SEO e compartilhamento
+
+- **Endereço público em um lugar só**: `VITE_SITE_URL` (default
+  `https://erik-efl.github.io/Portifolio`). O build injeta esse valor em
+  `canonical`, `og:url` e `og:image` (todos precisam ser absolutos) pelo plugin
+  `site-url` do `vite.config.js`. Trocar de domínio = mudar a variável.
+- **`public/og-image.png`** é o card 1200×630 do Open Graph. Regera com
+  `node scripts/make-og-image.cjs` (usa Playwright para renderizar o HTML do
+  card com a foto de `src/assets/Image/perfil.webp`).
+- `og:image` em `.ico` ou caminho relativo é ignorado por WhatsApp/LinkedIn —
+  por isso o card é PNG absoluto, com `og:image:width/height/alt`.
+- **GitHub Pages em subpasta**: `VITE_BASE_PATH=/Portifolio/` no build do CI e
+  `basename` do router tirado de `import.meta.env.BASE_URL`, senão
+  `/Portifolio/about` cai no `errorElement`. Com domínio próprio, apague
+  `VITE_BASE_PATH`.
+- O CI copia `dist/index.html` para `dist/404.html`: sem isso, abrir
+  `/Portifolio/about` direto devolve o 404 do GitHub (o app nunca carrega).
+- `robots.txt` só é lido na **raiz do domínio**: em `usuario.github.io/projeto`
+  ele é ignorado pelo crawler. Para um domínio próprio, coloque em `public/`.
+
 ## 🎨 Tema e breakpoints
 
 - As cores saem de tokens semânticos (`theme.semantic.surface`,

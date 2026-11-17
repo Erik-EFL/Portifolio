@@ -42,7 +42,17 @@ jobs:
           if-no-files-found: ignore
 
       - name: Build project
+        env:
+          # Projeto do GitHub Pages vive em /Portifolio/. Ao usar domínio próprio,
+          # apague esta variável (e ajuste VITE_SITE_URL).
+          VITE_BASE_PATH: /Portifolio/
         run: npm run build
+
+      # GitHub Pages devolve 404 para /about, /skills e /projects quando a URL é
+      # aberta direto. Servir o index como 404.html entrega o app e preserva o
+      # link para quem chega de fora (e para o crawler).
+      - name: Fallback de rotas (SPA)
+        run: cp dist/index.html dist/404.html
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4

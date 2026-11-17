@@ -22,39 +22,45 @@ const Projects = lazy(() => import('./pages/Projects/Projects'))
 const Skills = lazy(() => import('./pages/Skills/Skills'))
 const AdminPage = lazy(() => import('./pages/Admin/Admin'))
 
-const router = createBrowserRouter([
-  {
-    element: <RootLayout />,
-    errorElement: <ErrorScreen />,
-    children: [
-      {
-        path: '/',
-        element: <Home />
-      },
-      {
-        path: '/about',
-        element: <About />
-      },
-      {
-        path: '/projects',
-        element: <Projects />
-      },
-      {
-        path: '/skills',
-        element: <Skills />
-      },
-      {
-        path: '/contacts',
-        element: <ErrorScreen />
-      }
-    ]
-  },
-  {
-    path: '/admin',
-    element: <AdminPage />,
-    errorElement: <ErrorScreen />
-  }
-])
+const router = createBrowserRouter(
+  [
+    {
+      element: <RootLayout />,
+      errorElement: <ErrorScreen />,
+      children: [
+        {
+          path: '/',
+          element: <Home />
+        },
+        {
+          path: '/about',
+          element: <About />
+        },
+        {
+          path: '/projects',
+          element: <Projects />
+        },
+        {
+          path: '/skills',
+          element: <Skills />
+        },
+        {
+          path: '/contacts',
+          element: <ErrorScreen />
+        }
+      ]
+    },
+    {
+      path: '/admin',
+      element: <AdminPage />,
+      errorElement: <ErrorScreen />
+    }
+  ],
+  // No GitHub Pages o site vive em /Portifolio/: sem o basename o router não
+  // reconhece "/Portifolio/about" e cai no errorElement. BASE_URL é '/' quando
+  // o site está na raiz do domínio.
+  { basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/' }
+)
 
 function RootLayout() {
   const { switchTheme } = useTheme()

@@ -1,34 +1,68 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/image-512x512.ico" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/image-512x512.ico" />
-    <link rel="mask-icon" href="/image-512x512.ico" color="#1E1E1F" />
-    <link rel="shortcut icon" href="/image-512x512.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Erik-FL</title>
+    <!--
+      O endereço público vem de VITE_SITE_URL e é injetado aqui no build pelo
+      plugin `site-url` (vite.config.js). canonical, og:url e og:image precisam
+      ser absolutos — trocar de domínio é mudar uma variável só.
+    -->
+    <title>Erik Ferreira Lima | Desenvolvedor Full Stack JavaScript</title>
     <meta
       name="description"
-      content="Erik Ferreira Lima desenvolvedor full stack javascript, trabalha com React.js e React Native, node.js, typescript"
+      content="Portfólio de Erik Ferreira Lima, desenvolvedor full stack JavaScript: projetos em React, React Native, Node.js e TypeScript, habilidades e contato."
     />
-    <meta name="author" content="Erik-FL" />
-    <meta name="keywords" content="Erik-FL, desenvolvedor, full stack, javascript, react, node, express, mongodb, React.js, React Native, node.js, typescript, Erik, Erik Ferreira, Erik Ferreira Lima, Erik Lima, programador" />
-    <meta name="robots" content="index, follow" />
-    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="%SITE_URL%/" />
+    <meta name="author" content="Erik Ferreira Lima" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
 
-    <!-- Open Graph: `meta name="title"` não existe; o título social é og:title -->
+    <!-- Open Graph (WhatsApp, LinkedIn, Facebook) -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Erik-FL" />
+    <meta property="og:site_name" content="Erik Ferreira Lima" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta
+      property="og:title"
+      content="Erik Ferreira Lima | Desenvolvedor Full Stack JavaScript"
+    />
     <meta
       property="og:description"
-      content="Desenvolvedor full stack JavaScript: React, React Native, Node.js e TypeScript."
+      content="Portfólio de Erik Ferreira Lima, desenvolvedor full stack JavaScript: projetos em React, React Native, Node.js e TypeScript, habilidades e contato."
     />
-    <meta property="og:image" content="/image-512x512.ico" />
-    <meta property="og:locale" content="pt_BR" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Card com o nome Erik Ferreira Lima, desenvolvedor full stack, e a stack React, React Native, Node.js e TypeScript"
+    />
+
+    <!-- Twitter/X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Erik Ferreira Lima | Desenvolvedor Full Stack JavaScript"
+    />
+    <meta
+      name="twitter:description"
+      content="Portfólio de Erik Ferreira Lima, desenvolvedor full stack JavaScript: React, React Native, Node.js e TypeScript."
+    />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="Card com o nome Erik Ferreira Lima, desenvolvedor full stack"
+    />
+
+    <!-- %BASE_URL% mantém os ícones certos tanto na raiz do domínio quanto
+         na subpasta do GitHub Pages -->
+    <link rel="manifest" href="%BASE_URL%manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%image-512x512.svg" />
+    <link rel="shortcut icon" href="%BASE_URL%image-512x512.ico" />
+    <link rel="apple-touch-icon" href="%BASE_URL%image-192x192.png" />
 
     <!-- Evita flash de tema errado antes do JS aplicar data-theme -->
     <meta name="color-scheme" content="light dark" />
@@ -41,7 +75,7 @@
     <meta name="apple-mobile-web-app-title" content="Erik-FL" />
     <meta name="application-name" content="Erik-FL" />
     <meta name="msapplication-TileColor" content="#1E1E1F" />
-    <meta name="msapplication-TileImage" content="/image-512x512.svg" />
+    <meta name="msapplication-TileImage" content="%BASE_URL%image-512x512.png" />
   </head>
   <body>
     <div id="root"></div>
