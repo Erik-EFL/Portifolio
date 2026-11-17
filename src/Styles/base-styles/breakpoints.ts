@@ -1,4 +1,4 @@
-import { BreakpointsSizes } from '@/@types/design-system/break-boints'
+import { BreakpointsSizes } from '@/@types/design-system/breakpoints'
 import { RuleSet, css } from 'styled-components'
 
 export const breakpoints = {

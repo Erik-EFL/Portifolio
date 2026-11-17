@@ -1,63 +1,21 @@
 import { useLanguage } from '@/store/language.store'
-import { useTheme } from '@/context/theme.context'
-import { Box, Grid, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Grid, Typography } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
+import { AboutLink, BadgeDot, BadgeText, BadgeWrapper } from './Content.style'
 
 const Content = () => {
   const { data, language, isLoading } = useLanguage()
-  const { theme } = useTheme()
 
   const { home } = data
 
-  // Texto do badge laranja: escuro nos dois temas (o fundo é o accent).
-  const circleColor = theme.semantic.onAccent
-
   return (
-    <Grid
-      sx={{
-        margin: 'auto'
-      }}
-      item
-      xs={12}
-      sm={6}
-      md={6}
-      lg={6}
-    >
-      <Box sx={{ position: 'relative', marginBottom: '-10px' }}>
+    <Grid item xs={12} sm={6} md={6} lg={6} sx={{ margin: 'auto' }}>
+      <BadgeWrapper>
         <span>
-          <Typography
-            component='span'
-            sx={{
-              position: 'relative',
-              zIndex: '10',
-              fontFamily: 'Montserrat',
-              color: circleColor,
-              backgroundColor: 'transparent',
-              fontWeight: '800',
-              fontSize: '1.2rem',
-              lineHeight: '1.2rem',
-              marginRight: '5px'
-            }}
-          >
-            {home.circle}
-          </Typography>{' '}
-          {home.name}
+          <BadgeText>{home.circle}</BadgeText> {home.name}
         </span>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '-10px',
-            left: '-27px',
-            width: '40px',
-            height: '40px',
-            borderRadius: '100%',
-            backgroundColor: '#F1A208',
-            marginLeft: '20px',
-            zIndex: '-1'
-          }}
-        />
-      </Box>
+        <BadgeDot />
+      </BadgeWrapper>
       {isLoading ? null : (
         <TypeAnimation
           key={`${language}-${home.title}`}
@@ -67,37 +25,23 @@ const Content = () => {
         />
       )}
       <Grid
+        item
         xs={12}
         sm={12}
         md={11}
         lg={11}
-        sx={{
-          position: 'relative',
-          marginTop: '-20px'
-        }}
+        sx={{ position: 'relative', marginTop: '-20px' }}
       >
         <Typography component='p'>
-          {home.description.map((item: string, index: number) => {
-            return (
-              <span key={index}>
-                <br />
-                {item}
-              </span>
-            )
-          })}
-          <Link
-            className='homeLink'
-            to='/about'
-            aria-label='About me page'
-            style={{
-              color: '#F1A208',
-              marginLeft: '5px',
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}
-          >
+          {home.description.map((line: string, index: number) => (
+            <span key={`${index}-${line}`}>
+              <br />
+              {line}
+            </span>
+          ))}
+          <AboutLink to='/about' aria-label='Sobre mim'>
             {home.link}
-          </Link>
+          </AboutLink>
         </Typography>
       </Grid>
     </Grid>

@@ -8,7 +8,7 @@ import type {
   Skill,
   SkillCategory,
   TLanguage
-} from '@/@types/data-tipe.entity'
+} from '@/@types/portfolio.entity'
 import aboutData from '@/constant/Data/About.data'
 import staticData from '@/constant/Data/data.json'
 import { isRecord } from '@/utils/is-record'

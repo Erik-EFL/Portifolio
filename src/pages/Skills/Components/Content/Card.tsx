@@ -1,8 +1,28 @@
 import { SkillsSkeleton } from '@/components/Skeleton'
-import { Box, Container, Grid, Rating } from '@mui/material'
-import { CardStyled } from './Card.styled'
-import { Skill, SkillCategory } from '../../../../@types/data-tipe.entity'
+import { Container, Grid } from '@mui/material'
+import {
+  CardHeader,
+  CardStyled,
+  Decoration,
+  SkillRating,
+  SkillRow
+} from './Card.styled'
+import { Skill, SkillCategory } from '@/@types/portfolio.entity'
 import { useLanguage } from '@/store/language.store'
+
+/**
+ * Categorias que mostram o nível como texto em vez de estrelas.
+ * Centralizado aqui para não repetir a comparação de título (que é texto
+ * traduzido) em cada linha do JSX.
+ */
+const CATEGORIES_WITHOUT_RATING = new Set([
+  'Languages',
+  'Others',
+  'Soft Skills'
+])
+
+const hasRating = (categoryTitle: string): boolean =>
+  !CATEGORIES_WITHOUT_RATING.has(categoryTitle)
 
 const Card = () => {
   const { data, isLoading } = useLanguage()
@@ -14,18 +34,12 @@ const Card = () => {
   return (
     <Container
       component='main'
-      sx={{
-        maxWidth: '900px',
-        marginTop: '-30px'
-      }}
+      maxWidth={false}
+      sx={{ maxWidth: '900px', marginTop: '-30px' }}
     >
       <Grid
         container
         spacing={2}
-        xs={14}
-        sm={12}
-        md={12}
-        lg={12}
         sx={{
           gap: '30px',
           justifyContent: 'center',
@@ -33,88 +47,27 @@ const Card = () => {
           zIndex: '10'
         }}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '-20px',
-            left: '60px',
-            width: '50px',
-            height: '50px',
-            borderRadius: '100%',
-            backgroundColor: '#ffd001bd',
-            marginLeft: '20px',
-            zIndex: '-1'
-          }}
-        />
-        {skillsDetails?.map((item: SkillCategory, index: number) => (
-          <CardStyled key={index}>
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: '-10px',
-                right: '90px',
-                width: '50px',
-                height: '50px',
-                borderRadius: '100%',
-                backgroundColor: '#ffd001bd',
-                marginLeft: '20px',
-                zIndex: '-1'
-              }}
-            />
-            <div className='card-header'>
-              <h3>{item.title}</h3>
-              {item.title === 'Languages' ||
-              item.title === 'Others' ||
-              item.title === 'Soft Skills' ? (
-                <p></p>
-              ) : (
-                <p>Skill Level</p>
-              )}
-            </div>
-            {item.skills.map((skill: Skill, index: number) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  alignContent: 'center'
-                }}
-              >
+        <Decoration $top='-20px' $left='60px' />
+        {skillsDetails?.map((category: SkillCategory) => (
+          <CardStyled key={category.title}>
+            <Decoration $bottom='-10px' $right='90px' />
+            <CardHeader>
+              <h3>{category.title}</h3>
+              <p>{hasRating(category.title) ? 'Skill Level' : ''}</p>
+            </CardHeader>
+            {category.skills.map((skill: Skill) => (
+              <SkillRow key={skill.name}>
                 <h4>{skill.name}</h4>
-                {item.title === 'Languages' ||
-                item.title === 'Others' ||
-                item.title === 'Soft Skills' ? (
-                  <p>{skill.level}</p>
+                {hasRating(category.title) ? (
+                  <SkillRating name='read-only' value={skill.level} readOnly />
                 ) : (
-                  <Rating
-                    name='read-only'
-                    value={skill.level}
-                    readOnly
-                    sx={{
-                      color: '#ffd001bd',
-                      marginTop: '16px'
-                    }}
-                  />
+                  <p>{skill.level}</p>
                 )}
-              </div>
+              </SkillRow>
             ))}
           </CardStyled>
         ))}
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: '-10px',
-            right: '90px',
-            width: '50px',
-            height: '50px',
-            borderRadius: '100%',
-            backgroundColor: '#ffd001bd',
-            marginLeft: '20px',
-            zIndex: '-1'
-          }}
-        />
+        <Decoration $bottom='-10px' $right='90px' />
       </Grid>
     </Container>
   )

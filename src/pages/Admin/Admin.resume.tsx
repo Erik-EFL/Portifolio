@@ -6,7 +6,7 @@ import {
   RESUME_AVAILABILITY_QUERY_KEY,
   uploadResume
 } from '@/services/admin-api.service'
-import type { TLanguage } from '@/@types/data-tipe.entity'
+import type { TLanguage } from '@/@types/portfolio.entity'
 import styles from './Admin.module.css'
 import { ICONS, Icon } from './Admin.icons'
 

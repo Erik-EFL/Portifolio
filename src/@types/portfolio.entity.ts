@@ -49,17 +49,3 @@ export interface IData {
   skills: LocalizedSection<SkillCategory>[]
   skillsDetails: LocalizedSection<SkillCategory>[]
 }
-
-/**
- * Dados já resolvidos para o idioma atual.
- * Montado pela store de idioma (src/store/language.store.ts) via services.
- */
-export interface MyObject {
-  navigation: NavigationLink[]
-  footer: NavigationLink[]
-  footerCopyright: FooterItem[]
-  about: string[]
-  home: HomeContent
-  skills: SkillCategory[]
-  skillsDetails: SkillCategory[]
-}

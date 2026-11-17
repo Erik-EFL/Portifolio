@@ -8,7 +8,7 @@ import {
   SkillCategory,
   FooterItem,
   LocalizedSection
-} from './data-tipe.entity'
+} from './portfolio.entity'
 
 declare const home: LocalizedSection<HomeContent>[]
 declare const about: LocalizedSection<AboutContent>[]

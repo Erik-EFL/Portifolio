@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { create } from 'zustand'
 import { useQuery } from '@tanstack/react-query'
-import { TLanguage } from '@/@types/data-tipe.entity'
+import { TLanguage } from '@/@types/portfolio.entity'
 import { getRows, PORTFOLIO_ROWS_QUERY_KEY } from '@/services/admin-api.service'
 import {
   getLocalizedPortfolioData,

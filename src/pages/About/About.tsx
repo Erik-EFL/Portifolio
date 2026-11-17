@@ -9,7 +9,7 @@ import {
   RESUME_AVAILABILITY_QUERY_KEY
 } from '@/services/admin-api.service'
 import { useState } from 'react'
-import type { TLanguage } from '@/@types/data-tipe.entity'
+import type { TLanguage } from '@/@types/portfolio.entity'
 import Text from './components/Text/Text'
 import Video from './components/Video/Video'
 

@@ -6,7 +6,7 @@ import {
   createSectionDocument
 } from '@/services/portfolio-data.service'
 import { isRecord } from '@/utils/is-record'
-import type { IData } from '@/@types/data-tipe.entity'
+import type { IData } from '@/@types/portfolio.entity'
 import styles from './Admin.module.css'
 import { SECTION_FORM_ID, getEditorValidation } from './Admin.utils'
 import { ICONS, Icon } from './Admin.icons'

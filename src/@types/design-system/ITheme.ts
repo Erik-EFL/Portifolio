@@ -1,6 +1,6 @@
 import { RuleSet } from 'styled-components'
 
-import { BreakpointsSizes, BreakpointsType } from './break-boints'
+import { BreakpointsSizes, BreakpointsType } from './breakpoints'
 import { ColorPaletteInterface } from './colors'
 import { TypographyType } from './typography'
 

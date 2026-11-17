@@ -7,7 +7,7 @@ import {
   parseDataRows,
   parseDataRow
 } from '@/services/portfolio-data.service'
-import type { TLanguage } from '@/@types/data-tipe.entity'
+import type { TLanguage } from '@/@types/portfolio.entity'
 
 export class AdminApiError extends Error {
   readonly status: number
