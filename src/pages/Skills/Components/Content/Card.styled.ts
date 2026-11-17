@@ -8,6 +8,8 @@ import styled from 'styled-components'
 const DECORATION = '#ffd001bd'
 
 export const CardStyled = styled(Grid)`
+  position: relative;
+  z-index: 1;
   width: 280px;
   padding: 20px;
   line-height: 15px;
@@ -16,7 +18,7 @@ export const CardStyled = styled(Grid)`
   display: inline-block;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   backdrop-filter: blur(10px);
-  background: transparent;
+  background-color: ${({ theme }) => theme.semantic.surfaceElevated};
 
   h4 {
     margin-bottom: 0;
@@ -46,26 +48,31 @@ export const SkillRow = styled.div`
   align-items: center;
 `
 
-interface IDecorationProps {
-  $top?: string
-  $bottom?: string
-  $left?: string
-  $right?: string
+/** Camada decorativa atrás dos cards (posições sorteadas no componente). */
+export const DecorationsLayer = styled.div`
+  position: absolute;
+  inset: -28px 0;
+  z-index: 0;
+  /* corta o que passa nas laterais (sem criar scroll horizontal) e deixa as
+     bolinhas de topo/base aparecerem porque a camada é mais alta que o grid */
+  overflow: hidden;
+  pointer-events: none;
+`
+
+interface IDotProps {
+  $top: string
+  $left: string
+  $size: number
 }
 
-/** Um único círculo decorativo, posicionado por props (eram 3 `Box` copiados). */
-export const Decoration = styled.div<IDecorationProps>`
+export const Dot = styled.span<IDotProps>`
   position: absolute;
-  width: 50px;
-  height: 50px;
+  top: ${({ $top }) => $top};
+  left: ${({ $left }) => $left};
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
   border-radius: 100%;
   background-color: ${DECORATION};
-  margin-left: 20px;
-  z-index: -1;
-  ${({ $top }) => $top && `top: ${$top};`}
-  ${({ $bottom }) => $bottom && `bottom: ${$bottom};`}
-  ${({ $left }) => $left && `left: ${$left};`}
-  ${({ $right }) => $right && `right: ${$right};`}
 `
 
 export const SkillRating = styled(Rating)`

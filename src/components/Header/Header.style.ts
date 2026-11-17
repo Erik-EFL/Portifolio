@@ -41,6 +41,15 @@ const HeaderStyled = styled.header`
 
   @media (min-width: 320px) and (max-width: 640.2px) {
     width: 100%;
+    /* 50px de padding em tela de 390px empurrava o header para fora */
+    padding: 0 14px;
+
+    .header-internal {
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-width: 0;
+    }
 
     .icon-social-media {
       display: flex;

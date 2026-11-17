@@ -2,6 +2,7 @@ import { CssBaseline } from '@mui/material'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { SrOnly } from '@/components/Skeleton'
+import NavMobile from '@/components/Mobile/Navegação.mobile'
 import { GlobalStyle } from '@/Styles/global-style'
 import Footer from './components/Footer/Footer'
 import Header from './components/Header/Header'
@@ -70,6 +71,7 @@ function RootLayout() {
         </p>
       )}
       <Outlet />
+      <NavMobile />
       <Footer toggleTheme={switchTheme} />
     </>
   )

@@ -9,6 +9,12 @@ const NavMenu = styled.nav`
   gap: 10px;
   width: 65vw;
 
+  /* No mobile a navegação é a barra inferior (components/Mobile); o menu do
+     header fica sem links e roubava 65vw, empurrando o layout. */
+  @media (max-width: 640.2px) {
+    display: none;
+  }
+
   @media (min-width: 840px) and (max-width: 1080px) {
     .completeMenu {
       margin-right: 50px;
