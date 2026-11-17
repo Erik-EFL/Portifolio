@@ -15,3 +15,4 @@ export {
   ProjectsSkeleton,
   SkillsSkeleton
 } from './PageSkeletons'
+export { PageFallback } from './PageFallback'

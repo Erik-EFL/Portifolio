@@ -45,6 +45,15 @@ const NavMenu = styled.nav`
     color: ${({ theme }) => theme.semantic.text};
   }
 
+  /* Botão de tema: mesmo visual dos links, mas é <button> (sem navegação). */
+  .mobileThemeButton {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
   @media (max-width: 640.2px) {
     display: flex;
   }

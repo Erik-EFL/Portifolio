@@ -39,9 +39,7 @@ const Content = () => {
               {line}
             </span>
           ))}
-          <AboutLink to='/about' aria-label='Sobre mim'>
-            {home.link}
-          </AboutLink>
+          <AboutLink to='/about'>{home.link}</AboutLink>
         </Typography>
       </Grid>
     </Grid>

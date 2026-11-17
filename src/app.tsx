@@ -1,19 +1,26 @@
+import { lazy, Suspense } from 'react'
 import { CssBaseline } from '@mui/material'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
-import { SrOnly } from '@/components/Skeleton'
+import { PageFallback, SrOnly } from '@/components/Skeleton'
 import NavMobile from '@/components/Mobile/Navegação.mobile'
 import { GlobalStyle } from '@/Styles/global-style'
 import Footer from './components/Footer/Footer'
 import Header from './components/Header/Header'
 import { useTheme } from './context/theme.context'
-import About from './pages/About/About'
-import AdminPage from './pages/Admin/Admin'
 import ErrorScreen from './pages/error-page/index'
-import Home from './pages/Home/Home'
-import Projects from './pages/Projects/Projects'
-import Skills from './pages/Skills/Skills'
 import { useLanguage } from './store/language.store'
+
+/**
+ * Uma rota por chunk: sem isso o build saía num único arquivo de 1.1 MB que
+ * todo visitante baixava inteiro antes de ver a home — inclusive o Admin, que
+ * é a página mais pesada e a menos acessada.
+ */
+const Home = lazy(() => import('./pages/Home/Home'))
+const About = lazy(() => import('./pages/About/About'))
+const Projects = lazy(() => import('./pages/Projects/Projects'))
+const Skills = lazy(() => import('./pages/Skills/Skills'))
+const AdminPage = lazy(() => import('./pages/Admin/Admin'))
 
 const router = createBrowserRouter([
   {
@@ -70,7 +77,9 @@ function RootLayout() {
           </button>
         </p>
       )}
-      <Outlet />
+      <Suspense fallback={<PageFallback />}>
+        <Outlet />
+      </Suspense>
       <NavMobile />
       <Footer toggleTheme={switchTheme} />
     </>
@@ -84,7 +93,9 @@ export function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <GlobalStyle />
-      <RouterProvider router={router} />
+      <Suspense fallback={<PageFallback />}>
+        <RouterProvider router={router} />
+      </Suspense>
     </ThemeProvider>
   )
 }

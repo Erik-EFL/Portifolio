@@ -14,25 +14,24 @@ O projeto foi desenvolvido com o intuito de mostrar meus projetos e habilidades.
   <summary>Sobre o desenvolvimento</summary>
   <br />
 
-  Para o desenvolvimento do projeto, utilizei o framework ReactJS, com o objetivo de praticar e aprender mais sobre a biblioteca. O projeto foi desenvolvido com o intuito de mostrar meus projetos e habilidades, além de ser um portfólio pessoal.
-  Além do outras bibliotecas, como o React Router Dom, para a navegação entre as páginas, e o React Icons, para a utilização de ícones, styled-components, para a estilização dos componentes entre outras bibliotecas.
+Para o desenvolvimento do projeto, utilizei o framework ReactJS, com o objetivo de praticar e aprender mais sobre a biblioteca. O projeto foi desenvolvido com o intuito de mostrar meus projetos e habilidades, além de ser um portfólio pessoal.
+Além do outras bibliotecas, como o React Router Dom, para a navegação entre as páginas, e o React Icons, para a utilização de ícones, styled-components, para a estilização dos componentes entre outras bibliotecas.
 
   <br />
 </details>
 
-
-  ### Habilidades utilizadas durante o desenvolvimento 💻
+### Habilidades utilizadas durante o desenvolvimento 💻
 
 <details>
   <summary> 🦾 Habilidades</summary>
   <br />
 
-  * Desenvolvimento de aplicações React
-  * Desenvolvimento de portfólio
-  * Desenvolvimento de aplicações responsivas
-  * Desenvolvimento de aplicações com React Hooks
-  * Desenvolvimento de aplicações com React Router
-  * Metodologia ágil(Kanban)
+- Desenvolvimento de aplicações React
+- Desenvolvimento de portfólio
+- Desenvolvimento de aplicações responsivas
+- Desenvolvimento de aplicações com React Hooks
+- Desenvolvimento de aplicações com React Router
+- Metodologia ágil(Kanban)
 
   <br />
 </details>
@@ -41,18 +40,18 @@ O projeto foi desenvolvido com o intuito de mostrar meus projetos e habilidades.
   <summary> 🖥️ Tecnologias</summary>
   <br />
 
-  * React.js
-    * Components Funcional
-    * Hooks
-    * React Router
-  * HTML5
-  * CSS3
-  * JavaScript
-  * Material-ui
-  * Styled-components
-  * Git
-  * GitHub-pages
-  * Vercel
+- React.js
+  - Components Funcional
+  - Hooks
+  - React Router
+- HTML5
+- CSS3
+- JavaScript
+- Material-ui
+- Styled-components
+- Git
+- GitHub-pages
+- Vercel
 
   <br />
 </details>
@@ -61,21 +60,111 @@ O projeto foi desenvolvido com o intuito de mostrar meus projetos e habilidades.
   <summary> 🖥️ Implementações futuras 🖥️</summary>
   <br />
 
-  * Front-end
-    * Aplicar atomic design
-    * Criar easter eggs na página
-    * Criar uma página de contato/ About me
-    * Criar area de admin para verificar informações sobre acessos e ter um controle sobre as
-      melhoras que possam ser feitas no site
-    * Aplicar testes unitários
-  * Back-end
-    * Criar uma api para armazenar os dados dos projetos
-    * Criar testes de integração
-    * Criar testes E2E
-    * Aplicar testes unitários
+- Front-end
+  - Aplicar atomic design
+  - Criar easter eggs na página
+  - ~~Criar uma página de contato/ About me~~ (feito: `/about`)
+  - ~~Criar area de admin~~ (feito: `/admin`, com login Firebase)
+  - ~~Aplicar testes unitários~~ (feito: Vitest, ver "Testes")
+- Back-end
+  - ~~Criar uma api para armazenar os dados dos projetos~~ (feito: Functions + tabela de conteúdo)
+  - Criar testes de integração
+  - ~~Criar testes E2E~~ (feito: Playwright, ver "Testes")
+  - ~~Aplicar testes unitários~~ (feito: `node --test` em `functions/`)
 
   <br />
 </details>
+
+## 🗂️ Estrutura
+
+```text
+src/
+  app.tsx                 rotas (code splitting por rota) + layout raiz
+  pages/                  Home, About, Skills, Projects, Admin, error-page
+  components/             Header, Footer, Mobile (barra inferior), Cards,
+                          Skeleton, Toggle, Input, ErrorBoundary
+  store/language.store.ts Zustand + react-query: idioma e conteúdo do portfólio
+  services/               admin-api (tabela de conteúdo), portfolio-data
+                          (merge + localização), firebase-auth
+  context/theme.context   tema claro/escuro persistido em localStorage
+  Styles/                 tokens (grayscale/goldenPalette/semantic), temas e
+                          GlobalStyle
+  constant/Data/data.json conteúdo estático usado como fallback da API
+e2e/                      testes de ponta a ponta (Playwright)
+functions/                backend Firebase (Functions + tabela do appbackend)
+```
+
+O conteúdo vem da API administrativa (`/rows`) e é mesclado **por cima** de
+`src/constant/Data/data.json`. Se a API estiver fora, o site continua de pé com
+o conteúdo estático — é o que os testes chamam de fallback. Depois de um login
+bem-sucedido em `/admin`, o painel lê e grava essas mesmas linhas.
+
+## 🧪 Testes
+
+| Comando                 | O que roda                                             |
+| ----------------------- | ------------------------------------------------------ |
+| `npm run test`          | unitários (Vitest + Testing Library, jsdom)            |
+| `npm run test:coverage` | unitários com cobertura e **piso que falha o build**   |
+| `npm run test:e2e`      | ponta a ponta (Playwright: desktop 1400×900 e Pixel 5) |
+| `npm run test:e2e:ui`   | mesma suíte com a interface do Playwright              |
+| `npm run verify`        | typecheck + lint + testes + build (o que a CI roda)    |
+
+- Os e2e sobem o build de produção (`vite build` + `vite preview` na :4173) e
+  interceptam as APIs: a do admin responde 503 (para exercitar o fallback) e a
+  do GitHub é stubbada, então nada depende de rede nem de rate limit.
+- `e2e/a11y.spec.ts` roda o axe (WCAG 2 A/AA) em todas as páginas e falha em
+  violações `serious`/`critical`. O iframe do YouTube (DOM de terceiro) fica
+  fora do scan.
+- O piso de cobertura (`vite.config.js`) é o número real medido: ~32% de
+  linhas. Módulos só de estilo (`*.style.ts`, `*.styled.ts`, `src/Styles`) não
+  entram no cálculo — não têm ramificação e são cobertos pelos e2e.
+- O backend tem seus próprios testes (`cd functions && npm test`, `node --test`).
+
+## 🔧 Scripts
+
+```sh
+npm run dev            # servidor de desenvolvimento (5173)
+npm run build          # build de produção (dist/)
+npm run preview        # serve o build (8080)
+npm run typecheck      # tsc --noEmit (inclui e2e/)
+npm run lint           # eslint, 0 warnings permitidos
+npm run lint:fix       # eslint --fix
+npm run format         # prettier
+npm run functions:build        # compila functions/
+npm run firebase:deploy:functions
+```
+
+O hook de pré-commit (`.husky/pre-commit`) roda `lint-staged` (eslint --fix +
+prettier nos arquivos staged) e `npm run typecheck` antes de cada commit.
+
+## 🎨 Tema e breakpoints
+
+- As cores saem de tokens semânticos (`theme.semantic.surface`,
+  `surfaceElevated`, `border`, `text`, `textMuted`, `accent`, `onAccent`,
+  `scrollbar`), nunca de `theme.mode === 'dark' ? ...` espalhado. Para trocar
+  uma cor, mexa em `src/Styles/base-styles/colors.ts`.
+- O tema vive em `localStorage['theme']` (`'light' | 'dark'`) e é aplicado como
+  `data-theme` no `<html>`, então o primeiro paint já sai certo.
+- Idiomas: `ptBR` e `enUS`, guardados em `localStorage['language']`. Os textos
+  vêm do conteúdo (não há i18next).
+- Breakpoints: `640.2px` é o corte do mobile (barra inferior no lugar do menu do
+  header); `900px` empilha o hero.
+
+## 🚀 CI
+
+`.github/workflows/deploy.yml` roda em push na `main` e em pull request:
+
+- **Build**: `npm ci` → typecheck → lint → `test:coverage` (piso de cobertura) →
+  build, com o `lcov` publicado como artefato.
+- **E2E**: instala o chromium e roda `npm run test:e2e`; guarda o relatório se
+  falhar.
+- **Functions**: `npm ci` + `npm test` dentro de `functions/`.
+- **Deploy**: depois de build e e2e, publica `dist/` no GitHub Pages.
+
+Os workflows `firebase-hosting-merge.yml` / `firebase-hosting-pull-request.yml`
+foram gerados pelo Firebase CLI e hoje **não têm alvo**: `firebase.json` não tem
+bloco `hosting`. Enquanto isso for verdade, eles não devem ser considerados o
+deploy oficial (o do GitHub Pages é).
 
   <br />
 
@@ -101,11 +190,12 @@ O projeto foi desenvolvido com o intuito de mostrar meus projetos e habilidades.
 
 ## ⚙️ Status do Projeto 🛠️
 
-  ```js
-    let projeto {
-      "status": "Em desenvolvimento"
-    }
-  ```
+```js
+  let projeto {
+    "status": "Em desenvolvimento"
+  }
+```
+
 ##
 
 ## Firebase Functions: configuração local e deploy
@@ -149,7 +239,6 @@ A tabela guarda uma linha por seção, com as colunas `key` (nome da seção) e 
 - Leituras passam por CDN: toda requisição de leitura leva um `_=<timestamp>` para não servir conteúdo velho depois de salvar ou excluir.
 - Escritas são eventualmente consistentes: a linha criada volta no POST, e o painel usa essa resposta para atualizar o cache (senão um segundo "Salvar" criaria duplicata). Exclusões somem da listagem em alguns segundos — confirme pelo `GET /v1/rows/{tabela}/{_id}`, que responde 400 `Not found` quando a linha já saiu.
 
-
 Sem esse arquivo a Function responde `503 CORS_NOT_CONFIGURED` e o navegador mostra apenas `Failed to fetch`, porque nenhuma resposta com erro de configuração passa pelo CORS.
 
 ### Desenvolvimento e deploy
@@ -192,9 +281,9 @@ npm run firebase:deploy:functions
 
 O deploy executa o build configurado em `functions/package.json`. Para validar o frontend, use os scripts existentes `npm run dev`, `npm run build` e `npm run preview`.
 
-O projeto não configura Firebase Hosting nem pressupõe um provedor de deploy. Em hospedagem estática, configure a URL pública exata da Function no frontend (por exemplo, `VITE_FUNCTIONS_BASE_URL`) e inclua a origem final do site, exatamente, em `CORS_ALLOWED_ORIGINS`. Repita isso para cada domínio/ambiente; não use curingas. Consulte o Firebase Console ou `firebase functions:list --project <project-id>` para obter a URL realmente publicada.
+O frontend é publicado no GitHub Pages pelo `deploy.yml`; o Firebase Hosting não está configurado em `firebase.json`. Em qualquer hospedagem estática, configure a URL pública exata da Function no frontend e inclua a origem final do site, exatamente, em `CORS_ALLOWED_ORIGINS`. Repita isso para cada domínio/ambiente; não use curingas. Consulte o Firebase Console ou `firebase functions:list --project <project-id>` para obter a URL realmente publicada.
 
-Execute `npm run typecheck` para verificar os tipos do projeto; `tsconfig.json` usa `module: ESNext` com `moduleResolution: bundler`, compatíveis com Vite.
+`tsconfig.json` usa `module: ESNext` com `moduleResolution: bundler`, compatíveis com Vite.
 
 ### ©️ Aviso de direitos autorais
 

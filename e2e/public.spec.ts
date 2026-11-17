@@ -13,7 +13,9 @@ test.describe('página inicial', () => {
       page.getByRole('img', { name: 'imagem de Erik lima' })
     ).toBeVisible()
     await expect(page.getByText('Erik Ferreira Lima').first()).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Sobre mim' })).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: /sobre o desenvolvedor/i })
+    ).toBeVisible()
   })
 
   test('não deixa a página presa no skeleton quando a API está fora', async ({
@@ -87,7 +89,7 @@ test.describe('navegação', () => {
     await expect(page).toHaveURL(/\/skills$/)
     await expect(page.getByRole('heading', { name: 'Front-end' })).toBeVisible()
 
-    await page.getByRole('link', { name: 'Sobre' }).click()
+    await page.getByRole('link', { name: 'Sobre', exact: true }).click()
     await expect(page).toHaveURL(/\/about$/)
   })
 })

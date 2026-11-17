@@ -25,11 +25,9 @@ function ToggleTheme({ number, toggleTheme }: IToggleThemeProps) {
         checked={themeMode === 'dark'}
         ariaLabel={'check-box-change-Theme-color'}
       />
-      <label
-        className='label'
-        htmlFor={`change-Theme-color-${number}`}
-        aria-label='Change Theme Color'
-      >
+      {/* sem aria-label aqui: em <label> o nome acessível vem do conteúdo
+          (o input ao lado é quem carrega o rótulo) */}
+      <label className='label' htmlFor={`change-Theme-color-${number}`}>
         <FontAwesomeIcon className='fa-moon' icon={faMoon} />
         <FontAwesomeIcon className='fa-sun' icon={faSun} />
         <div className='ball' />

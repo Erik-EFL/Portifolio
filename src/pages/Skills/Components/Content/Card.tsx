@@ -15,18 +15,13 @@ import { Skill, SkillCategory } from '@/@types/portfolio.entity'
 import { useLanguage } from '@/store/language.store'
 
 /**
- * Categorias que mostram o nível como texto em vez de estrelas.
- * Centralizado aqui para não repetir a comparação de título (que é texto
- * traduzido) em cada linha do JSX.
+ * Só quem tem `level` numérico ganha estrelas. O critério anterior era comparar
+ * o título da categoria com uma lista fixa em inglês ("Languages", "Others") —
+ * nunca batia com o dado real ("Idiomas", "Outras habilidades") e sobravam
+ * fileiras de estrelas vazias nas categorias sem nota.
  */
-const CATEGORIES_WITHOUT_RATING = new Set([
-  'Languages',
-  'Others',
-  'Soft Skills'
-])
-
-const hasRating = (categoryTitle: string): boolean =>
-  !CATEGORIES_WITHOUT_RATING.has(categoryTitle)
+const hasNumericLevel = (skill: Skill): boolean =>
+  typeof skill.level === 'number'
 
 /** Quantidade de bolinhas decorativas por lado. */
 const DOTS_PER_SIDE = 3
@@ -44,8 +39,8 @@ const randomInt = (min: number, max: number): number =>
 /**
  * Sorteia as bolinhas uma vez por montagem (useMemo de deps vazia). Os cards
  * ficam um embaixo do outro ocupando toda a largura, então as posições se
- * concentram nas margens/beiradas: no meio elas ficariam inteiramente atrás do
- * vidro (aparecem só como um brilho desfocado, que é o efeito desejado).
+ * concentram nas margens/beiradas: no meio elas apareceriam só como um brilho
+ * desfocado atrás do vidro.
  */
 const useRandomDecorations = (): IDecoration[] =>
   useMemo(() => {
@@ -101,7 +96,7 @@ const Card = () => {
       sx={{ maxWidth: '900px', marginTop: '-30px', paddingBottom: '6rem' }}
     >
       <SkillsList>
-        <DecorationsLayer aria-hidden='true'>
+        <DecorationsLayer aria-hidden='true' data-testid='skills-decorations'>
           {decorations.map(dot => (
             <Dot
               key={dot.id}
@@ -112,24 +107,24 @@ const Card = () => {
           ))}
         </DecorationsLayer>
         {skillsDetails?.map((category: SkillCategory) => (
-          <CardStyled key={category.title}>
+          <CardStyled key={category.title} aria-label={category.title}>
             <CardHeader>
               <h3>{category.title}</h3>
-              <p>{hasRating(category.title) ? 'Skill Level' : ''}</p>
+              <p>
+                {category.skills.some(hasNumericLevel) ? 'Skill Level' : ''}
+              </p>
             </CardHeader>
             <SkillsGrid>
               {category.skills.map((skill: Skill) => (
                 <SkillRow key={skill.name}>
                   <h4>{skill.name}</h4>
-                  {hasRating(category.title) ? (
+                  {hasNumericLevel(skill) ? (
                     <SkillRating
                       name='read-only'
                       value={skill.level}
                       readOnly
                     />
-                  ) : (
-                    <p>{skill.level}</p>
-                  )}
+                  ) : null}
                 </SkillRow>
               ))}
             </SkillsGrid>

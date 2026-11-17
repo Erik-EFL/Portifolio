@@ -42,7 +42,9 @@ export const BadgeDot = styled.span`
 `
 
 export const AboutLink = styled(Link)`
-  color: ${BRAND};
+  /* #F1A208 sobre o fundo claro dá contraste 2:1 (ilegível); o token accent é
+     o mesmo ouro na versão acessível de cada tema. */
+  color: ${({ theme }) => theme.semantic.accent};
   margin-left: 5px;
   font-weight: bold;
   cursor: pointer;
