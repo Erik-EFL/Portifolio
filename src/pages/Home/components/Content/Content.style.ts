@@ -33,8 +33,8 @@ export const BadgeDot = styled.span`
   position: absolute;
   top: -10px;
   left: -27px;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 42px;
   border-radius: 100%;
   background-color: ${BRAND};
   margin-left: 20px;
