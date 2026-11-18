@@ -25,6 +25,7 @@ import {
 } from './Admin.utils'
 import { ICONS, Icon, SECTION_ICONS } from './Admin.icons'
 import { SectionEditor } from './Admin.section-editor'
+import { RedundancyPanel } from './Admin.redundancy'
 import { ResumeUploader } from './Admin.resume'
 import { AnalyticsPanel } from './Admin.analytics'
 
@@ -428,6 +429,8 @@ export const AdminConsole = () => {
                   />
                 </div>
               </section>
+
+              <RedundancyPanel />
 
               <SectionEditor
                 key={`${activeKey}:${

@@ -145,6 +145,7 @@ npm run lint:fix       # eslint --fix
 npm run format         # prettier
 npm run functions:build        # compila functions/
 npm run firebase:deploy:functions
+npm run supabase:sync          # espelha o conteúdo no Supabase (--dry-run, --prune)
 ```
 
 O hook de pré-commit (`.husky/pre-commit`) roda `lint-staged` (eslint --fix +
@@ -313,6 +314,31 @@ A tabela guarda uma linha por seção, com as colunas `key` (nome da seção) e 
 - Escritas são eventualmente consistentes: a linha criada volta no POST, e o painel usa essa resposta para atualizar o cache (senão um segundo "Salvar" criaria duplicata). Exclusões somem da listagem em alguns segundos — confirme pelo `GET /v1/rows/{tabela}/{_id}`, que responde 400 `Not found` quando a linha já saiu.
 
 Sem esse arquivo a Function responde `503 CORS_NOT_CONFIGURED` e o navegador mostra apenas `Failed to fetch`, porque nenhuma resposta com erro de configuração passa pelo CORS.
+
+### Redundância no Supabase (conteúdo e currículos)
+
+O appbackend.io é a fonte primária do conteúdo e o Firebase Storage guarda os PDFs. O Supabase entra como **cópia**, não como segunda fonte de verdade:
+
+- toda escrita de conteúdo (`POST`/`PUT`/`DELETE` em `/api/rows`) é replicada na tabela `public.content_rows` (uma linha por seção, `id` = `_id` do appbackend);
+- `GET /api/rows` e `GET /api/rows/:id` caem no espelho quando o appbackend responde 5xx/timeout, com o header `X-Content-Source: supabase`. Um 404 ou 409 da fonte primária **não** cai no espelho: são respostas legítimas, e trocá-las por uma cópia velha esconderia o problema;
+- cada upload de currículo é copiado para o bucket privado `resumes` do Supabase Storage, e `/api/resumes/:idioma` serve a cópia quando o Firebase Storage está fora;
+- falha do espelho é registrada no log e não derruba a resposta: o conteúdo já está salvo na fonte primária e o script de sincronização reconcilia depois.
+
+Nada disso existe sem as duas secrets no servidor (`SUPABASE_URL` e `SUPABASE_SECRET_KEY`) — use a chave **secreta** do projeto, `sb_secret_...`, e nunca a publicável: a publicável não escreve nem ignora RLS, e o espelho fica desligado de propósito. O painel admin mostra um cartão **Redundância — Supabase** com as duas contagens e o que está só de um lado.
+
+Primeira configuração:
+
+1. Rode `supabase/migrations/0001_redundancia.sql` no SQL Editor do projeto (cria `content_rows`, a RLS e o bucket `resumes`).
+2. Crie as secrets: `firebase functions:secrets:set SUPABASE_URL` e `firebase functions:secrets:set SUPABASE_SECRET_KEY`. No emulador, as duas vão em `functions/.secret.local`.
+3. Copie o conteúdo existente e confira a divergência:
+
+   ```sh
+   npm run supabase:sync -- --dry-run   # só relata
+   npm run supabase:sync                # copia o que faltar/divergir
+   npm run supabase:sync -- --prune     # remove do espelho o que não existe mais
+   ```
+
+O script lê as mesmas variáveis do ambiente e, na falta delas, de `functions/.secret.local`. Linhas órfãs do painel do appbackend (`key`/`value` nulos) ficam fora do espelho — o site nunca as leu e copiá-las faria a comparação acusar divergência eterna.
 
 ### Desenvolvimento e deploy
 

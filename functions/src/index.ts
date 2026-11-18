@@ -4,9 +4,16 @@ import { defineSecret, type SecretParam } from "firebase-functions/params";
 import { onRequest } from "firebase-functions/v2/https";
 import type { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
-import { callAppBackend, listAllRows } from "./appbackend";
+import { AppBackendError, callAppBackend, listAllRows } from "./appbackend";
 import { readAnalyticsSummary, recordPageView } from "./analytics";
 import { ApiError, sendError } from "./errors";
+import {
+  checkRedundancy,
+  mirrorRowDeletion,
+  mirrorRows,
+  readMirroredRows,
+  toMirrorableRows,
+} from "./redundancy";
 import { listResumeAvailability, saveResume, sendResume } from "./resumes";
 import {
   createAdminSession,
@@ -24,7 +31,17 @@ import {
 const APPBACKEND_COLLECTION_ID = defineSecret("APPBACKEND_COLLECTION_ID");
 const ADMIN_EMAILS = defineSecret("ADMIN_EMAILS");
 const CORS_ALLOWED_ORIGINS = defineSecret("CORS_ALLOWED_ORIGINS");
-const REQUIRED_SECRETS = [APPBACKEND_COLLECTION_ID, ADMIN_EMAILS, CORS_ALLOWED_ORIGINS];
+// Redundância: a chave secreta do Supabase só existe no servidor. Sem as duas
+// secrets o espelho fica desligado (o site continua servindo do appbackend).
+const SUPABASE_URL = defineSecret("SUPABASE_URL");
+const SUPABASE_SECRET_KEY = defineSecret("SUPABASE_SECRET_KEY");
+const REQUIRED_SECRETS = [
+  APPBACKEND_COLLECTION_ID,
+  ADMIN_EMAILS,
+  CORS_ALLOWED_ORIGINS,
+  SUPABASE_URL,
+  SUPABASE_SECRET_KEY,
+];
 const ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
 const ALLOWED_HEADERS = "Authorization, Content-Type";
 
@@ -184,6 +201,15 @@ function parsePathSegment(value: string | undefined): string {
   return validateRowId(decoded);
 }
 
+/**
+ * Só indisponibilidade do appbackend cai para o espelho. Um 404 (`ROW_NOT_FOUND`)
+ * ou um 409 são respostas legítimas da fonte primária: trocá-las por uma cópia
+ * antiga esconderia o problema em vez de resolvê-lo.
+ */
+function isUpstreamOutage(error: unknown): boolean {
+  return error instanceof AppBackendError && error.status >= 500;
+}
+
 function routeResumePath(pathname: string): { language: string } | undefined {
   const match = pathname.match(/^\/api\/resumes\/([^/]+)$/);
   return match ? { language: match[1] } : undefined;
@@ -212,8 +238,32 @@ export const api = onRequest(
         return;
       }
       if (pathname === "/api/rows" && request.method === "GET") {
-        const rows = await listAllRows(getCollectionId());
-        response.status(200).json(rows);
+        try {
+          const rows = await listAllRows(getCollectionId());
+          response.status(200).json(rows);
+          return;
+        } catch (error) {
+          if (!isUpstreamOutage(error)) throw error;
+          const mirrored = await readMirroredRows().catch((mirrorError: unknown) => {
+            console.error(
+              "[redundancy] appbackend fora e espelho indisponível:",
+              mirrorError instanceof Error ? mirrorError.message : String(mirrorError),
+            );
+            return null;
+          });
+          if (!mirrored) throw error;
+          console.warn("[redundancy] servindo o conteúdo pelo espelho do Supabase.");
+          response.set("X-Content-Source", "supabase");
+          response.status(200).json(mirrored);
+          return;
+        }
+      }
+      if (pathname === "/api/redundancy" && request.method === "GET") {
+        await requireAdministrator(request);
+        const status = await checkRedundancy(async () =>
+          toMirrorableRows(await listAllRows(getCollectionId())),
+        );
+        response.status(200).json(status);
         return;
       }
       // Público de propósito (o visitante não tem token), mas continua sujeito
@@ -233,9 +283,19 @@ export const api = onRequest(
       }
       if (pathname.startsWith("/api/rows/") && request.method === "GET") {
         const rowId = parsePathSegment(pathname.slice("/api/rows/".length));
-        const result = await callAppBackend(getCollectionId(), "GET", rowId);
-        sendUpstreamResult(response, result);
-        return;
+        try {
+          const result = await callAppBackend(getCollectionId(), "GET", rowId);
+          sendUpstreamResult(response, result);
+          return;
+        } catch (error) {
+          if (!isUpstreamOutage(error)) throw error;
+          const mirrored = await readMirroredRows().catch(() => null);
+          const row = mirrored?.find((candidate) => candidate._id === rowId);
+          if (!row) throw error;
+          response.set("X-Content-Source", "supabase");
+          response.status(200).json(row);
+          return;
+        }
       }
       if (pathname === "/api/rows" && ["POST", "PUT", "DELETE"].includes(request.method)) {
         await requireAdministrator(request);
@@ -244,16 +304,26 @@ export const api = onRequest(
         const collectionId = getCollectionId();
         if (request.method === "POST") {
           const rows = validateCreateRows(body);
-          sendUpstreamResult(response, await callAppBackend(collectionId, "POST", undefined, rows));
+          const result = await callAppBackend(collectionId, "POST", undefined, rows);
+          // O appbackend devolve as linhas criadas com `_id`: é o que permite
+          // espelhar já na escrita (o id local não existe antes disso).
+          await mirrorRows(toMirrorableRows(result.body));
+          sendUpstreamResult(response, result);
           return;
         }
         if (request.method === "PUT") {
           const row = validateUpdateRow(body);
-          sendUpstreamResult(response, await callAppBackend(collectionId, "PUT", undefined, row));
+          const result = await callAppBackend(collectionId, "PUT", undefined, row);
+          const mirrorable = toMirrorableRows(result.body);
+          // A resposta do PUT pode vir vazia (204): a linha validada já basta
+          await mirrorRows(mirrorable.length > 0 ? mirrorable : [row]);
+          sendUpstreamResult(response, result);
           return;
         }
         const ids = validateDeleteIds(body);
-        sendUpstreamResult(response, await callAppBackend(collectionId, "DELETE", undefined, ids));
+        const result = await callAppBackend(collectionId, "DELETE", undefined, ids);
+        await mirrorRowDeletion(ids);
+        sendUpstreamResult(response, result);
         return;
       }
 

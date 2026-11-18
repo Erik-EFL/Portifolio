@@ -20,7 +20,8 @@
     "functions:build": "npm --prefix functions run build",
     "firebase:emulators": "firebase emulators:start --project demo-project --only functions,auth",
     "firebase:seed:auth": "node functions/scripts/seed-emulator-auth.mjs",
-    "firebase:deploy:functions": "firebase deploy --only functions"
+    "firebase:deploy:functions": "firebase deploy --only functions",
+    "supabase:sync": "node functions/scripts/sync-supabase.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

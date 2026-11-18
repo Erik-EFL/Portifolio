@@ -260,6 +260,49 @@ export const downloadResume = async (language: TLanguage): Promise<void> => {
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000)
 }
 
+export interface RedundancyStatus {
+  configured: boolean
+  rowsInMirror: number | null
+  rowsInPrimary: number | null
+  missingInMirror: string[]
+  extraInMirror: string[]
+  error: string | null
+}
+
+export const REDUNDANCY_QUERY_KEY = ['redundancy-status'] as const
+
+const parseIdList = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter((id): id is string => typeof id === 'string')
+    : []
+
+/**
+ * Diagnóstico do espelho no Supabase: quantas linhas cada fonte tem e o que está
+ * só de um lado. Autenticado porque expõe ids internos da coleção.
+ */
+export const getRedundancyStatus = async (): Promise<RedundancyStatus> => {
+  const response = await request(`${getApiBaseUrl()}/api/redundancy`, {
+    headers: await authorizedHeaders()
+  })
+  await ensureSuccess(response)
+  const result: unknown = await response.json()
+
+  if (!isRecord(result) || typeof result.configured !== 'boolean') {
+    throw new Error('The redundancy API returned an invalid response.')
+  }
+
+  return {
+    configured: result.configured,
+    rowsInMirror:
+      typeof result.rowsInMirror === 'number' ? result.rowsInMirror : null,
+    rowsInPrimary:
+      typeof result.rowsInPrimary === 'number' ? result.rowsInPrimary : null,
+    missingInMirror: parseIdList(result.missingInMirror),
+    extraInMirror: parseIdList(result.extraInMirror),
+    error: typeof result.error === 'string' ? result.error : null
+  }
+}
+
 export const PORTFOLIO_ROWS_QUERY_KEY = ['portfolio-content-rows'] as const
 
 export const ANALYTICS_QUERY_KEY = ['analytics-summary'] as const
