@@ -32,7 +32,19 @@ export const resolveText = (
   language: TLanguage
 ): string => {
   const traduzido = translations?.[language]?.trim()
-  return traduzido || base
+  if (traduzido) return traduzido
+
+  const baseLimpa = base?.trim()
+  if (baseLimpa) return base
+
+  // Base em branco: o conteúdo antigo (dois blocos por idioma) deixou
+  // placeholders sem texto porque o nome só existia no outro bloco. Mostrar o
+  // texto que existe é melhor que renderizar uma linha vazia.
+  const outroIdioma = SKILL_LANGUAGES.map(item =>
+    translations?.[item]?.trim()
+  ).find(texto => Boolean(texto))
+
+  return outroIdioma ?? base
 }
 
 const readLocalizedText = (value: unknown): LocalizedText | undefined => {
@@ -85,9 +97,9 @@ const isLocalizedSection = (
   Array.isArray(value.items)
 
 /**
- * Formato antigo (um bloco por idioma) → lista única. ptBR é a base; o texto do
- * enUS vira `translations.enUS` quando difere. Skill que só existia em um dos
- * idiomas é preservada (o que sobra aparece na lista única).
+ * Formato antigo (um bloco por idioma) → lista única. O bloco ptBR é a base; o
+ * texto do outro idioma vira `translations` quando difere. Skill que só existia
+ * em um dos idiomas é preservada (entra no fim, sem tradução inventada).
  */
 const fromLocalizedSections = (
   sections: LocalizedSection<SkillCategory>[]
@@ -100,19 +112,56 @@ const fromLocalizedSections = (
 
   return base.map((categoria, index) => {
     const espelho = outro[index]
+    const skillsEspelho = espelho?.skills ?? []
+    const nomesBase = categoria.skills.map(skill => skill.name?.trim() ?? '')
+    const nomesEspelho = skillsEspelho.map(skill => skill.name?.trim() ?? '')
 
-    return {
-      title: categoria.title,
-      skills: categoria.skills.map((skill, skillIndex) => {
-        const nomeEspelho = espelho?.skills?.[skillIndex]?.name?.trim()
+    // O índice só pareia com segurança quando os dois blocos descrevem a MESMA
+    // lista. Com lugar vazio ou tamanho diferente o índice desalinha e inventa
+    // tradução ("Prisma" virando "TypeORM"), então nesse caso não pareia nada.
+    const pareavel =
+      nomesBase.length === nomesEspelho.length &&
+      nomesBase.every(Boolean) &&
+      nomesEspelho.every(Boolean)
+
+    const skills = categoria.skills
+      .map((skill, skillIndex) => {
+        const nome = nomesBase[skillIndex]
+        // lugar vazio não vira linha em branco no card (e não repete a key "")
+        if (!nome) return undefined
+
+        const nomeEspelho = nomesEspelho[skillIndex]
 
         return {
           ...skill,
-          ...(nomeEspelho && nomeEspelho !== skill.name
+          name: nome,
+          ...(pareavel && nomeEspelho && nomeEspelho !== nome
             ? { translations: { [outroIdioma]: nomeEspelho } }
             : {})
         }
-      }),
+      })
+      .filter((skill): skill is Skill => skill !== undefined)
+
+    // nome que só existe no outro bloco não se perde: entra no fim da lista.
+    // O que já está na lista como texto base ou como tradução não duplica.
+    const conhecidos = new Set<string>()
+    skills.forEach(skill => {
+      conhecidos.add(skill.name)
+      Object.values(skill.translations ?? {}).forEach(texto =>
+        conhecidos.add(texto)
+      )
+    })
+
+    skillsEspelho.forEach((skill, skillIndex) => {
+      const nome = nomesEspelho[skillIndex]
+      if (!nome || conhecidos.has(nome)) return
+      conhecidos.add(nome)
+      skills.push({ ...skill, name: nome })
+    })
+
+    return {
+      title: categoria.title,
+      skills,
       ...(espelho?.title?.trim() && espelho.title.trim() !== categoria.title
         ? { translations: { [outroIdioma]: espelho.title.trim() } }
         : {})
@@ -150,8 +199,13 @@ export const resolveSkillCategories = (
   categories.map(category => ({
     ...category,
     title: resolveText(category.title, category.translations, language),
-    skills: category.skills.map(skill => ({
-      ...skill,
-      name: resolveText(skill.name, skill.translations, language)
-    }))
+    skills: category.skills
+      .map(skill => ({
+        ...skill,
+        name: resolveText(skill.name, skill.translations, language)
+      }))
+      // Sem texto em nenhum idioma não há o que mostrar: a linha em branco só
+      // consome célula do grid e repete a mesma `key` (o React perde a conta
+      // das linhas e deixa nós órfãos).
+      .filter(skill => skill.name.trim() !== '')
   }))

@@ -94,6 +94,25 @@ describe('normalizeSkillCategories', () => {
     ])
   })
 
+  it('usa o nome do outro idioma quando a base está em branco', () => {
+    // O bloco ptBR do conteúdo real ficou com placeholders vazios no Back-end:
+    // sem isso a linha renderizava em branco (e repetia a key "").
+    const antigo = formatoAntigo(
+      [categoria('Back-end', ['Node.js', '', ''])],
+      [categoria('Back-end', ['Node.js', 'Prisma', 'Sequelize'])]
+    )
+
+    const normalizado = normalizeSkillCategories(antigo) ?? []
+
+    expect(normalizado[0].skills.map(skill => skill.name)).toEqual([
+      'Node.js',
+      'Prisma',
+      'Sequelize'
+    ])
+    // o nome veio do espelho: não é tradução, é o texto base que faltava
+    expect(normalizado[0].skills[1].translations).toBeUndefined()
+  })
+
   it('preserva a skill que existia em um idioma só', () => {
     const antigo = formatoAntigo(
       [categoria('Front-end', ['React'])],
@@ -117,6 +136,43 @@ describe('normalizeSkillCategories', () => {
 })
 
 describe('resolveSkillCategories', () => {
+  it('descarta skill sem texto em nenhum idioma', () => {
+    const categorias: SkillCategory[] = [
+      {
+        title: 'Back-end',
+        skills: [{ name: 'Node.js' }, { name: '' }, { name: '   ' }]
+      }
+    ]
+
+    expect(
+      resolveSkillCategories(categorias, 'ptBR')[0].skills.map(
+        skill => skill.name
+      )
+    ).toEqual(['Node.js'])
+    expect(
+      resolveSkillCategories(categorias, 'enUS')[0].skills.map(
+        skill => skill.name
+      )
+    ).toEqual(['Node.js'])
+  })
+
+  it('usa a única tradução existente quando a base está vazia', () => {
+    const categorias: SkillCategory[] = [
+      {
+        title: 'Back-end',
+        skills: [{ name: '', translations: { enUS: 'Prisma' } }]
+      }
+    ]
+
+    // ptBR não tem tradução: mostra o texto que existe em vez de linha vazia
+    expect(resolveSkillCategories(categorias, 'ptBR')[0].skills[0].name).toBe(
+      'Prisma'
+    )
+    expect(resolveSkillCategories(categorias, 'enUS')[0].skills[0].name).toBe(
+      'Prisma'
+    )
+  })
+
   it('entrega os textos no idioma pedido', () => {
     const categorias: SkillCategory[] = [
       {

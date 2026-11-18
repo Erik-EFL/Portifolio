@@ -106,30 +106,35 @@ const Card = () => {
             />
           ))}
         </DecorationsLayer>
-        {skillsDetails?.map((category: SkillCategory) => (
-          <CardStyled key={category.title} aria-label={category.title}>
-            <CardHeader>
-              <h2>{category.title}</h2>
-              <p>
-                {category.skills.some(hasNumericLevel) ? 'Skill Level' : ''}
-              </p>
-            </CardHeader>
-            <SkillsGrid>
-              {category.skills.map((skill: Skill) => (
-                <SkillRow key={skill.name}>
-                  <h3>{skill.name}</h3>
-                  {hasNumericLevel(skill) ? (
-                    <SkillRating
-                      name='read-only'
-                      value={skill.level}
-                      readOnly
-                    />
-                  ) : null}
-                </SkillRow>
-              ))}
-            </SkillsGrid>
-          </CardStyled>
-        ))}
+        {skillsDetails?.map(
+          (category: SkillCategory, categoryIndex: number) => (
+            <CardStyled
+              key={`${category.title}-${categoryIndex}`}
+              aria-label={category.title}
+            >
+              <CardHeader>
+                <h2>{category.title}</h2>
+                <p>
+                  {category.skills.some(hasNumericLevel) ? 'Skill Level' : ''}
+                </p>
+              </CardHeader>
+              <SkillsGrid>
+                {category.skills.map((skill: Skill, skillIndex: number) => (
+                  <SkillRow key={`${skill.name}-${skillIndex}`}>
+                    <h3>{skill.name}</h3>
+                    {hasNumericLevel(skill) ? (
+                      <SkillRating
+                        name='read-only'
+                        value={skill.level}
+                        readOnly
+                      />
+                    ) : null}
+                  </SkillRow>
+                ))}
+              </SkillsGrid>
+            </CardStyled>
+          )
+        )}
       </SkillsList>
     </Container>
   )

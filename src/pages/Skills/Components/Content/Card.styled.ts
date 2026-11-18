@@ -90,7 +90,7 @@ export const CardStyled = styled.section`
     z-index: 1;
   }
 
-  h4 {
+  h3 {
     margin: 0;
     padding: 0;
     font-weight: 600;
@@ -111,9 +111,11 @@ export const CardHeader = styled.header`
   margin-bottom: 0.75rem;
   border-bottom: 1px solid ${({ theme }) => glass(theme).border};
 
-  h3 {
+  /* o título da categoria é um h2 no markup; 1.5rem mantém o tamanho que os
+     estilos padrão do navegador já pintavam (24px) */
+  h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
   }
 
   p {
@@ -152,10 +154,12 @@ export const SkillRow = styled.div`
   gap: 0.75rem;
   min-width: 0;
 
-  h4 {
+  h3 {
+    /* nome pode ser longo ("Styled Components") e a coluna fica estreita:
+       quebrar em duas linhas em vez de vazar por cima da coluna vizinha */
+    min-width: 0;
+    font-size: 1rem;
     line-height: 1.2;
-    /* nomes longos ("Styled Components") quebram em duas linhas em vez de
-       serem cortados com reticências */
     overflow-wrap: anywhere;
   }
 `
