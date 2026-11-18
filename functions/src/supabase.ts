@@ -11,7 +11,8 @@
  */
 
 const DEFAULT_ROWS_TABLE = "content_rows";
-const DEFAULT_BUCKET = "resumes";
+// bucket já criado no projeto (singular); o override é SUPABASE_STORAGE_BUCKET
+const DEFAULT_BUCKET = "resume";
 const ROWS_TIMEOUT_MS = 8_000;
 const OBJECT_TIMEOUT_MS = 20_000;
 const LIST_PAGE_SIZE = 1_000;

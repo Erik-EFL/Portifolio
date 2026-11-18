@@ -156,9 +156,14 @@ export async function mirroredResumeAvailability(
   try {
     const names = await client.listObjectNames(RESUME_FOLDER);
     const files = new Set(names);
+    // A listagem do Storage devolve o nome RELATIVO ao prefixo pedido
+    // ("ptBR.pdf"); o mock dos testes devolvia o caminho inteiro. Aceitar as
+    // duas formas evita depender desse detalhe.
+    const hasResume = (language: ResumeLanguage): boolean =>
+      files.has(`${language}.pdf`) || files.has(`${RESUME_FOLDER}/${language}.pdf`);
     return {
-      ptBR: files.has(`${RESUME_FOLDER}/ptBR.pdf`),
-      enUS: files.has(`${RESUME_FOLDER}/enUS.pdf`),
+      ptBR: hasResume("ptBR"),
+      enUS: hasResume("enUS"),
     };
   } catch (error) {
     console.error(

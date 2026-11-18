@@ -321,14 +321,14 @@ O appbackend.io é a fonte primária do conteúdo e o Firebase Storage guarda os
 
 - toda escrita de conteúdo (`POST`/`PUT`/`DELETE` em `/api/rows`) é replicada na tabela `public.content_rows` (uma linha por seção, `id` = `_id` do appbackend);
 - `GET /api/rows` e `GET /api/rows/:id` caem no espelho quando o appbackend responde 5xx/timeout, com o header `X-Content-Source: supabase`. Um 404 ou 409 da fonte primária **não** cai no espelho: são respostas legítimas, e trocá-las por uma cópia velha esconderia o problema;
-- cada upload de currículo é copiado para o bucket privado `resumes` do Supabase Storage, e `/api/resumes/:idioma` serve a cópia quando o Firebase Storage está fora;
+- cada upload de currículo é copiado para o bucket privado `resume` do Supabase Storage (objeto `resumes/<idioma>.pdf`), e `/api/resumes/:idioma` serve a cópia quando o Firebase Storage está fora;
 - falha do espelho é registrada no log e não derruba a resposta: o conteúdo já está salvo na fonte primária e o script de sincronização reconcilia depois.
 
 Nada disso existe sem as duas secrets no servidor (`SUPABASE_URL` e `SUPABASE_SECRET_KEY`) — use a chave **secreta** do projeto, `sb_secret_...`, e nunca a publicável: a publicável não escreve nem ignora RLS, e o espelho fica desligado de propósito. O painel admin mostra um cartão **Redundância — Supabase** com as duas contagens e o que está só de um lado.
 
 Primeira configuração:
 
-1. Rode `supabase/migrations/0001_redundancia.sql` no SQL Editor do projeto (cria `content_rows`, a RLS e o bucket `resumes`).
+1. Rode `supabase/migrations/0001_redundancia.sql` no SQL Editor do projeto (cria `content_rows` com RLS e ajusta o bucket `resume`, que já existe).
 2. Crie as secrets: `firebase functions:secrets:set SUPABASE_URL` e `firebase functions:secrets:set SUPABASE_SECRET_KEY`. No emulador, as duas vão em `functions/.secret.local`.
 3. Copie o conteúdo existente e confira a divergência:
 

@@ -14,7 +14,7 @@ const CONFIG: SupabaseConfig = {
   url: "https://projeto.supabase.co",
   secretKey: "sb_secret_teste",
   rowsTable: "content_rows",
-  bucket: "resumes",
+  bucket: "resume",
 };
 
 interface Call {
@@ -87,7 +87,7 @@ describe("readSupabaseConfig", () => {
       url: "https://projeto.supabase.co",
       secretKey: "k",
       rowsTable: "content_rows",
-      bucket: "resumes",
+      bucket: "resume",
     });
   });
 
@@ -250,7 +250,7 @@ describe("createSupabaseClient", () => {
 
     const [call] = calls;
     assert.equal(call.method, "POST");
-    assert.equal(call.url, "https://projeto.supabase.co/storage/v1/object/resumes/resumes/ptBR.pdf");
+    assert.equal(call.url, "https://projeto.supabase.co/storage/v1/object/resume/resumes/ptBR.pdf");
     assert.equal(call.headers["x-upsert"], "true");
     assert.equal(call.headers["content-type"], "application/pdf");
   });
@@ -276,7 +276,7 @@ describe("createSupabaseClient", () => {
       "resumes/ptBR.pdf",
       "resumes/enUS.pdf",
     ]);
-    assert.match(calls[0].url, /\/storage\/v1\/object\/list\/resumes$/);
+    assert.match(calls[0].url, /\/storage\/v1\/object\/list\/resume$/);
     assert.equal(JSON.parse(calls[0].body ?? "{}").prefix, "resumes");
   });
 });

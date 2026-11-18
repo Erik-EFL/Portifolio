@@ -36,9 +36,11 @@ alter table public.content_rows enable row level security;
 --   on public.content_rows for select to anon using (true);
 
 -- Bucket privado dos currículos (o download passa pela function, que assina com
--- a service role). Limite e MIME repetem a validação do endpoint de upload.
+-- a service role). O bucket `resume` já existe no projeto; o `on conflict`
+-- garante que rodar de novo só ajusta limite e MIME. Se o bucket tiver outro
+-- nome, defina SUPABASE_STORAGE_BUCKET nas secrets da function.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('resumes', 'resumes', false, 10485760, array['application/pdf'])
+values ('resume', 'resume', false, 10485760, array['application/pdf'])
 on conflict (id) do update
   set file_size_limit = excluded.file_size_limit,
       allowed_mime_types = excluded.allowed_mime_types;

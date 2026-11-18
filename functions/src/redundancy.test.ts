@@ -157,9 +157,11 @@ describe("espelho de leitura", () => {
     assert.equal(resumeObjectPath("enUS"), "resumes/enUS.pdf");
   });
 
-  it("calcula a disponibilidade pelo bucket", async () => {
+  it("calcula a disponibilidade pelo bucket (nome relativo ao prefixo)", async () => {
+    // A API real devolve "ptBR.pdf" para o prefixo "resumes"; o caminho inteiro
+    // também é aceito.
     const client = createClient({
-      listObjectNames: async () => ["resumes/ptBR.pdf", "resumes/outro.pdf"],
+      listObjectNames: async () => ["ptBR.pdf", "outro.pdf"],
     });
 
     assert.deepEqual(await mirroredResumeAvailability(client), {
