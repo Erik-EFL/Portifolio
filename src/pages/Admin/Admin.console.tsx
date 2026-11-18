@@ -26,6 +26,7 @@ import {
 import { ICONS, Icon, SECTION_ICONS } from './Admin.icons'
 import { SectionEditor } from './Admin.section-editor'
 import { ResumeUploader } from './Admin.resume'
+import { AnalyticsPanel } from './Admin.analytics'
 
 export const NavGroup = ({
   title,
@@ -83,6 +84,8 @@ export const AdminConsole = () => {
   const user = useAdminAuthStore(state => state.user)
   const signOut = useAdminAuthStore(state => state.signOut)
   const [activeKey, setActiveKey] = useState<DataSectionKey>('navigation')
+  // Duas telas no mesmo console: edição de seção e os contadores de acesso.
+  const [view, setView] = useState<'sections' | 'analytics'>('sections')
   const [notice, setNotice] = useState('')
   const [editorRevision, setEditorRevision] = useState(0)
   const rowsQuery = useQuery({
@@ -222,6 +225,7 @@ export const AdminConsole = () => {
             activeKey={activeKey}
             onSelect={key => {
               setActiveKey(key)
+              setView('sections')
               setNotice('')
             }}
           />
@@ -232,9 +236,42 @@ export const AdminConsole = () => {
             activeKey={activeKey}
             onSelect={key => {
               setActiveKey(key)
+              setView('sections')
               setNotice('')
             }}
           />
+          <div className={styles.navGroup}>
+            <p className={styles.navGroupTitle}>Operação</p>
+            <ul className={styles.navList}>
+              <li>
+                <button
+                  className={`${styles.navItem} ${
+                    view === 'analytics' ? styles.navItemActive : ''
+                  }`}
+                  type='button'
+                  aria-pressed={view === 'analytics'}
+                  onClick={() => {
+                    setView('analytics')
+                    setNotice('')
+                  }}
+                >
+                  <span className={styles.navItemLabel}>
+                    <Icon
+                      className={styles.navIcon}
+                      path={ICONS.eye}
+                      size={16}
+                    />
+                    Acessos
+                  </span>
+                  <span
+                    className={`${styles.navBadge} ${styles.navBadgeSaved}`}
+                  >
+                    visitas
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </div>
         </nav>
 
         <div className={styles.userCard}>
@@ -265,133 +302,153 @@ export const AdminConsole = () => {
         <header className={styles.topbar}>
           <div className={styles.topbarMain}>
             <span className={styles.breadcrumb} aria-hidden='true'>
-              database<span className={styles.breadcrumbSep}>/</span>sections
-              <span className={styles.breadcrumbSep}>/</span>
+              database<span className={styles.breadcrumbSep}>/</span>
+              {view === 'analytics' ? 'analytics' : 'sections'}
+              {view === 'sections' && (
+                <>
+                  <span className={styles.breadcrumbSep}>/</span>
+                  {activeKey}
+                </>
+              )}
             </span>
             <h2 className={styles.topbarTitle}>
-              {activeKey}
-              <span
-                className={`${styles.badge} ${
-                  activeRow ? styles.badgeSaved : styles.badgeFallback
-                }`}
-              >
-                {activeRow ? 'linha no servidor' : 'fallback ativo (sem linha)'}
-              </span>
+              {view === 'analytics' ? 'acessos' : activeKey}
+              {view === 'sections' && (
+                <span
+                  className={`${styles.badge} ${
+                    activeRow ? styles.badgeSaved : styles.badgeFallback
+                  }`}
+                >
+                  {activeRow
+                    ? 'linha no servidor'
+                    : 'fallback ativo (sem linha)'}
+                </span>
+              )}
             </h2>
           </div>
           <div className={styles.topbarActions}>
-            <button
-              className={`${styles.btn} ${styles.btnPrimary}`}
-              type='submit'
-              form={SECTION_FORM_ID}
-              disabled={
-                !canMutate || saveMutation.isPending || deleteMutation.isPending
-              }
-              title={
-                canMutate
-                  ? undefined
-                  : 'Indisponível enquanto a lista de linhas do servidor não carregar.'
-              }
-            >
-              <Icon path={ICONS.check} size={16} />
-              {saveMutation.isPending
-                ? 'Salvando…'
-                : 'Salvar Seção no Servidor'}
-            </button>
+            {view === 'sections' && (
+              <button
+                className={`${styles.btn} ${styles.btnPrimary}`}
+                type='submit'
+                form={SECTION_FORM_ID}
+                disabled={
+                  !canMutate ||
+                  saveMutation.isPending ||
+                  deleteMutation.isPending
+                }
+                title={
+                  canMutate
+                    ? undefined
+                    : 'Indisponível enquanto a lista de linhas do servidor não carregar.'
+                }
+              >
+                <Icon path={ICONS.check} size={16} />
+                {saveMutation.isPending
+                  ? 'Salvando…'
+                  : 'Salvar Seção no Servidor'}
+              </button>
+            )}
           </div>
         </header>
 
         <div className={styles.content}>
-          {rowsQuery.isPending && (
-            <p className={styles.notice} role='status' aria-live='polite'>
-              Carregando conteúdo do servidor. A edição fica bloqueada até a
-              lista de linhas carregar.
-            </p>
-          )}
-          {rowsQuery.error && (
-            <div
-              className={`${styles.notice} ${styles.noticeError}`}
-              role='alert'
-            >
-              Não foi possível carregar o conteúdo do servidor; o fallback está
-              sendo exibido e as escritas estão desabilitadas.{' '}
-              {displayError(rowsQuery.error)}{' '}
-              <button
-                className={`${styles.btn} ${styles.btnGhost}`}
-                type='button'
-                onClick={() => void rowsQuery.refetch()}
-              >
-                Tentar de novo
-              </button>
-            </div>
-          )}
-
-          <section className={styles.card} aria-labelledby='resumes-title'>
-            <div className={styles.cardHead}>
-              <div>
-                <h3 className={styles.cardTitle} id='resumes-title'>
-                  <Icon
-                    className={styles.cardTitleIcon}
-                    path={ICONS.file}
-                    size={20}
-                  />
-                  About Me — Currículos &amp; documentos
-                </h3>
-                <p className={styles.cardSub}>
-                  O upload substitui o PDF armazenado para o idioma
-                  correspondente. Cada gravação é autorizada pelo servidor.
+          {view === 'analytics' ? (
+            <AnalyticsPanel />
+          ) : (
+            <>
+              {rowsQuery.isPending && (
+                <p className={styles.notice} role='status' aria-live='polite'>
+                  Carregando conteúdo do servidor. A edição fica bloqueada até a
+                  lista de linhas carregar.
                 </p>
-              </div>
-              <span className={styles.pill}>
-                <span
-                  className={`${styles.pillDot} ${
-                    availabilityQuery.isSuccess
-                      ? ''
-                      : availabilityQuery.error
-                      ? styles.pillDotMuted
-                      : styles.pillDotWarn
-                  }`}
-                  aria-hidden='true'
-                />
-                {availabilityQuery.isSuccess
-                  ? 'Storage conectado'
-                  : availabilityQuery.error
-                  ? 'Storage indisponível'
-                  : 'Verificando storage'}
-              </span>
-            </div>
-            <div className={styles.resumeGrid}>
-              <ResumeUploader
-                language='ptBR'
-                label='Português (ptBR)'
-                available={availabilityQuery.data?.ptBR}
-              />
-              <ResumeUploader
-                language='enUS'
-                label='English (enUS)'
-                available={availabilityQuery.data?.enUS}
-              />
-            </div>
-          </section>
+              )}
+              {rowsQuery.error && (
+                <div
+                  className={`${styles.notice} ${styles.noticeError}`}
+                  role='alert'
+                >
+                  Não foi possível carregar o conteúdo do servidor; o fallback
+                  está sendo exibido e as escritas estão desabilitadas.{' '}
+                  {displayError(rowsQuery.error)}{' '}
+                  <button
+                    className={`${styles.btn} ${styles.btnGhost}`}
+                    type='button'
+                    onClick={() => void rowsQuery.refetch()}
+                  >
+                    Tentar de novo
+                  </button>
+                </div>
+              )}
 
-          <SectionEditor
-            key={`${activeKey}:${
-              rowsQuery.isSuccess ? 'loaded' : 'not-loaded'
-            }:${editorRevision}`}
-            keyName={activeKey}
-            value={activeValue}
-            remoteRow={activeRow}
-            canMutate={canMutate}
-            onSave={section => {
-              setNotice('')
-              saveMutation.mutate(section)
-            }}
-            onDelete={handleDelete}
-            isSaving={saveMutation.isPending}
-            isDeleting={deleteMutation.isPending}
-            notice={notice}
-            setNotice={setNotice}
-          />
+              <section className={styles.card} aria-labelledby='resumes-title'>
+                <div className={styles.cardHead}>
+                  <div>
+                    <h3 className={styles.cardTitle} id='resumes-title'>
+                      <Icon
+                        className={styles.cardTitleIcon}
+                        path={ICONS.file}
+                        size={20}
+                      />
+                      About Me — Currículos &amp; documentos
+                    </h3>
+                    <p className={styles.cardSub}>
+                      O upload substitui o PDF armazenado para o idioma
+                      correspondente. Cada gravação é autorizada pelo servidor.
+                    </p>
+                  </div>
+                  <span className={styles.pill}>
+                    <span
+                      className={`${styles.pillDot} ${
+                        availabilityQuery.isSuccess
+                          ? ''
+                          : availabilityQuery.error
+                          ? styles.pillDotMuted
+                          : styles.pillDotWarn
+                      }`}
+                      aria-hidden='true'
+                    />
+                    {availabilityQuery.isSuccess
+                      ? 'Storage conectado'
+                      : availabilityQuery.error
+                      ? 'Storage indisponível'
+                      : 'Verificando storage'}
+                  </span>
+                </div>
+                <div className={styles.resumeGrid}>
+                  <ResumeUploader
+                    language='ptBR'
+                    label='Português (ptBR)'
+                    available={availabilityQuery.data?.ptBR}
+                  />
+                  <ResumeUploader
+                    language='enUS'
+                    label='English (enUS)'
+                    available={availabilityQuery.data?.enUS}
+                  />
+                </div>
+              </section>
+
+              <SectionEditor
+                key={`${activeKey}:${
+                  rowsQuery.isSuccess ? 'loaded' : 'not-loaded'
+                }:${editorRevision}`}
+                keyName={activeKey}
+                value={activeValue}
+                remoteRow={activeRow}
+                canMutate={canMutate}
+                onSave={section => {
+                  setNotice('')
+                  saveMutation.mutate(section)
+                }}
+                onDelete={handleDelete}
+                isSaving={saveMutation.isPending}
+                isDeleting={deleteMutation.isPending}
+                notice={notice}
+                setNotice={setNotice}
+              />
+            </>
+          )}
         </div>
       </section>
     </main>

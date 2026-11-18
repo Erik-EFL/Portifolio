@@ -8,6 +8,10 @@ import {
   parseDataRow
 } from '@/services/portfolio-data.service'
 import type { TLanguage } from '@/@types/portfolio.entity'
+import {
+  parseAnalyticsSummary,
+  type AnalyticsSummary
+} from '@/analytics/analytics-summary'
 
 export class AdminApiError extends Error {
   readonly status: number
@@ -257,3 +261,20 @@ export const downloadResume = async (language: TLanguage): Promise<void> => {
 }
 
 export const PORTFOLIO_ROWS_QUERY_KEY = ['portfolio-content-rows'] as const
+
+export const ANALYTICS_QUERY_KEY = ['analytics-summary'] as const
+
+/**
+ * Contadores de acesso: leitura autenticada, porque o endpoint mostra para
+ * onde as pessoas vão e de onde vêm — informação de operação, não de vitrine.
+ */
+export const getAnalytics = async (
+  days?: number
+): Promise<AnalyticsSummary> => {
+  const search = typeof days === 'number' ? `?days=${days}` : ''
+  const response = await request(`${getApiBaseUrl()}/api/analytics${search}`, {
+    headers: await authorizedHeaders()
+  })
+  await ensureSuccess(response)
+  return parseAnalyticsSummary(await response.json())
+}

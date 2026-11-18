@@ -4,6 +4,7 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { PageFallback, SrOnly } from '@/components/Skeleton'
 import NavMobile from '@/components/Mobile/Navegação.mobile'
+import { usePageView } from '@/analytics'
 import { GlobalStyle } from '@/Styles/global-style'
 import Footer from './components/Footer/Footer'
 import Header from './components/Header/Header'
@@ -65,6 +66,9 @@ const router = createBrowserRouter(
 function RootLayout() {
   const { switchTheme } = useTheme()
   const { isLoading, error, retry } = useLanguage()
+
+  // Conta o acesso aqui, não em cada página: rota nova entra na série sozinha.
+  usePageView()
 
   return (
     <>

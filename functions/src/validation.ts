@@ -28,6 +28,23 @@ export interface PersistedContentRow extends ContentRow {
 
 export type ResumeLanguage = "ptBR" | "enUS";
 
+/**
+ * Rotas que contam como acesso na tela de acessos. `/admin` fica de fora: é o
+ * dono conferindo o próprio painel, não visita.
+ */
+export const PAGE_VIEW_PATHS = ["home", "about", "skills", "projects"] as const;
+export type PageViewPath = (typeof PAGE_VIEW_PATHS)[number];
+
+/** Janela padrão e teto da tela de acessos; o teto evita varredura grande. */
+export const ANALYTICS_DEFAULT_DAYS = 30;
+export const ANALYTICS_MAX_DAYS = 90;
+
+export interface PageViewInput {
+  path: PageViewPath;
+  language: ResumeLanguage;
+  visitorId: string;
+}
+
 export interface AdminSession {
   email: string;
   role: "admin";
@@ -180,4 +197,46 @@ export function validatePdf(rawBody: Buffer | undefined): Buffer {
     throw new InputValidationError("Body does not have a PDF signature.");
   }
   return rawBody;
+}
+
+const VISITOR_ID_PATTERN = /^[A-Za-z0-9-]{8,64}$/;
+const PAGE_VIEW_PATH_SET: ReadonlySet<string> = new Set(PAGE_VIEW_PATHS);
+
+/**
+ * Endpoint de pageview é público: a validação é a única barreira contra alguém
+ * inflar os contadores, então só passa rota conhecida, idioma conhecido e um
+ * identificador de visitante no formato de UUID.
+ */
+export function validatePageView(value: unknown): PageViewInput {
+  if (!isRecord(value)) throw new InputValidationError("Page view payload must be an object.");
+  assertOnlyKeys(value, ["path", "language", "visitorId"]);
+
+  if (typeof value.path !== "string" || !PAGE_VIEW_PATH_SET.has(value.path)) {
+    throw new InputValidationError("Page view path is not tracked.");
+  }
+  if (value.language !== "ptBR" && value.language !== "enUS") {
+    throw new InputValidationError("Page view language must be ptBR or enUS.");
+  }
+  if (typeof value.visitorId !== "string" || !VISITOR_ID_PATTERN.test(value.visitorId)) {
+    throw new InputValidationError("Page view visitor id is invalid.");
+  }
+
+  return {
+    path: value.path as PageViewPath,
+    language: value.language,
+    visitorId: value.visitorId,
+  };
+}
+
+export function validateAnalyticsDays(value: string | null): number {
+  if (value === null || value.trim() === "") return ANALYTICS_DEFAULT_DAYS;
+  if (!/^\d{1,3}$/.test(value)) {
+    throw new InputValidationError("Analytics window must be a whole number of days.");
+  }
+
+  const days = Number(value);
+  if (days < 1 || days > ANALYTICS_MAX_DAYS) {
+    throw new InputValidationError(`Analytics window must be between 1 and ${ANALYTICS_MAX_DAYS} days.`);
+  }
+  return days;
 }

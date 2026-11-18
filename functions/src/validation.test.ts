@@ -7,8 +7,10 @@ import {
   InputValidationError,
   parseJsonBody,
   RequestTooLargeError,
+  validateAnalyticsDays,
   validateCreateRows,
   validateDeleteIds,
+  validatePageView,
   validatePdf,
   validateResumeLanguage,
   validateRowId,
@@ -160,5 +162,49 @@ describe("content request validation", () => {
     assert.throws(() => parseJsonBody(undefined), InputValidationError);
     assert.throws(() => parseJsonBody(Buffer.alloc(0)), InputValidationError);
     assert.throws(() => parseJsonBody(Buffer.from('{"incomplete":')), InputValidationError);
+  });
+});
+
+describe("validatePageView", () => {
+  const valid = { path: "skills", language: "enUS", visitorId: "3f0a1b2c-9d4e-4a55-8b1f-2c3d4e5f6a7b" };
+
+  it("aceita rota, idioma e visitante conhecidos", () => {
+    assert.deepEqual(validatePageView(valid), valid);
+  });
+
+  it("recusa rota que não é contada (inclusive o painel)", () => {
+    assert.throws(() => validatePageView({ ...valid, path: "admin" }), InputValidationError);
+    assert.throws(() => validatePageView({ ...valid, path: "/skills" }), InputValidationError);
+  });
+
+  it("recusa idioma e identificador de visitante fora do formato", () => {
+    assert.throws(() => validatePageView({ ...valid, language: "esES" }), InputValidationError);
+    assert.throws(() => validatePageView({ ...valid, visitorId: "curto" }), InputValidationError);
+    assert.throws(() => validatePageView({ ...valid, visitorId: "a".repeat(65) }), InputValidationError);
+  });
+
+  it("recusa campos extras e corpo que não é objeto", () => {
+    assert.throws(() => validatePageView({ ...valid, extra: 1 }), InputValidationError);
+    assert.throws(() => validatePageView([valid]), InputValidationError);
+    assert.throws(() => validatePageView(null), InputValidationError);
+  });
+});
+
+describe("validateAnalyticsDays", () => {
+  it("usa 30 dias quando a janela não é informada", () => {
+    assert.equal(validateAnalyticsDays(null), 30);
+    assert.equal(validateAnalyticsDays("  "), 30);
+  });
+
+  it("aceita janelas dentro do teto", () => {
+    assert.equal(validateAnalyticsDays("7"), 7);
+    assert.equal(validateAnalyticsDays("90"), 90);
+  });
+
+  it("recusa zero, acima do teto e texto", () => {
+    assert.throws(() => validateAnalyticsDays("0"), InputValidationError);
+    assert.throws(() => validateAnalyticsDays("91"), InputValidationError);
+    assert.throws(() => validateAnalyticsDays("trinta"), InputValidationError);
+    assert.throws(() => validateAnalyticsDays("-5"), InputValidationError);
   });
 });

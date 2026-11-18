@@ -5,13 +5,16 @@ import { onRequest } from "firebase-functions/v2/https";
 import type { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
 import { callAppBackend, listAllRows } from "./appbackend";
+import { readAnalyticsSummary, recordPageView } from "./analytics";
 import { ApiError, sendError } from "./errors";
 import { listResumeAvailability, saveResume, sendResume } from "./resumes";
 import {
   createAdminSession,
   parseJsonBody,
+  validateAnalyticsDays,
   validateCreateRows,
   validateDeleteIds,
+  validatePageView,
   validatePdf,
   validateResumeLanguage,
   validateRowId,
@@ -211,6 +214,21 @@ export const api = onRequest(
       if (pathname === "/api/rows" && request.method === "GET") {
         const rows = await listAllRows(getCollectionId());
         response.status(200).json(rows);
+        return;
+      }
+      // Público de propósito (o visitante não tem token), mas continua sujeito
+      // ao CORS acima: só o próprio site consegue registrar acesso.
+      if (pathname === "/api/analytics/pageview" && request.method === "POST") {
+        requireJsonContentType(request);
+        const pageView = validatePageView(parseJsonBody(request.rawBody));
+        await recordPageView(pageView);
+        response.status(204).end();
+        return;
+      }
+      if (pathname === "/api/analytics" && request.method === "GET") {
+        await requireAdministrator(request);
+        const requestedDays = new URL(request.url, "https://function.invalid").searchParams.get("days");
+        response.status(200).json(await readAnalyticsSummary(validateAnalyticsDays(requestedDays)));
         return;
       }
       if (pathname.startsWith("/api/rows/") && request.method === "GET") {

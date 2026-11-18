@@ -1,0 +1,60 @@
+{
+  "functions": [
+    {
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        ".env",
+        ".env.*",
+        ".secret.local",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"],
+      "source": "functions"
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9100
+    },
+    "functions": {
+      "port": 5101
+    },
+    "firestore": {
+      "port": 8390
+    },
+    "storage": {
+      "port": 9300
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true,
+    "hub": {
+      "port": 4410
+    },
+    "logging": {
+      "port": 4511
+    }
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "portifolio-7b841",
+        "supportEmail": "erik@dev-proxy.com"
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}
