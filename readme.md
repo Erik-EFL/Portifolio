@@ -239,6 +239,22 @@ deploy oficial (o do GitHub Pages é).
 
 ## Firebase Functions: configuração local e deploy
 
+### Firestore e Storage: o que é usado de verdade
+
+- **Firestore não é usado.** O conteúdo do portfólio vive no appbackend
+  (`https://v1.appbackend.io/v1/rows`), acessado pela Cloud Function; o cliente
+  só usa o Firebase para **Auth** (login do admin). `firestore.rules` nega tudo
+  — o Admin SDK não passa por regra, então nada depende delas. Se você habilitou
+  o banco pelo `firebase init`, o "modo de teste" (aberto até 2026-12-17) foi
+  trocado por esta regra; se não usar para nada, pode apagar o banco no console.
+- **Storage é usado**, só para os currículos (`resumes/ptBR.pdf` e
+  `resumes/enUS.pdf`), sempre pela Function. `storage.rules` também nega acesso
+  direto do navegador.
+- Verificação feita no emulador: Admin SDK grava e lê; cliente anônimo recebe
+  **403** nos dois serviços.
+- Deploy das regras: `firebase deploy --only firestore:rules,storage` (o Storage
+  só aceita depois que o bucket existir no console).
+
 ### Currículos (PDF) exigem o Storage habilitado
 
 Os uploads de currículo gravam em `resumes/ptBR.pdf` e `resumes/enUS.pdf` no

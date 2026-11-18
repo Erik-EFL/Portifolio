@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// Os currículos (resumes/ptBR.pdf e resumes/enUS.pdf) são gravados e entregues
+// pela Cloud Function com o Admin SDK, que ignora estas regras. O navegador
+// nunca acessa o bucket direto: o download passa por /api/resumes/<idioma>.
+//
+// Sem isso, qualquer pessoa com a URL do projeto poderia baixar currículos
+// antigos ou sobrescrever os arquivos.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
