@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { listResumeAvailability } from "./resumes";
+import { listResumeAvailability, type ResumeStore } from "./resumes";
 import {
   CONTENT_KEYS,
   createAdminSession,
@@ -142,14 +142,18 @@ describe("content request validation", () => {
   });
 
   it("reports resume availability for both fixed languages", async () => {
-    const checkedLanguages: string[] = [];
-    const availability = await listResumeAvailability(async (language) => {
-      checkedLanguages.push(language);
-      return language === "ptBR";
-    });
+    // A fonte informa os dois idiomas fixos; a function só soma as fontes.
+    const store: ResumeStore = {
+      name: "firebase",
+      save: async () => {},
+      read: async () => null,
+      availability: async () => ({ ptBR: true, enUS: false }),
+    };
 
-    assert.deepEqual(checkedLanguages, ["ptBR", "enUS"]);
-    assert.deepEqual(availability, { ptBR: true, enUS: false });
+    assert.deepEqual(await listResumeAvailability([store]), {
+      ptBR: true,
+      enUS: false,
+    });
   });
 
   it("parses bounded UTF-8 JSON request bodies", () => {

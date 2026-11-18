@@ -56,9 +56,10 @@ export const RedundancyPanel = () => {
             Redundância — Supabase
           </h3>
           <p className={styles.cardSub}>
-            Cópia do conteúdo e dos currículos fora do Google. Se o appbackend
-            ou o Firebase Storage ficarem fora do ar, o site e os downloads
-            passam a ser servidos por esta cópia.
+            Conteúdo: cópia do appbackend na tabela do Supabase. Currículos: o
+            PDF principal vive no Supabase Storage e o Firebase guarda a cópia.
+            Se a fonte principal de cada um cair, o site e os downloads passam a
+            ser servidos pela outra.
           </p>
         </div>
         <span className={styles.pill}>

@@ -394,8 +394,9 @@ export const AdminConsole = () => {
                       About Me — Currículos &amp; documentos
                     </h3>
                     <p className={styles.cardSub}>
-                      O upload substitui o PDF armazenado para o idioma
-                      correspondente. Cada gravação é autorizada pelo servidor.
+                      O upload substitui o PDF do idioma correspondente: grava
+                      no Supabase Storage e copia para o Firebase Storage. Cada
+                      gravação é autorizada pelo servidor.
                     </p>
                   </div>
                   <span className={styles.pill}>

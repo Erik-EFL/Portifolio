@@ -1,12 +1,12 @@
 /**
- * Camada de redundância: espelha o conteúdo (appbackend → Supabase) e os
- * currículos (Firebase Storage → Supabase Storage), e serve de fallback de
- * leitura quando a fonte primária está fora.
+ * Papéis das duas fontes:
  *
- * Regra: escrita espelhada é *best-effort* — a resposta ao admin nunca falha
- * porque o espelho caiu (o conteúdo já está salvo na fonte primária, e o script
- * de sincronização reconcilia depois). Leitura de fallback propaga o erro para
- * quem chamou decidir entre usar a cópia e devolver a falha original.
+ * - **Conteúdo**: o appbackend.io é a fonte primária e o Supabase guarda a cópia
+ *   (escrita best-effort; falha não derruba a resposta, e o script de
+ *   sincronização reconcilia depois).
+ * - **Currículos (PDF)**: o Supabase Storage é a fonte PRINCIPAL — o upload
+ *   grava ali primeiro e o Firebase Storage recebe a cópia. Por isso as funções
+ *   de currículo aqui não engolem erro: quem chama decide se ainda há cópia.
  */
 import { CONTENT_KEYS, type ResumeLanguage } from "./validation";
 import {
@@ -15,7 +15,7 @@ import {
   type SupabaseRow,
 } from "./supabase";
 
-export interface MirroredResumeAvailability {
+export interface SupabaseResumeAvailability {
   ptBR: boolean;
   enUS: boolean;
 }
@@ -115,24 +115,17 @@ export async function readMirroredRows(
   return rows.map(({ id, key, value }) => ({ _id: id, key, value }));
 }
 
-export async function mirrorResume(
+/** Fonte principal dos currículos: erro aqui é erro de upload. */
+export async function saveResumeToSupabase(
   language: ResumeLanguage,
   pdf: Buffer,
   client: SupabaseClient = getSupabaseClient(),
 ): Promise<void> {
-  if (!client.configured) return;
-  try {
-    await client.uploadObject(resumeObjectPath(language), pdf, "application/pdf");
-  } catch (error) {
-    console.error(
-      `[redundancy] falha ao espelhar o currículo ${language} no Supabase:`,
-      describeFailure(error),
-    );
-  }
+  await client.uploadObject(resumeObjectPath(language), pdf, "application/pdf");
 }
 
-/** `null` = o objeto não existe no espelho; erro = espelho indisponível. */
-export async function readMirroredResume(
+/** `null` = o objeto não existe no Supabase; erro = Supabase indisponível. */
+export async function readResumeFromSupabase(
   language: ResumeLanguage,
   client: SupabaseClient = getSupabaseClient(),
 ): Promise<Buffer | null> {
@@ -146,12 +139,12 @@ export async function readMirroredResume(
 }
 
 /**
- * Disponibilidade pelo espelho. `null` quando não há configuração ou o Storage
- * do Supabase não respondeu (quem chama decide se a fonte primária basta).
+ * Disponibilidade no Supabase. `null` quando não há configuração ou o Storage
+ * não respondeu (quem chama decide se a cópia no Firebase basta).
  */
-export async function mirroredResumeAvailability(
+export async function supabaseResumeAvailability(
   client: SupabaseClient = getSupabaseClient(),
-): Promise<MirroredResumeAvailability | null> {
+): Promise<SupabaseResumeAvailability | null> {
   if (!client.configured) return null;
   try {
     const names = await client.listObjectNames(RESUME_FOLDER);

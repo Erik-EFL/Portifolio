@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   checkRedundancy,
-  mirrorResume,
   mirrorRowDeletion,
   mirrorRows,
-  mirroredResumeAvailability,
-  readMirroredResume,
   readMirroredRows,
+  readResumeFromSupabase,
   resumeObjectPath,
+  saveResumeToSupabase,
+  supabaseResumeAvailability,
   toMirrorableRows,
 } from "./redundancy";
 import { SupabaseError, type SupabaseClient, type SupabaseRow } from "./supabase";
@@ -75,31 +75,25 @@ describe("toMirrorableRows", () => {
   });
 });
 
-describe("espelho de escrita", () => {
+describe("espelho de escrita (conteúdo)", () => {
   it("não faz nada quando a redundância está desligada", async () => {
     const client = createClient({}, false);
 
     await mirrorRows([{ _id: "r1", key: "home", value: {} }], client);
     await mirrorRowDeletion(["r1"], client);
-    await mirrorResume("ptBR", Buffer.from("x"), client);
 
     assert.equal(client.upserted.length, 0);
     assert.equal(client.deleted.length, 0);
-    assert.equal(client.uploaded.length, 0);
   });
 
-  it("mapeia _id para id no upsert e envia o PDF para o caminho do bucket", async () => {
+  it("mapeia _id para id no upsert e remove por id", async () => {
     const client = createClient();
 
     await mirrorRows([{ _id: "r1", key: "home", value: { t: 1 } }], client);
     await mirrorRowDeletion(["r1", "r2"], client);
-    await mirrorResume("enUS", Buffer.from("%PDF-1.4"), client);
 
     assert.deepEqual(client.upserted[0], [{ id: "r1", key: "home", value: { t: 1 } }]);
     assert.deepEqual(client.deleted[0], ["r1", "r2"]);
-    assert.deepEqual(client.uploaded, [
-      { path: "resumes/enUS.pdf", contentType: "application/pdf", size: 8 },
-    ]);
   });
 
   it("engole a falha do espelho: a escrita primária já aconteceu", async () => {
@@ -110,14 +104,32 @@ describe("espelho de escrita", () => {
       deleteRows: async () => {
         throw new SupabaseError(502, "SUPABASE_UNAVAILABLE", "fora do ar");
       },
+    });
+
+    await mirrorRows([{ _id: "r1", key: "home", value: {} }], client);
+    await mirrorRowDeletion(["r1"], client);
+  });
+});
+
+describe("currículos no Supabase (fonte principal)", () => {
+  it("grava o PDF no caminho do bucket", async () => {
+    const client = createClient();
+
+    await saveResumeToSupabase("enUS", Buffer.from("%PDF-1.4"), client);
+
+    assert.deepEqual(client.uploaded, [
+      { path: "resumes/enUS.pdf", contentType: "application/pdf", size: 8 },
+    ]);
+  });
+
+  it("propaga a falha do upload: aqui não há fonte anterior", async () => {
+    const client = createClient({
       uploadObject: async () => {
         throw new SupabaseError(502, "SUPABASE_UNAVAILABLE", "fora do ar");
       },
     });
 
-    await mirrorRows([{ _id: "r1", key: "home", value: {} }], client);
-    await mirrorRowDeletion(["r1"], client);
-    await mirrorResume("ptBR", Buffer.from("x"), client);
+    await assert.rejects(() => saveResumeToSupabase("ptBR", Buffer.from("x"), client), SupabaseError);
   });
 });
 
@@ -148,8 +160,8 @@ describe("espelho de leitura", () => {
       },
     });
 
-    assert.equal(await readMirroredResume("ptBR", missing), null);
-    await assert.rejects(() => readMirroredResume("ptBR", offline), SupabaseError);
+    assert.equal(await readResumeFromSupabase("ptBR", missing), null);
+    await assert.rejects(() => readResumeFromSupabase("ptBR", offline), SupabaseError);
   });
 
   it("resume o caminho do currículo por idioma", () => {
@@ -164,16 +176,16 @@ describe("espelho de leitura", () => {
       listObjectNames: async () => ["ptBR.pdf", "outro.pdf"],
     });
 
-    assert.deepEqual(await mirroredResumeAvailability(client), {
+    assert.deepEqual(await supabaseResumeAvailability(client), {
       ptBR: true,
       enUS: false,
     });
   });
 
   it("devolve null sem configuração ou com Storage fora", async () => {
-    assert.equal(await mirroredResumeAvailability(createClient({}, false)), null);
+    assert.equal(await supabaseResumeAvailability(createClient({}, false)), null);
     assert.equal(
-      await mirroredResumeAvailability(
+      await supabaseResumeAvailability(
         createClient({
           listObjectNames: async () => {
             throw new SupabaseError(502, "SUPABASE_UNAVAILABLE", "fora do ar");

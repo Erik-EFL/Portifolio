@@ -262,24 +262,26 @@ deploy oficial (o do GitHub Pages é).
 - Deploy das regras: `firebase deploy --only firestore:rules,storage` (o Storage
   só aceita depois que o bucket existir no console).
 
-### Currículos (PDF) exigem o Storage habilitado
+### Currículos (PDF): Supabase principal, Firebase cópia
 
 Os uploads de currículo gravam em `resumes/ptBR.pdf` e `resumes/enUS.pdf` no
-bucket do Firebase Storage. **Sem o Storage habilitado no projeto não existe
-bucket** e o painel mostra `Resume service is unavailable` — foi exatamente esse
-o sintoma que apareceu depois do deploy. Habilite em Console → Storage →
-Começar; o bucket passa a ser `<projeto>.firebasestorage.app`.
+bucket `resume` do **Supabase Storage** — é a fonte principal. O Firebase Storage
+recebe uma cópia best-effort: se o bucket não existir ou estiver fora, o upload
+continua respondendo 200 (a falha da cópia vai para o log, com o nome do bucket
+tentado). O download (`/api/resumes/<idioma>`) tenta o Supabase primeiro e cai no
+Firebase se o objeto não estiver lá, devolvendo `X-Resume-Source` com a origem.
 
-A function resolve o bucket, nesta ordem: `RESUME_STORAGE_BUCKET` (opcional) →
-`storageBucket` do `FIREBASE_CONFIG` injetado pelo Firebase → padrão do Admin
-SDK. Se falhar, o erro no log/console inclui o nome do bucket tentado.
+Por isso **o upload local não depende do emulador de Storage**: com
+`SUPABASE_SECRET_KEY` no `functions/.secret.local` o PDF vai para o Supabase real
+e a cópia no Firebase falha em silêncio. Sem as secrets do Supabase, o Firebase
+volta a ser o único destino — e aí, em `--only functions,auth`, o Admin SDK chama
+`storage.googleapis.com` com o bucket `demo-project.appspot.com`, que não existe,
+e o painel mostra `Resume service is unavailable`.
 
-**No ambiente local o emulador de Storage precisa estar no ar.** Subir só
-`functions` e `auth` (`--only functions,auth`) faz o Admin SDK chamar
-`storage.googleapis.com` com o bucket `demo-project.appspot.com`, que não existe:
-o upload responde `Resume service is unavailable` e nada é espelhado. Use
-`node functions/scripts/start-firebase-emulators.mjs` (stack completo) ou inclua
-`storage` no `--only`.
+A cópia no Firebase resolve o bucket nesta ordem: `RESUME_STORAGE_BUCKET`
+(opcional) → `storageBucket` do `FIREBASE_CONFIG` injetado pelo Firebase → padrão
+do Admin SDK. Em produção, habilite o Storage no Console (o bucket passa a ser
+`<projeto>.firebasestorage.app`) para a cópia existir.
 
 ### Preparar o projeto Firebase
 
@@ -324,12 +326,19 @@ Sem esse arquivo a Function responde `503 CORS_NOT_CONFIGURED` e o navegador mos
 
 ### Redundância no Supabase (conteúdo e currículos)
 
-O appbackend.io é a fonte primária do conteúdo e o Firebase Storage guarda os PDFs. O Supabase entra como **cópia**, não como segunda fonte de verdade:
+Os papéis são diferentes por tipo de dado:
 
-- toda escrita de conteúdo (`POST`/`PUT`/`DELETE` em `/api/rows`) é replicada na tabela `public.content_rows` (uma linha por seção, `id` = `_id` do appbackend);
+**Conteúdo** — o appbackend.io continua primário e o Supabase guarda a cópia:
+
+- toda escrita (`POST`/`PUT`/`DELETE` em `/api/rows`) é replicada na tabela `public.content_rows` (uma linha por seção, `id` = `_id` do appbackend);
 - `GET /api/rows` e `GET /api/rows/:id` caem no espelho quando o appbackend responde 5xx/timeout, com o header `X-Content-Source: supabase`. Um 404 ou 409 da fonte primária **não** cai no espelho: são respostas legítimas, e trocá-las por uma cópia velha esconderia o problema;
-- cada upload de currículo é copiado para o bucket privado `resume` do Supabase Storage (objeto `resumes/<idioma>.pdf`), e `/api/resumes/:idioma` serve a cópia quando o Firebase Storage está fora;
 - falha do espelho é registrada no log e não derruba a resposta: o conteúdo já está salvo na fonte primária e o script de sincronização reconcilia depois.
+
+**Currículos (PDF)** — o **Supabase Storage é o principal** e o Firebase Storage é a cópia:
+
+- o upload grava primeiro em `resume/resumes/<idioma>.pdf` (bucket privado) e só responde 200 depois disso; a cópia no Firebase é best-effort e falha só no log;
+- `/api/resumes/<idioma>` tenta o Supabase, depois o Firebase, e informa a origem em `X-Resume-Source`;
+- `/api/resumes` (disponibilidade) soma as duas fontes, então o painel e a página About continuam corretos se uma delas estiver fora.
 
 Nada disso existe sem as duas secrets no servidor (`SUPABASE_URL` e `SUPABASE_SECRET_KEY`) — use a chave **secreta** do projeto, `sb_secret_...`, e nunca a publicável: a publicável não escreve nem ignora RLS, e o espelho fica desligado de propósito. O painel admin mostra um cartão **Redundância — Supabase** com as duas contagens e o que está só de um lado.
 
