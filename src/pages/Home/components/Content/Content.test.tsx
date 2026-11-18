@@ -34,7 +34,9 @@ describe('Home / Content', () => {
     montar()
 
     expect(screen.getByText('Sou')).toBeInTheDocument()
-    expect(screen.getByText(/Erik Ferreira Lima/)).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Erik Ferreira Lima/ })
+    ).toBeInTheDocument()
     expect(screen.getByText('React, TypeScript e Node.')).toBeInTheDocument()
   })
 
@@ -47,9 +49,13 @@ describe('Home / Content', () => {
     expect(link).toHaveTextContent('Sobre o desenvolvedor')
   })
 
-  it('não anima o título enquanto carrega', () => {
+  it('o nome é o h1 e só o cargo espera o carregamento', () => {
     montar(true)
 
-    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument()
+    // o h1 (nome) existe sempre; o cargo (h2) só depois do conteúdo
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Erik Ferreira Lima/ })
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument()
   })
 })

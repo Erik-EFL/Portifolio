@@ -17,6 +17,28 @@ export const BadgeWrapper = styled.div`
   margin-bottom: -10px;
 `
 
+/**
+ * O nome é o h1 da página (é o que identifica a pessoa para o buscador). O
+ * reset abaixo faz o heading renderizar igual ao `<span>` inline que existia
+ * aqui: mesma fonte, mesmo tamanho, sem margem de bloco.
+ */
+export const BadgeName = styled.h1`
+  display: inline;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+`
+
+/**
+ * O cargo era um `<h1>` e herdava do navegador 2em/negrito/margem 0.67em.
+ * Agora é `h2` (hierarquia: nome -> cargo) e os números são repetidos aqui para
+ * o visual continuar idêntico ao default.
+ */
+export const RoleHeading = styled.h2`
+  font-size: 2em;
+  margin: 0.67em 0;
+`
+
 export const BadgeText = styled.span`
   position: relative;
   z-index: 10;

@@ -163,6 +163,18 @@ prettier nos arquivos staged) e `npm run typecheck` antes de cada commit.
   `/Portifolio/about` direto devolve o 404 do GitHub (o app nunca carrega).
 - `robots.txt` só é lido na **raiz do domínio**: em `usuario.github.io/projeto`
   ele é ignorado pelo crawler. Para um domínio próprio, coloque em `public/`.
+- **Metas por rota**: cada página chama `usePageMeta(META, '/rota')`
+  (`src/seo/`), que troca título, description, canonical, `og:*`, `twitter:*`,
+  `html lang` (pt-BR/en) e `og:locale`. O `/admin` é `noindex, nofollow`.
+- **Headings**: o `h1` da home é o nome (`Sou Erik Ferreira Lima`), o cargo é
+  `h2`; `/skills` e `/projects` têm `h1` só para leitor de tela (o desenho não
+  tem título visível), e os cards de skill vão de `h2` (categoria) a `h3` (item).
+- **JSON-LD** `Person` + `WebSite` no `index.html` (nome, cargo, stack e
+  `sameAs` dos perfis) — é o que permite o Google montar o painel da pessoa.
+- **`dist/sitemap.xml`** é gerado no build pelo plugin `sitemap` (as 4 rotas
+  públicas, com `lastmod`); em `public/` ele não poderia usar `VITE_SITE_URL`.
+  Envie em Search Console → Sitemaps, já que o `robots.txt` da subpasta é
+  ignorado.
 
 ## 🎨 Tema e breakpoints
 

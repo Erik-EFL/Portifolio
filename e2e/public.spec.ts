@@ -100,7 +100,7 @@ test.describe('skills', () => {
 
     const cards = page
       .locator('section')
-      .filter({ has: page.locator('header h3') })
+      .filter({ has: page.locator('header h2') })
     await expect(cards).toHaveCount(7)
 
     const primeiro = await cards.first().boundingBox()

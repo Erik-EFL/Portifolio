@@ -109,7 +109,7 @@ const Card = () => {
         {skillsDetails?.map((category: SkillCategory) => (
           <CardStyled key={category.title} aria-label={category.title}>
             <CardHeader>
-              <h3>{category.title}</h3>
+              <h2>{category.title}</h2>
               <p>
                 {category.skills.some(hasNumericLevel) ? 'Skill Level' : ''}
               </p>
@@ -117,7 +117,7 @@ const Card = () => {
             <SkillsGrid>
               {category.skills.map((skill: Skill) => (
                 <SkillRow key={skill.name}>
-                  <h4>{skill.name}</h4>
+                  <h3>{skill.name}</h3>
                   {hasNumericLevel(skill) ? (
                     <SkillRating
                       name='read-only'

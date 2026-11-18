@@ -1,7 +1,14 @@
 import { useLanguage } from '@/store/language.store'
 import { Grid, Typography } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
-import { AboutLink, BadgeDot, BadgeText, BadgeWrapper } from './Content.style'
+import {
+  AboutLink,
+  BadgeDot,
+  BadgeName,
+  BadgeText,
+  BadgeWrapper,
+  RoleHeading
+} from './Content.style'
 
 const Content = () => {
   const { data, language, isLoading } = useLanguage()
@@ -11,18 +18,20 @@ const Content = () => {
   return (
     <Grid item xs={12} sm={6} md={6} lg={6} sx={{ margin: 'auto' }}>
       <BadgeWrapper>
-        <span>
+        <BadgeName>
           <BadgeText>{home.circle}</BadgeText> {home.name}
-        </span>
+        </BadgeName>
         <BadgeDot />
       </BadgeWrapper>
       {isLoading ? null : (
-        <TypeAnimation
-          key={`${language}-${home.title}`}
-          cursor
-          sequence={[`${home.title}`, 1000000]}
-          wrapper='h1'
-        />
+        <RoleHeading>
+          <TypeAnimation
+            key={`${language}-${home.title}`}
+            cursor
+            sequence={[`${home.title}`, 1000000]}
+            wrapper='span'
+          />
+        </RoleHeading>
       )}
       <Grid
         item

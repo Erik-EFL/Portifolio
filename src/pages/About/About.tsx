@@ -9,9 +9,23 @@ import {
   RESUME_AVAILABILITY_QUERY_KEY
 } from '@/services/admin-api.service'
 import { useState } from 'react'
+import { usePageMeta, type LocalizedPageMeta } from '@/seo'
 import type { TLanguage } from '@/@types/portfolio.entity'
 import Text from './components/Text/Text'
 import Video from './components/Video/Video'
+
+const META: LocalizedPageMeta = {
+  ptBR: {
+    title: 'Sobre mim | Erik Ferreira Lima',
+    description:
+      'Quem é Erik Ferreira Lima: trajetória como desenvolvedor full stack JavaScript, formação e currículo para download.'
+  },
+  enUS: {
+    title: 'About me | Erik Ferreira Lima',
+    description:
+      'Who Erik Ferreira Lima is: background as a full stack JavaScript developer, education and resume download.'
+  }
+}
 
 const text = {
   ptBR: 'Quem sou eu',
@@ -25,6 +39,8 @@ const resumeLabels = {
 
 const About = () => {
   const { language, isLoading } = useLanguage()
+
+  usePageMeta(META, '/about')
   const portugueseResume = getResumeUrl('ptBR')
   const englishResume = getResumeUrl('enUS')
   const availabilityQuery = useQuery({

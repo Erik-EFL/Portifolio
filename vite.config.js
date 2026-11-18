@@ -12,6 +12,35 @@ const siteUrlPlugin = siteUrl => ({
   transformIndexHtml: html => html.replaceAll('%SITE_URL%', siteUrl)
 })
 
+// Rotas públicas (o /admin fica de fora de propósito: é noindex).
+const SITEMAP_ROUTES = ['/', '/about', '/skills', '/projects']
+
+// Sitemap gerado no build: em public/ ele não poderia usar VITE_SITE_URL e
+// sairia com URL errada ao trocar de domínio.
+const sitemapPlugin = siteUrl => ({
+  name: 'sitemap',
+  apply: 'build',
+  generateBundle() {
+    const lastmod = new Date().toISOString().slice(0, 10)
+    const urls = SITEMAP_ROUTES.map(
+      route => `  <url>
+    <loc>${siteUrl}${route}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>`
+    ).join('\n')
+
+    this.emitFile({
+      type: 'asset',
+      fileName: 'sitemap.xml',
+      source: `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>
+`
+    })
+  }
+})
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -24,7 +53,10 @@ export default defineConfig(({ mode }) => {
     base,
     // Em teste o plugin de react-refresh injeta $RefreshSig$ e quebra o import
     // dos módulos; o esbuild já transforma o JSX pelo tsconfig.
-    plugins: mode === 'test' ? [] : [react(), siteUrlPlugin(siteUrl)],
+    plugins:
+      mode === 'test'
+        ? []
+        : [react(), siteUrlPlugin(siteUrl), sitemapPlugin(siteUrl)],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))

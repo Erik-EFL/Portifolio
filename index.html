@@ -59,6 +59,49 @@
 
     <!-- %BASE_URL% mantém os ícones certos tanto na raiz do domínio quanto
          na subpasta do GitHub Pages -->
+    <!-- Dados estruturados: é o que permite o Google montar o painel da pessoa
+         (nome, cargo, perfis) em vez de tratar o site como uma página solta. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "%SITE_URL%/#person",
+            "name": "Erik Ferreira Lima",
+            "alternateName": "Erik-FL",
+            "url": "%SITE_URL%/",
+            "image": "%SITE_URL%/og-image.png",
+            "jobTitle": "Desenvolvedor Full Stack",
+            "description": "Desenvolvedor full stack JavaScript: React, React Native, Node.js e TypeScript.",
+            "knowsLanguage": ["pt-BR", "en"],
+            "knowsAbout": [
+              "React",
+              "React Native",
+              "Node.js",
+              "TypeScript",
+              "JavaScript",
+              "Desenvolvimento web",
+              "Desenvolvimento mobile"
+            ],
+            "sameAs": [
+              "https://github.com/Erik-EFL",
+              "https://www.linkedin.com/in/erikferreiralima/",
+              "https://www.instagram.com/oi.erik.lima/"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "%SITE_URL%/#website",
+            "url": "%SITE_URL%/",
+            "name": "Erik Ferreira Lima",
+            "inLanguage": "pt-BR",
+            "publisher": { "@id": "%SITE_URL%/#person" }
+          }
+        ]
+      }
+    </script>
+
     <link rel="manifest" href="%BASE_URL%manifest.json" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%image-512x512.svg" />
     <link rel="shortcut icon" href="%BASE_URL%image-512x512.ico" />
