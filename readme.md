@@ -274,6 +274,13 @@ A function resolve o bucket, nesta ordem: `RESUME_STORAGE_BUCKET` (opcional) →
 `storageBucket` do `FIREBASE_CONFIG` injetado pelo Firebase → padrão do Admin
 SDK. Se falhar, o erro no log/console inclui o nome do bucket tentado.
 
+**No ambiente local o emulador de Storage precisa estar no ar.** Subir só
+`functions` e `auth` (`--only functions,auth`) faz o Admin SDK chamar
+`storage.googleapis.com` com o bucket `demo-project.appspot.com`, que não existe:
+o upload responde `Resume service is unavailable` e nada é espelhado. Use
+`node functions/scripts/start-firebase-emulators.mjs` (stack completo) ou inclua
+`storage` no `--only`.
+
 ### Preparar o projeto Firebase
 
 1. Crie ou selecione um projeto no [Firebase Console](https://console.firebase.google.com/).
