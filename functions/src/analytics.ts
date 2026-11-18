@@ -151,6 +151,25 @@ export const summarizeDailyDocuments = (
   };
 };
 
+/**
+ * Payload do contador diário. Exportado porque a forma importa: chave com ponto
+ * NÃO vira caminho de campo em `set()` — o Firestore grava a string literal
+ * ("paths.home") e a leitura de `data.paths` volta vazia. Por isso os mapas são
+ * aninhados explicitamente e o `merge` incrementa cada um sem zerar os irmãos.
+ */
+export const buildDailyUpsert = (
+  pageView: PageView,
+  date: string,
+  firstVisitToday: boolean,
+): Record<string, unknown> => ({
+  date,
+  views: FieldValue.increment(1),
+  visitors: FieldValue.increment(firstVisitToday ? 1 : 0),
+  paths: { [pageView.path]: FieldValue.increment(1) },
+  languages: { [pageView.language]: FieldValue.increment(1) },
+  updatedAt: FieldValue.serverTimestamp(),
+});
+
 export const recordPageView = async (pageView: PageView): Promise<void> => {
   const firestore = getFirestore();
   const date = analyticsDateKey();
@@ -166,17 +185,7 @@ export const recordPageView = async (pageView: PageView): Promise<void> => {
     .then(() => true)
     .catch(() => false);
 
-  await dailyDocument.set(
-    {
-      date,
-      views: FieldValue.increment(1),
-      visitors: FieldValue.increment(firstVisitToday ? 1 : 0),
-      [`paths.${pageView.path}`]: FieldValue.increment(1),
-      [`languages.${pageView.language}`]: FieldValue.increment(1),
-      updatedAt: FieldValue.serverTimestamp(),
-    },
-    { merge: true },
-  );
+  await dailyDocument.set(buildDailyUpsert(pageView, date, firstVisitToday), { merge: true });
 };
 
 export const readAnalyticsSummary = async (days: number): Promise<AnalyticsSummary> => {

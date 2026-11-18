@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { FieldValue } from "firebase-admin/firestore";
 import {
   analyticsDateKey,
+  buildDailyUpsert,
   shiftDateKey,
   summarizeDailyDocuments,
 } from "./analytics";
@@ -106,3 +108,44 @@ describe("summarizeDailyDocuments", () => {
     assert.equal(summarizeDailyDocuments([], 0, now).days.length, 1);
   });
 });
+
+describe("buildDailyUpsert", () => {
+  const pageView = {
+    path: "home",
+    language: "ptBR",
+    visitorId: "11111111-2222-4333-8444-555555555555",
+  } as const;
+
+  it("aninha rota e idioma em vez de montar chave com ponto", () => {
+    // `set({ "paths.home": ... })` grava a chave LITERAL: a leitura de
+    // `data.paths` volta vazia e o painel mostra zero em toda rota. Este teste
+    // trava a forma do documento que o e2e (Firestore real) já confirmou.
+    const payload = buildDailyUpsert(pageView, "2026-11-18", true);
+
+    for (const key of Object.keys(payload)) {
+      assert.ok(!key.includes("."), `chave com ponto no documento: ${key}`);
+    }
+    assert.deepEqual(Object.keys(payload).sort(), [
+      "date",
+      "languages",
+      "paths",
+      "updatedAt",
+      "views",
+      "visitors",
+    ]);
+    assert.deepEqual(Object.keys(payload.paths as object), ["home"]);
+    assert.deepEqual(Object.keys(payload.languages as object), ["ptBR"]);
+    assert.equal(payload.date, "2026-11-18");
+  });
+
+  it("incrementa visitante só na primeira visita do dia", () => {
+    const first = buildDailyUpsert(pageView, "2026-11-18", true);
+    const repeat = buildDailyUpsert(pageView, "2026-11-18", false);
+
+    assert.equal(JSON.stringify(first.visitors), JSON.stringify(FieldValue.increment(1)));
+    assert.equal(JSON.stringify(repeat.visitors), JSON.stringify(FieldValue.increment(0)));
+    // Views e o contador da rota contam toda visita, inclusive a repetida.
+    assert.equal(JSON.stringify(repeat.views), JSON.stringify(FieldValue.increment(1)));
+  });
+});
+
