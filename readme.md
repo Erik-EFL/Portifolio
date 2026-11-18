@@ -101,6 +101,12 @@ base em português vale também para o inglês e a tradução é opcional, embut
 própria entrada (`{ name: 'Boa comunicação', translations: { enUS: 'Good
 communication' } }`). Assim não existe "skill que só aparece em um idioma".
 
+Uma linha que ainda esteja no formato antigo (dois blocos, um por idioma) é
+migrada na leitura tomando o bloco **ptBR** como fonte da lista — os nomes de
+skill/ferramenta já são em inglês, então a composição do enUS é ignorada (dele
+só se aproveita o título da categoria). Tradução de nome, nesse formato, não é
+inferida por índice: ela só existe quando está escrita em `translations`.
+
 O conteúdo vem da API administrativa (`/rows`) e é mesclado **por cima** de
 `src/constant/Data/data.json`. Se a API estiver fora, o site continua de pé com
 o conteúdo estático — é o que os testes chamam de fallback. Depois de um login

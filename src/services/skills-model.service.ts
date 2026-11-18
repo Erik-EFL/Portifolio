@@ -97,73 +97,36 @@ const isLocalizedSection = (
   Array.isArray(value.items)
 
 /**
- * Formato antigo (um bloco por idioma) → lista única. O bloco ptBR é a base; o
- * texto do outro idioma vira `translations` quando difere. Skill que só existia
- * em um dos idiomas é preservada (entra no fim, sem tradução inventada).
+ * Formato antigo (um bloco por idioma) → lista única.
+ *
+ * A lista do bloco ptBR é a ÚNICA fonte: os nomes de skill/ferramenta já são em
+ * inglês nos dois blocos, então copiar a composição do enUS só criava
+ * divergência (Bootstrap/Figma existiam apenas lá, Zustand/jotai apenas aqui) e
+ * a página mostrava listas diferentes por idioma. Do enUS aproveitamos somente
+ * o título da categoria ("Ferramentas" → "Tools"), que é texto de interface.
+ * Nome traduzido só vale no formato novo, com `translations` explícito.
  */
 const fromLocalizedSections = (
   sections: LocalizedSection<SkillCategory>[]
 ): SkillCategory[] => {
   const pt = sections.find(section => section.language === 'ptBR')?.items ?? []
   const en = sections.find(section => section.language === 'enUS')?.items ?? []
-  const base = pt.length >= en.length ? pt : en
-  const outro = pt.length >= en.length ? en : pt
-  const outroIdioma: TLanguage = pt.length >= en.length ? 'enUS' : 'ptBR'
+  // linha que só tem o bloco enUS continua válida: ele vira a lista
+  const base = pt.length > 0 ? pt : en
+  const titulosEmIngles = pt.length > 0 ? en : []
 
   return base.map((categoria, index) => {
-    const espelho = outro[index]
-    const skillsEspelho = espelho?.skills ?? []
-    const nomesBase = categoria.skills.map(skill => skill.name?.trim() ?? '')
-    const nomesEspelho = skillsEspelho.map(skill => skill.name?.trim() ?? '')
-
-    // O índice só pareia com segurança quando os dois blocos descrevem a MESMA
-    // lista. Com lugar vazio ou tamanho diferente o índice desalinha e inventa
-    // tradução ("Prisma" virando "TypeORM"), então nesse caso não pareia nada.
-    const pareavel =
-      nomesBase.length === nomesEspelho.length &&
-      nomesBase.every(Boolean) &&
-      nomesEspelho.every(Boolean)
-
-    const skills = categoria.skills
-      .map((skill, skillIndex) => {
-        const nome = nomesBase[skillIndex]
-        // lugar vazio não vira linha em branco no card (e não repete a key "")
-        if (!nome) return undefined
-
-        const nomeEspelho = nomesEspelho[skillIndex]
-
-        return {
-          ...skill,
-          name: nome,
-          ...(pareavel && nomeEspelho && nomeEspelho !== nome
-            ? { translations: { [outroIdioma]: nomeEspelho } }
-            : {})
-        }
-      })
-      .filter((skill): skill is Skill => skill !== undefined)
-
-    // nome que só existe no outro bloco não se perde: entra no fim da lista.
-    // O que já está na lista como texto base ou como tradução não duplica.
-    const conhecidos = new Set<string>()
-    skills.forEach(skill => {
-      conhecidos.add(skill.name)
-      Object.values(skill.translations ?? {}).forEach(texto =>
-        conhecidos.add(texto)
-      )
-    })
-
-    skillsEspelho.forEach((skill, skillIndex) => {
-      const nome = nomesEspelho[skillIndex]
-      if (!nome || conhecidos.has(nome)) return
-      conhecidos.add(nome)
-      skills.push({ ...skill, name: nome })
-    })
+    const tituloEspelho = titulosEmIngles[index]?.title?.trim()
 
     return {
       title: categoria.title,
-      skills,
-      ...(espelho?.title?.trim() && espelho.title.trim() !== categoria.title
-        ? { translations: { [outroIdioma]: espelho.title.trim() } }
+      skills: categoria.skills
+        // lugar vazio no bloco não vira linha em branco no card (e não repete
+        // a key "")
+        .filter(skill => (skill.name?.trim() ?? '') !== '')
+        .map(skill => ({ ...skill, name: skill.name.trim() })),
+      ...(tituloEspelho && tituloEspelho !== categoria.title
+        ? { translations: { enUS: tituloEspelho } }
         : {})
     }
   })

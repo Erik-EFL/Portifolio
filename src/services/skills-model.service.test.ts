@@ -80,23 +80,23 @@ describe('normalizeSkillCategories', () => {
     ])
   })
 
-  it('guarda a tradução só onde o texto realmente muda', () => {
+  it('usa a lista em português como fonte e não inventa tradução de nome', () => {
     const antigo = formatoAntigo(
       [categoria('Soft Skills', ['Empatia'])],
       [categoria('Soft Skills', ['Empathy'])]
     )
 
+    // o nome do outro bloco não vira tradução de skill: os nomes já são em
+    // inglês nos dois blocos e parear por índice inventava troca (Tailwind →
+    // Bootstrap). Tradução de nome só existe no formato de lista única.
     expect(normalizeSkillCategories(antigo)).toEqual([
-      {
-        title: 'Soft Skills',
-        skills: [{ name: 'Empatia', translations: { enUS: 'Empathy' } }]
-      }
+      { title: 'Soft Skills', skills: [{ name: 'Empatia' }] }
     ])
   })
 
-  it('usa o nome do outro idioma quando a base está em branco', () => {
+  it('descarta lugar vazio do bloco em português', () => {
     // O bloco ptBR do conteúdo real ficou com placeholders vazios no Back-end:
-    // sem isso a linha renderizava em branco (e repetia a key "").
+    // cada um renderizava linha em branco e repetia a key "".
     const antigo = formatoAntigo(
       [categoria('Back-end', ['Node.js', '', ''])],
       [categoria('Back-end', ['Node.js', 'Prisma', 'Sequelize'])]
@@ -104,26 +104,37 @@ describe('normalizeSkillCategories', () => {
 
     const normalizado = normalizeSkillCategories(antigo) ?? []
 
-    expect(normalizado[0].skills.map(skill => skill.name)).toEqual([
-      'Node.js',
-      'Prisma',
-      'Sequelize'
-    ])
-    // o nome veio do espelho: não é tradução, é o texto base que faltava
-    expect(normalizado[0].skills[1].translations).toBeUndefined()
+    expect(normalizado[0].skills.map(skill => skill.name)).toEqual(['Node.js'])
   })
 
-  it('preserva a skill que existia em um idioma só', () => {
+  it('não mistura a composição do bloco em inglês', () => {
     const antigo = formatoAntigo(
-      [categoria('Front-end', ['React'])],
-      [categoria('Soft Skills', ['Empathy']), categoria('Front-end', ['React'])]
+      [categoria('Front-end', ['React', 'Zustand'])],
+      [categoria('Front-end', ['React', 'Bootstrap'])]
     )
 
     const normalizado = normalizeSkillCategories(antigo) ?? []
 
-    // o bloco maior vira a base, então nada se perde
-    expect(normalizado).toHaveLength(2)
-    expect(normalizado[0].title).toBe('Soft Skills')
+    expect(normalizado.map(categoria => categoria.title)).toEqual(['Front-end'])
+    expect(normalizado[0].skills.map(skill => skill.name)).toEqual([
+      'React',
+      'Zustand'
+    ])
+  })
+
+  it('aproveita o título da categoria no outro idioma', () => {
+    const antigo = formatoAntigo(
+      [categoria('Idiomas', ['Portuguese'])],
+      [categoria('Spoken languages', ['Portuguese'])]
+    )
+
+    expect(normalizeSkillCategories(antigo)).toEqual([
+      {
+        title: 'Idiomas',
+        translations: { enUS: 'Spoken languages' },
+        skills: [{ name: 'Portuguese' }]
+      }
+    ])
   })
 
   it('recusa lista com item inválido em vez de entregar lista parcial', () => {
