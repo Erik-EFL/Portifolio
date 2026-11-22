@@ -1,10 +1,13 @@
-import Button from '@mui/material/Button'
-import CardActions from '@mui/material/CardActions'
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
-import Typography from '@mui/material/Typography'
 import * as React from 'react'
-import { ProjectCardStyled } from './Card.style'
+import {
+  ProjectAction,
+  ProjectActions,
+  ProjectBody,
+  ProjectCardStyled,
+  ProjectCover,
+  ProjectDescription,
+  ProjectTitle
+} from './Card.style'
 
 interface ICardProps {
   name: string
@@ -24,24 +27,22 @@ const ProjectCard = React.memo(function ProjectCard({
   image
 }: ICardProps) {
   return (
-    <ProjectCardStyled id={id}>
-      <CardMedia sx={{ height: 150 }} image={image} title={name} />
-      <CardContent>
-        <Typography gutterBottom variant='h5' component='div'>
-          {name}
-        </Typography>
-        <Typography variant='body2'>{description}</Typography>
-      </CardContent>
-      <CardActions>
-        <a href={gitHub} target='_blank' rel='noopener noreferrer'>
-          <Button size='small'>Git Hub</Button>
-        </a>
+    <ProjectCardStyled id={id} aria-label={name}>
+      <ProjectCover src={image} alt={`Prévia do projeto ${name}`} />
+      <ProjectBody>
+        <ProjectTitle>{name}</ProjectTitle>
+        <ProjectDescription>{description}</ProjectDescription>
+      </ProjectBody>
+      <ProjectActions>
+        <ProjectAction href={gitHub} target='_blank' rel='noopener noreferrer'>
+          Git Hub
+        </ProjectAction>
         {site ? (
-          <a href={site} target='_blank' rel='noopener noreferrer'>
-            <Button size='small'>Site</Button>
-          </a>
+          <ProjectAction href={site} target='_blank' rel='noopener noreferrer'>
+            Site
+          </ProjectAction>
         ) : null}
-      </CardActions>
+      </ProjectActions>
     </ProjectCardStyled>
   )
 })

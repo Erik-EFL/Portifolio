@@ -70,7 +70,6 @@ export default defineConfig(({ mode }) => {
           // manualChunks como função.)
           manualChunks: id => {
             if (!id.includes('node_modules')) return undefined
-            if (id.includes('@mui')) return 'vendor-mui'
             if (id.includes('styled-components')) return 'vendor-styled'
             if (id.includes('@tanstack')) return 'vendor-query'
             if (id.includes('firebase')) return 'vendor-firebase'

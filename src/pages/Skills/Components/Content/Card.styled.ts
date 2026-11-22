@@ -1,6 +1,6 @@
-import { Rating } from '@mui/material'
 import styled from 'styled-components'
 import type { DefaultTheme } from 'styled-components'
+import { Container } from '@/components/Layout/Container'
 
 /**
  * Círculo decorativo da marca. É cor de identidade (não superfície de tema),
@@ -191,9 +191,28 @@ export const Dot = styled.span<IDotProps>`
   background-color: ${DECORATION};
 `
 
-export const SkillRating = styled(Rating)`
-  && {
-    flex-shrink: 0;
-    color: ${DECORATION};
-  }
+/**
+ * Estrelas da nota. Eram `<Rating readOnly>` do MUI (que pinta 5 ícones SVG e
+ * expõe `role="img"`); aqui são 5 glifos no mesmo contrato de acessibilidade.
+ */
+export const RatingStars = styled.span`
+  display: inline-flex;
+  gap: 1px;
+  flex-shrink: 0;
+  color: ${DECORATION};
+  font-size: 1.25rem;
+  line-height: 1;
+`
+
+/** Estrela vazia: mesma célula, sem preenchimento. */
+export const RatingStar = styled.span<{ $filled: boolean }>`
+  color: ${DECORATION};
+  opacity: ${({ $filled }) => ($filled ? 1 : 0.35)};
+`
+
+/** Moldura do conteúdo: 900px (era `<Container maxWidth={false} sx={{maxWidth}}>`). */
+export const SkillsContent = styled(Container)`
+  max-width: 900px;
+  margin-top: -30px;
+  padding-bottom: 6rem;
 `

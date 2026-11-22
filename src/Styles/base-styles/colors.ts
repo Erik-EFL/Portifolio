@@ -220,6 +220,12 @@ export const semanticTokens = {
     text: grayscale[10],
     textMuted: grayscale[40],
     accent: goldenPalette.color['light'][30],
+    /**
+     * Accent para TEXTO pequeno (link/botão dentro de card). O `accent` dá
+     * 4.23:1 sobre `surfaceElevated` — abaixo dos 4.5:1 exigidos pelo WCAG AA;
+     * este tom mais escuro dá 6.41:1 e mantém a mesma família de cor.
+     */
+    accentStrong: goldenPalette.color['light'][20],
     /** Texto sobre o accent (badge laranja): escuro para manter contraste. */
     onAccent: grayscale[10],
     scrollbar: {
@@ -235,6 +241,8 @@ export const semanticTokens = {
     text: grayscale[110],
     textMuted: grayscale[70],
     accent: goldenPalette.color['dark'][60],
+    /** Variante para texto pequeno: no tema escuro o accent já passa (8.3:1). */
+    accentStrong: goldenPalette.color['dark'][60],
     /** Texto sobre o accent (badge laranja): escuro para manter contraste. */
     onAccent: grayscale[10],
     scrollbar: {

@@ -1,5 +1,4 @@
 import { useLanguage } from '@/store/language.store'
-import { Grid, Typography } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 import {
   AboutLink,
@@ -7,6 +6,9 @@ import {
   BadgeName,
   BadgeText,
   BadgeWrapper,
+  HeroColumn,
+  HeroParagraph,
+  HeroTextBlock,
   RoleHeading
 } from './Content.style'
 
@@ -16,7 +18,7 @@ const Content = () => {
   const { home } = data
 
   return (
-    <Grid item xs={12} sm={6} md={6} lg={6} sx={{ margin: 'auto' }}>
+    <HeroColumn>
       <BadgeWrapper>
         <BadgeName>
           <BadgeText>{home.circle}</BadgeText> {home.name}
@@ -33,15 +35,8 @@ const Content = () => {
           />
         </RoleHeading>
       )}
-      <Grid
-        item
-        xs={12}
-        sm={12}
-        md={11}
-        lg={11}
-        sx={{ position: 'relative', marginTop: '-20px' }}
-      >
-        <Typography component='p'>
+      <HeroTextBlock>
+        <HeroParagraph>
           {home.description.map((line: string, index: number) => (
             <span key={`${index}-${line}`}>
               <br />
@@ -49,9 +44,9 @@ const Content = () => {
             </span>
           ))}
           <AboutLink to='/about'>{home.link}</AboutLink>
-        </Typography>
-      </Grid>
-    </Grid>
+        </HeroParagraph>
+      </HeroTextBlock>
+    </HeroColumn>
   )
 }
 

@@ -1,6 +1,5 @@
 import { AboutSkeleton } from '@/components/Skeleton'
 import { useLanguage } from '@/store/language.store'
-import { Button, Container, Grid, Stack, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import {
   downloadResume,
@@ -12,7 +11,14 @@ import { useState } from 'react'
 import { usePageMeta, type LocalizedPageMeta } from '@/seo'
 import type { TLanguage } from '@/@types/portfolio.entity'
 import Text from './components/Text/Text'
-import Video from './components/Video/Video'
+import {
+  Main,
+  PageMessage,
+  ResumeButton,
+  ResumeNav,
+  TextColumn,
+  Title
+} from './about.styles'
 
 const META: LocalizedPageMeta = {
   ptBR: {
@@ -33,12 +39,23 @@ const text = {
 }
 
 const resumeLabels = {
-  ptBR: 'Baixar currículo em português',
-  enUS: 'Download English resume'
+  ptBR: {
+    label_1: 'Baixar curriculo em Português',
+    label_2: 'Baixar curriculo em Inglês'
+  },
+  enUS: {
+    label_1: 'Download Portuguese resume',
+    label_2: 'Download English resume'
+  }
 }
 
+const resumeLanguage = (language: TLanguage) =>
+  language === 'ptBR' ? resumeLabels.ptBR : resumeLabels.enUS
+
 const About = () => {
-  const { language, isLoading } = useLanguage()
+  const { language, data, isLoading } = useLanguage()
+
+  console.log(data)
 
   usePageMeta(META, '/about')
   const portugueseResume = getResumeUrl('ptBR')
@@ -69,132 +86,95 @@ const About = () => {
 
   return (
     <>
-      <Typography component='h1' align='center'>
-        {text[language]}
-      </Typography>
-      <Container
-        component='main'
-        maxWidth='lg'
-        sx={{
-          margin: 'auto'
-        }}
-      >
+      <Title>{text[language]}</Title>
+      <Main>
         {isLoading ? (
           <AboutSkeleton />
         ) : (
-          <Grid container spacing={2}>
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={8}
-              lg={6}
-              sx={{
-                margin: 'auto'
-              }}
-            >
-              <Video />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={8}
-              lg={6}
-              sx={{
-                marginLeft: 'auto',
-                marginRight: 'auto'
-              }}
-            >
-              <Text />
-            </Grid>
-          </Grid>
+          <TextColumn>
+            <Text />
+          </TextColumn>
         )}
-        <Stack
-          component='nav'
+        <ResumeNav
           aria-label={
             language === 'ptBR'
               ? 'Currículos para download'
               : 'Resume downloads'
           }
-          direction='row'
-          useFlexGap
-          flexWrap='wrap'
-          spacing={2}
-          justifyContent='center'
-          sx={{ marginBlock: 3 }}
         >
           {resumeAvailability?.ptBR && (
-            <Button
+            <ResumeButton
               type='button'
               onClick={() => void handleDownload('ptBR')}
               disabled={!portugueseResume || downloading !== null}
               aria-busy={downloading === 'ptBR'}
             >
-              {downloading === 'ptBR' ? 'Downloading…' : resumeLabels.ptBR}
-            </Button>
+              {downloading === 'ptBR'
+                ? 'Downloading…'
+                : resumeLanguage(language).label_1}
+            </ResumeButton>
           )}
           {resumeAvailability?.enUS && (
-            <Button
+            <ResumeButton
               type='button'
               onClick={() => void handleDownload('enUS')}
               disabled={!englishResume || downloading !== null}
               aria-busy={downloading === 'enUS'}
             >
-              {downloading === 'enUS' ? 'Downloading…' : resumeLabels.enUS}
-            </Button>
+              {downloading === 'enUS'
+                ? 'Downloading…'
+                : resumeLanguage(language).label_2}
+            </ResumeButton>
           )}
-        </Stack>
+        </ResumeNav>
         {availabilityQuery.isFetching && (
-          <Typography role='status' aria-live='polite' align='center'>
+          <PageMessage role='status' aria-live='polite'>
             {language === 'ptBR'
               ? 'Verificando currículos disponíveis…'
               : 'Checking available resumes…'}
-          </Typography>
+          </PageMessage>
         )}
         {availabilityQuery.error && (
-          <Typography role='alert' align='center'>
+          <PageMessage role='alert'>
             {language === 'ptBR'
               ? 'Não foi possível verificar os currículos disponíveis.'
               : 'Could not check resume availability.'}{' '}
             {availabilityQuery.error instanceof Error
               ? availabilityQuery.error.message
               : 'Unknown request error.'}
-            <Button
+            <ResumeButton
               type='button'
               onClick={() => void availabilityQuery.refetch()}
             >
               {language === 'ptBR' ? 'Tentar novamente' : 'Retry'}
-            </Button>
-          </Typography>
+            </ResumeButton>
+          </PageMessage>
         )}
         {resumeAvailability && !resumeAvailability.ptBR && (
-          <Typography role='status' align='center'>
+          <PageMessage role='status'>
             {language === 'ptBR'
               ? 'Currículo em português indisponível.'
               : 'Portuguese resume unavailable.'}
-          </Typography>
+          </PageMessage>
         )}
         {resumeAvailability && !resumeAvailability.enUS && (
-          <Typography role='status' align='center'>
+          <PageMessage role='status'>
             {language === 'ptBR'
               ? 'Currículo em inglês indisponível.'
               : 'English resume unavailable.'}
-          </Typography>
+          </PageMessage>
         )}
         {downloadError && (
-          <Typography role='alert' align='center'>
-            {downloadError}
-          </Typography>
+          <PageMessage role='alert'>{downloadError}</PageMessage>
         )}
         {!portugueseResume && !availabilityQuery.error && (
-          <Typography role='status' align='center'>
+          <PageMessage role='status'>
             {language === 'ptBR'
               ? 'Downloads de currículo indisponíveis: configure VITE_ADMIN_API_URL.'
               : 'Resume downloads unavailable: configure VITE_ADMIN_API_URL.'}
-          </Typography>
+          </PageMessage>
         )}
-      </Container>
+      </Main>
     </>
   )
 }

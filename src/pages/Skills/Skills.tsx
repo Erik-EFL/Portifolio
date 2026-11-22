@@ -1,8 +1,8 @@
-import Container from '@mui/material/Container'
 import { SrOnly } from '@/components/Skeleton'
 import { useLanguage } from '@/store/language.store'
 import { usePageMeta, type LocalizedPageMeta } from '@/seo'
 import Card from './Components/Content/Card'
+import { SkillsPage } from './Skills.style'
 
 const META: LocalizedPageMeta = {
   ptBR: {
@@ -28,19 +28,12 @@ const Skills = () => {
   usePageMeta(META, '/skills')
 
   return (
-    <Container
-      component='main'
-      maxWidth='lg'
-      sx={{
-        marginTop: '90px',
-        marginBottom: '120px'
-      }}
-    >
+    <SkillsPage>
       {/* A página não tem título visível (o desenho são os cards), mas o h1
           precisa existir: sem ele a hierarquia começava nos h3 das categorias. */}
       <SrOnly as='h1'>{TITLE[language] ?? TITLE.ptBR}</SrOnly>
       <Card />
-    </Container>
+    </SkillsPage>
   )
 }
 

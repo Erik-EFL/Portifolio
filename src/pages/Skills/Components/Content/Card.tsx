@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
 import { SkillsSkeleton } from '@/components/Skeleton'
-import { Container } from '@mui/material'
 import {
   CardHeader,
   CardStyled,
   DecorationsLayer,
   Dot,
-  SkillRating,
+  RatingStar,
+  RatingStars,
   SkillRow,
+  SkillsContent,
   SkillsGrid,
   SkillsList
 } from './Card.styled'
@@ -25,6 +26,31 @@ const hasNumericLevel = (skill: Skill): boolean =>
 
 /** Quantidade de bolinhas decorativas por lado. */
 const DOTS_PER_SIDE = 3
+
+/** Nota máxima desenhada — o `level` do conteúdo vai de 1 a 5. */
+const MAX_SKILL_LEVEL = 5
+
+const clampLevel = (level: number): number =>
+  Math.max(0, Math.min(MAX_SKILL_LEVEL, Math.round(level)))
+
+/**
+ * Nota da skill. Eram `<Rating readOnly>` do MUI; o contrato de acessibilidade
+ * fica igual (`role="img"` + "5 Stars"), que é o que leitor de tela e teste
+ * consultam.
+ */
+const SkillRating = ({ level }: { level: number }) => {
+  const filled = clampLevel(level)
+
+  return (
+    <RatingStars role='img' aria-label={`${filled} Stars`}>
+      {Array.from({ length: MAX_SKILL_LEVEL }, (_, index) => (
+        <RatingStar key={index} $filled={index < filled} aria-hidden='true'>
+          ★
+        </RatingStar>
+      ))}
+    </RatingStars>
+  )
+}
 
 interface IDecoration {
   id: number
@@ -90,11 +116,7 @@ const Card = () => {
   if (isLoading) return <SkillsSkeleton />
 
   return (
-    <Container
-      component='main'
-      maxWidth={false}
-      sx={{ maxWidth: '900px', marginTop: '-30px', paddingBottom: '6rem' }}
-    >
+    <SkillsContent as='div'>
       <SkillsList>
         <DecorationsLayer aria-hidden='true' data-testid='skills-decorations'>
           {decorations.map(dot => (
@@ -123,11 +145,7 @@ const Card = () => {
                   <SkillRow key={`${skill.name}-${skillIndex}`}>
                     <h3>{skill.name}</h3>
                     {hasNumericLevel(skill) ? (
-                      <SkillRating
-                        name='read-only'
-                        value={skill.level}
-                        readOnly
-                      />
+                      <SkillRating level={Number(skill.level)} />
                     ) : null}
                   </SkillRow>
                 ))}
@@ -136,7 +154,7 @@ const Card = () => {
           )
         )}
       </SkillsList>
-    </Container>
+    </SkillsContent>
   )
 }
 

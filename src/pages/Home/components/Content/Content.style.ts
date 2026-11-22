@@ -6,6 +6,39 @@ import { Link } from 'react-router-dom'
  * temas, para o texto do badge laranja) — sem `sx` com hex fixo.
  */
 
+/**
+ * Coluna do hero. Era `<Grid item xs={12} sm={6} md={6} lg={6} sx={{margin:'auto'}}>`:
+ * largura total no mobile e metade da linha a partir de 600px (breakpoint `sm`
+ * do MUI), centralizada pelo `margin: auto`.
+ */
+export const HeroColumn = styled.div`
+  width: 100%;
+  margin: auto;
+
+  @media (min-width: 37.5rem) {
+    flex: 0 1 50%;
+    max-width: 50%;
+  }
+`
+
+/**
+ * Bloco de texto do hero. Era outro `<Grid item xs={12} md={11}>` com margem
+ * negativa para colar o parágrafo no cargo.
+ */
+export const HeroTextBlock = styled.div`
+  position: relative;
+  margin-top: -20px;
+
+  @media (min-width: 56.25rem) {
+    max-width: 91.6667%;
+  }
+`
+
+/** Parágrafo do hero: `Typography component='p'`, sem a margem padrão de `<p>`. */
+export const HeroParagraph = styled.p`
+  margin: 0;
+`
+
 /** Cor de identidade do site (badge e link de destaque). */
 const BRAND = '#F1A208'
 

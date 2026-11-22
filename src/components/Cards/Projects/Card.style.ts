@@ -1,37 +1,91 @@
-import { Card } from '@mui/material'
 import styled from 'styled-components'
 
 /**
- * As cores do card vêm dos tokens semânticos do tema (`theme.semantic`),
- * inclusive as do MUI, que de outro modo usam a paleta light fixa
- * (`text.primary`, `#1976d2`).
+ * Card do projeto. Era `<Card>` do MUI com overrides de `&& .MuiTypography-*`
+ * e `&& .MuiButton-root`; agora cada pedaço tem seu componente, então as cores
+ * saem direto dos tokens sem depender de classe gerada pelo MUI.
  */
-export const ProjectCardStyled = styled(Card)`
-  && {
-    width: 300px;
-    height: 300px;
-    border-radius: 10px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    backdrop-filter: blur(4px);
-    background-color: ${({ theme }) => theme.semantic.surfaceElevated};
-    border: 1px solid ${({ theme }) => theme.semantic.border};
-  }
+export const ProjectCardStyled = styled.article`
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(4px);
+  background-color: ${({ theme }) => theme.semantic.surfaceElevated};
+  border: 1px solid ${({ theme }) => theme.semantic.border};
+`
 
-  && .MuiTypography-h5 {
-    color: ${({ theme }) => theme.semantic.text};
-  }
+/** Capa: 150px de altura, igual ao `<CardMedia sx={{ height: 150 }}>`. */
+export const ProjectCover = styled.img`
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+`
 
-  && .MuiTypography-body2 {
-    color: ${({ theme }) => theme.semantic.textMuted};
-  }
+export const ProjectBody = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 1rem;
+`
 
-  && .MuiButton-root {
-    color: ${({ theme }) => theme.semantic.accent};
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
+/** Título: era `Typography variant='h5' gutterBottom` pintado por classe MUI. */
+export const ProjectTitle = styled.h2`
+  margin: 0 0 0.35em;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.334;
+  color: ${({ theme }) => theme.semantic.text};
+`
 
-  && .MuiButton-root:hover {
+/** Descrição: era `Typography variant='body2'`. */
+export const ProjectDescription = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.43;
+  color: ${({ theme }) => theme.semantic.textMuted};
+`
+
+export const ProjectActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+`
+
+/**
+ * Ação do card. Era `<a><Button size='small'>...</Button></a>` — um botão
+ * dentro de um link (HTML inválido, foco duplicado); agora o próprio link é o
+ * botão, com navegação e teclado nativos.
+ */
+export const ProjectAction = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.75;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: ${({ theme }) => theme.semantic.accentStrong};
+
+  &:hover {
     background-color: ${({ theme }) => `${theme.semantic.accent}1f`};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.semantic.accent};
+    outline-offset: 2px;
   }
 `

@@ -1,5 +1,4 @@
 import { lazy, Suspense } from 'react'
-import { CssBaseline } from '@mui/material'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { PageFallback, SrOnly } from '@/components/Skeleton'
@@ -101,7 +100,6 @@ export function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
       <GlobalStyle />
       <Suspense fallback={<PageFallback />}>
         <RouterProvider router={router} />

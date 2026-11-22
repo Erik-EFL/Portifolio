@@ -118,15 +118,15 @@ test.describe('projetos', () => {
     await stubGithub(page)
     await page.goto('/projects')
 
-    const cards = page.locator('.MuiCard-root')
+    const cards = page.getByRole('article')
     await expect(cards).toHaveCount(2)
     await expect(cards.first()).toContainText('AppDelivery')
     await expect(
-      cards.first().getByRole('button', { name: 'Site' })
+      cards.first().getByRole('link', { name: 'Site' })
     ).toBeVisible()
-    await expect(
-      cards.nth(1).getByRole('button', { name: 'Site' })
-    ).toHaveCount(0)
+    await expect(cards.nth(1).getByRole('link', { name: 'Site' })).toHaveCount(
+      0
+    )
   })
 
   test('mostra erro com retry quando a API do GitHub falha', async ({

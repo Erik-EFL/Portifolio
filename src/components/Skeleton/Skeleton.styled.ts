@@ -97,3 +97,100 @@ export const SrOnly = styled.span`
   white-space: nowrap;
   border: 0;
 `
+
+/* --- Molduras de página -------------------------------------------------
+ * Eram `<Box sx={{...}}>` / `<Container>` do MUI espalhados pelos skeletons.
+ * Cada uma virou um componente com nome, para o layout do placeholder ficar
+ * no CSS e não em props `sx` inline.
+ */
+
+/** Fallback de rota: bloco de largura total com respiro em volta. */
+export const SkeletonPageFallback = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  padding: 48px 20px;
+  box-sizing: border-box;
+`
+
+/** Coluna do hero (texto) da Home. */
+export const SkeletonHeroColumn = styled.div`
+  width: 100%;
+  max-width: 620px;
+  flex: 1 1 auto;
+`
+
+export const SkeletonHeroTitle = styled.div`
+  margin-block: 18px 10px;
+`
+
+export const SkeletonHeroFooter = styled.div`
+  margin-top: 18px;
+`
+
+/** Coluna da foto do hero: 500px fixos, como a imagem real. */
+export const SkeletonHeroImage = styled.div`
+  flex-shrink: 0;
+  width: 500px;
+  max-width: 100%;
+`
+
+/** Coluna única centralizada (Sobre mim: texto ocupa a tela sozinho). */
+export const SkeletonCenteredColumn = styled.div`
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+`
+
+/** Fileira de cards de habilidade. */
+export const SkeletonSkillsSection = styled.div`
+  width: 100%;
+  max-width: 900px;
+  margin-top: 60px;
+`
+
+export const SkeletonCardsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+`
+
+/** Lista de projetos (rola por dentro, como a real). */
+export const SkeletonProjectsList = styled.main`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 76vh;
+  overflow-y: auto;
+`
+
+export const SkeletonProjectCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  height: 300px;
+  border-radius: 10px;
+  border: 1px solid rgba(160, 160, 160, 0.5);
+  overflow: hidden;
+`
+
+export const SkeletonProjectBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+`
+
+export const SkeletonProjectActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 16px 16px;
+`

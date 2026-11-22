@@ -63,8 +63,8 @@ describe('Projects', () => {
       ]
     })
 
-    expect(screen.getAllByRole('button', { name: 'Site' })).toHaveLength(1)
-    expect(screen.getAllByRole('button', { name: 'Git Hub' })).toHaveLength(2)
+    expect(screen.getAllByRole('link', { name: 'Site' })).toHaveLength(1)
+    expect(screen.getAllByRole('link', { name: 'Git Hub' })).toHaveLength(2)
 
     const linkSite = screen
       .getAllByRole('link')
